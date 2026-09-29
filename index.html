@@ -106,21 +106,163 @@
   </div>
 </section>
 
-        <!-- SECCIÓN 2: PRONTUARIO DE LAS 7 FÓRMULAS -->
-        <section id="sec-formulas" class="tab-content">
-            <h2>📐 Secuencia de Resolución de 7 Pasos</h2>
-            <p>Dado un punto inicial $P_1(x_1, y_1)$ y un punto final $P_2(x_2, y_2)$, esta es la secuencia matemática unificada para analizar la recta:</p>
-            
-            <ol class="formulas-list">
-                <li><strong>Vector Desplazamiento:</strong> $\Delta \vec{r} = (\Delta x, \Delta y) = (x_2 - x_1, y_2 - y_1)$</li>
-                <li><strong>Magnitud del Desplazamiento:</strong> $|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$</li>
-                <li><strong>Dirección del Vector:</strong> $\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right)$ <em>(con ajuste por cuadrante si $\Delta x < 0$)</em></li>
-                <li><strong>Pendiente de la Recta:</strong> $m = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$</li>
-                <li><strong>Forma Punto-Pendiente:</strong> $y - y_1 = m(x - x_1)$</li>
-                <li><strong>Forma Explícita (Pendiente-Ordenada):</strong> $y = mx + b$</li>
-                <li><strong>Forma General:</strong> $Ax + By + C = 0$</li>
-            </ol>
-        </section>
+<!-- GUÍA RÁPIDA Y FÓRMULAS CON ENFOQUE VISUAL E INTERACTIVO -->
+<section id="sec-formulas" class="space-y-6">
+
+  <!-- ENCABEZADO -->
+  <div class="border-b pb-4">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+      📘 Guía de Consulta Rápida y Fórmulas
+    </h2>
+    <p class="text-gray-600 dark:text-gray-300 text-sm">
+      Catálogo interactivo con fundamentos visuales, interpretación práctica y alertas de signos.
+    </p>
+  </div>
+
+  <!-- GRID DE FÓRMULAS (7 TARJETAS) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <!-- TARJETA 1 -->
+    <div class="border-l-4 border-blue-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-gray-800 dark:text-white">1. Vector Desplazamiento ($\Delta \vec{r}$)</h3>
+        <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded">Física</span>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-blue-600 dark:text-blue-300">
+        $$\Delta \vec{r} = (x_2 - x_1)\hat{i} + (y_2 - y_1)\hat{j}$$
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        <strong>💡 ¿Cómo entenderlo?</strong> Indica cuánto te moviste horizontalmente ($\Delta x$) y cuánto verticalmente ($\Delta y$).
+      </p>
+      <div class="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+        🔑 <strong>Consejo de signo:</strong> Respeta siempre el signo del punto inicial. Si $x_1 = -3$, entonces $x_2 - (-3) = x_2 + 3$.
+      </div>
+    </div>
+
+    <!-- TARJETA 2 -->
+    <div class="border-l-4 border-purple-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-gray-800 dark:text-white">2. Magnitud ($|\Delta \vec{r}|$)</h3>
+        <span class="text-xs bg-purple-100 text-purple-800 font-semibold px-2 py-0.5 rounded">Geometría</span>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-purple-600 dark:text-purple-300">
+        $$|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$$
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        <strong>💡 ¿Cómo entenderlo?</strong> Mide la distancia en línea recta real entre los dos puntos usando el Teorema de Pitágoras.
+      </p>
+      <div class="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+        🔑 <strong>Consejo de signo:</strong> Elevado al cuadrado SIEMPRE da positivo: $(-4)^2 = +16$. Dentro de la raíz nunca queda negativo.
+      </div>
+    </div>
+
+    <!-- TARJETA 3 -->
+    <div class="border-l-4 border-emerald-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-gray-800 dark:text-white">3. Dirección del Vector ($\theta$)</h3>
+        <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">Trigonometría</span>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-emerald-600 dark:text-emerald-300">
+        $$\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right) + C$$
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        <strong>💡 ¿Cómo entenderlo?</strong> Ángulo de inclinación en grados ($^\circ$) respecto a la horizontal.
+      </p>
+      <div class="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+        🔑 <strong>Regla del Cuadrante:</strong> Si $\Delta x < 0$, suma $+180^\circ$. Si $\Delta x > 0$ y $\Delta y < 0$, suma $+360^\circ$.
+      </div>
+    </div>
+
+    <!-- TARJETA 4 -->
+    <div class="border-l-4 border-amber-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-gray-800 dark:text-white">4. Pendiente de la Recta ($m$)</h3>
+        <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded">Inclinación</span>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-amber-600 dark:text-amber-300">
+        $$m = \frac{y_2 - y_1}{x_2 - x_1}$$
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        <strong>💡 ¿Cómo entenderlo?</strong> Razón de cambio: $m > 0$ la recta sube, $m < 0$ la recta baja, $m = 0$ es horizontal.
+      </p>
+      <div class="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+        🔑 <strong>Consejo práctico:</strong> Manten la pareja de puntos en orden. Si arriba usas $y_2 - y_1$, abajo usas $x_2 - x_1$.
+      </div>
+    </div>
+
+    <!-- TARJETA 5 -->
+    <div class="border-l-4 border-indigo-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-gray-800 dark:text-white">5. Forma Punto-Pendiente</h3>
+        <span class="text-xs bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded">Ecuación</span>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-indigo-600 dark:text-indigo-300">
+        $$y - y_1 = m(x - x_1)$$
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        <strong>💡 ¿Cómo entenderlo?</strong> Plantilla para armar la ecuación conociendo un punto $A(x_1, y_1)$ y la pendiente $m$.
+      </p>
+      <div class="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+        🔑 <strong>Consejo práctico:</strong> Usa paréntesis al sustituir $y - (y_1) = m(x - (x_1))$ para no perder los signos menos.
+      </div>
+    </div>
+
+    <!-- TARJETA 6 -->
+    <div class="border-l-4 border-teal-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-bold text-gray-800 dark:text-white">6. Forma Explícita ($y = mx + b$)</h3>
+        <span class="text-xs bg-teal-100 text-teal-800 font-semibold px-2 py-0.5 rounded">Gráfica Directa</span>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-teal-600 dark:text-teal-300">
+        $$y = mx + b$$
+      </div>
+      <p class="text-xs text-gray-600 dark:text-gray-300">
+        <strong>💡 ¿Cómo entenderlo?</strong> Muestra la pendiente $m$ y la ordenada al origen $b$ (corte con el eje Y en $(0,b)$).
+      </p>
+      <div class="mt-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+        🔑 <strong>Consejo práctico:</strong> Pasa $y_1$ sumando o restando al otro lado tras multiplicar $m \cdot (-x_1)$ para obtener $b$.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TARJETA CERRADORA ANCHA: FORMA GENERAL -->
+  <div class="border-l-4 border-rose-500 bg-white dark:bg-gray-800 p-4 rounded-r-lg shadow-sm">
+    <div class="flex justify-between items-center mb-2">
+      <h3 class="font-bold text-gray-800 dark:text-white">7. Forma General ($Ax + By + C = 0$)</h3>
+      <span class="text-xs bg-rose-100 text-rose-800 font-semibold px-2 py-0.5 rounded">Canónica Estándar</span>
+    </div>
+    <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-center my-2 font-mono text-lg text-rose-600 dark:text-rose-300">
+      $$Ax + By + C = 0$$
+    </div>
+    <p class="text-xs text-gray-600 dark:text-gray-300">
+      <strong>💡 ¿Cómo entenderlo?</strong> Expresión canónica donde todos los términos están alineados a la izquierda e igualados a cero.
+    </p>
+  </div>
+
+  <!-- BLOQUE ANTIERRORES DE SIGNOS Y ÁLGEBRA -->
+  <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 border border-amber-200 dark:border-amber-600/30 rounded-lg p-5">
+    <h3 class="font-bold text-amber-900 dark:text-amber-300 text-base mb-3 flex items-center gap-2">
+      ⚡ 3 Reglas de Oro para Resolver Ejercicios en Preparatoria
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-700 dark:text-gray-200">
+      <div class="bg-white/80 dark:bg-gray-800/80 p-3 rounded border border-amber-100 dark:border-gray-600">
+        <strong class="text-amber-800 dark:text-amber-400 block mb-1">1. Usa Paréntesis al Sustituir</strong>
+        Escribe siempre paréntesis al reemplazar números negativos: <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">y - (-3) ⟹ y + 3</code>. Evitarás confusiones fatales con los signos.
+      </div>
+      <div class="bg-white/80 dark:bg-gray-800/80 p-3 rounded border border-amber-100 dark:border-gray-600">
+        <strong class="text-amber-800 dark:text-amber-400 block mb-1">2. Puntos Inicial y Final</strong>
+        El punto de partida $A(x_1, y_1)$ siempre va primero y el destino $B(x_2, y_2)$ va después. No inviertas las parejas al restar.
+      </div>
+      <div class="bg-white/80 dark:bg-gray-800/80 p-3 rounded border border-amber-100 dark:border-gray-600">
+        <strong class="text-amber-800 dark:text-amber-400 block mb-1">3. ¿Línea Vertical u Horizontal?</strong>
+        • Si $y_1 = y_2$: La recta es plana y horizontal ($m = 0$).<br>
+        • Si $x_1 = x_2$: La recta es completamente vertical y no tiene pendiente ($m$ indefinida).
+      </div>
+    </div>
+  </div>
+
+</section>
 
         <!-- SECCIÓN 3: LABORATORIO / CALCULADORA -->
         <section id="sec-laboratorio" class="tab-content">
