@@ -1,14 +1,15 @@
-/* VARIABLES GLOBALES Y TEMAS */
+/* VARIABLES GLOBALES - TEMÁTICA OFICIAL CONALEP */
 :root {
-    --primary: #0f172a;
-    --secondary: #1e293b;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --text-light: #f8fafc;
-    --text-muted: #94a3b8;
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
+    --primary: #00594C;         /* Verde Oscuro Institucional Conalep */
+    --secondary: #003B32;       /* Verde Profundo para Fondos/Headers */
+    --accent: #00806A;          /* Verde Esmeralda para Selección/Botones */
+    --accent-hover: #00a88f;    /* Verde Claro para interacción Hover */
+    --gold-accent: #d97706;     /* Dorado/Ámbar institucional para detalles */
+    --text-light: #f8fafc;      /* Texto Claro */
+    --text-muted: #94a3b8;      /* Texto Secundario */
+    --bg-main: #f1f5f9;         /* Fondo Gris Suave de la página */
+    --card-bg: #ffffff;         /* Fondo de Tarjetas Blanco */
+    --border-color: #cbd5e1;     /* Bordes definidos */
 }
 
 body {
