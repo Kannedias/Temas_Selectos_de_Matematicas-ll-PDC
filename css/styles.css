@@ -319,3 +319,27 @@ body {
         text-align: left;
     }
 }
+/* ISOLACIÓN Y FIJACIÓN DEL BADGE EN HEADER */
+.header-badge-static {
+  display: inline-block !important;
+  background-color: #e53e3e !important; /* Rojo o tono de acento */
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  /* Cancelar cualquier animación o transición heredada */
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  vertical-align: middle;
+}
+
+/* Prevenir parpadeo o movimiento al hacer hover */
+.header-badge-static:hover {
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
