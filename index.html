@@ -50,85 +50,70 @@
         <!-- ========================================== -->
         <!-- PESTAÑA 1: FUNDAMENTOS EN EL MUNDO REAL   -->
         <!-- ========================================== -->
-        <section id="sec-fundamentos" class="tab-content space-y-6">
-            
-            <div class="border-b pb-3">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                    💡 ¿Para qué sirven las Matemáticas en el Mundo Real?
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                    Las fórmulas no son números abstractos: son el <strong>código fuente</strong>, la <strong>física de estructuras</strong> y los <strong>algoritmos médicos</strong> que transforman el mundo.
-                </p>
-            </div>
+       <section id="sec-fundamentos" class="tab-content active">
+  <div class="pedagogico-header" style="text-align: center; padding: 2rem 1rem; color: #ffffff;">
+    <h2>💡 ¿Para qué sirven las Matemáticas en el Mundo Real?</h2>
+    <p>Las fórmulas no son números abstractos: son el <strong>código fuente</strong>, la <strong>física de estructuras</strong> y los <strong>algoritmos médicos</strong> que transforman el mundo.</p>
+  </div>
 
-            <!-- TARJETAS DE APLICACIÓN PRÁCTICA -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- CARD 1: SISTEMAS & TI -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold px-3 py-1 text-right uppercase tracking-wider">
-                        SISTEMAS & TI
-                    </div>
-                    <div class="p-5 flex-grow space-y-3">
-                        <h3 class="font-bold text-lg text-gray-800 dark:text-white">
-                            👾 El Algoritmo de Renderizado y Colisiones
-                        </h3>
-                        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 text-xs font-semibold px-3 py-2 rounded-md">
-                            Ecuación General: $Ax + By + C = 0$<br>• Vector $\Delta\vec{r}$
-                        </div>
-                        <p class="text-xs text-gray-600 dark:text-gray-300">
-                            ¿Cómo sabe un videojuego en 3D o 2D que un disparo impactó a un objetivo? En cada fotograma, el motor (Unity/Unreal) calcula el <em>Raycasting</em> trazando una recta entre dos puntos.
-                        </p>
-                    </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 italic text-xs text-gray-500 dark:text-gray-400">
-                        "Si no entiendes la ecuación de la recta, no puedes programar físicas de movimiento, colisiones ni gráficos optimizados."
-                    </div>
-                </div>
+  <div class="metaforas-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 1rem;">
+    
+    <!-- TARJETA 1: TI Y SOFTWARE -->
+    <article class="card-aplicacion" style="background-color: #1e293b; border-radius: 8px; overflow: hidden; color: #ffffff;">
+      <div class="card-image-wrapper" style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Videojuegos y Gráficos TI" style="width: 100%; height: 200px; object-fit: cover; display: block;">
+        <span class="badge-area badge-ti" style="position: absolute; top: 10px; right: 10px; background: #2563eb; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Sistemas & TI</span>
+      </div>
+      <div class="card-body" style="padding: 1.2rem;">
+        <h3>🎮 El Algoritmo de Renderizado y Colisiones</h3>
+        <div class="formula-highlight" style="background: rgba(255,255,255,0.05); padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px; font-family: monospace; font-size: 0.9rem;">
+          Ecuación General: Ax + By + C = 0 &bull; Vector &Delta;r
+        </div>
+        <p>¿Cómo sabe un videojuego en 3D o 2D que un disparo impactó a un objetivo? En cada fotograma, el motor (Unity/Unreal) calcula el <strong>Raycasting</strong> trazando una recta entre dos puntos.</p>
+        <p class="metafora-quote" style="font-style: italic; opacity: 0.85; margin-top: 0.8rem;">
+          💬 "Si no entiendes la ecuación de la recta, no puedes programar físicas de movimiento, colisiones ni gráficos optimizados."
+        </p>
+      </div>
+    </article>
 
-                <!-- CARD 2: INGENIERÍA -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                    <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold px-3 py-1 text-right uppercase tracking-wider">
-                        INGENIERÍA
-                    </div>
-                    <div class="p-5 flex-grow space-y-3">
-                        <h3 class="font-bold text-lg text-gray-800 dark:text-white">
-                            🏗️ Resistencia de Materiales y Cargas
-                        </h3>
-                        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 text-xs font-semibold px-3 py-2 rounded-md">
-                            Magnitud: $|\Delta\vec{r}|$ • Inclinación $\theta$ • Pendiente ($m$)
-                        </div>
-                        <p class="text-xs text-gray-600 dark:text-gray-300">
-                            En el diseño de puentes, vigas y rampas, una línea no es solo un dibujo. Representa un <strong>Vector de Fuerza</strong> que soporta toneladas de peso sobre un ángulo de inclinación preciso.
-                        </p>
-                    </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 italic text-xs text-gray-500 dark:text-gray-400">
-                        "Un cálculo incorrecto en la pendiente o en la dirección $\theta$ hace la diferencia entre una estructura segura y un colapso."
-                    </div>
-                </div>
+    <!-- TARJETA 2: INGENIERÍA -->
+    <article class="card-aplicacion" style="background-color: #1e293b; border-radius: 8px; overflow: hidden; color: #ffffff;">
+      <div class="card-image-wrapper" style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=600&q=80" alt="Ingeniería y Estructuras" style="width: 100%; height: 200px; object-fit: cover; display: block;">
+        <span class="badge-area badge-ing" style="position: absolute; top: 10px; right: 10px; background: #059669; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Ingeniería</span>
+      </div>
+      <div class="card-body" style="padding: 1.2rem;">
+        <h3>🏗️ Resistencia de Materiales y Cargas</h3>
+        <div class="formula-highlight" style="background: rgba(255,255,255,0.05); padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px; font-family: monospace; font-size: 0.9rem;">
+          Magnitud: |&Delta;r| &bull; Inclinación &theta; &bull; Pendiente (m)
+        </div>
+        <p>En el diseño de puentes, vigas y rampas, una línea no es solo un dibujo. Representa un <strong>Vector de Fuerza</strong> que soporta toneladas de peso sobre un ángulo de inclinación preciso.</p>
+        <p class="metafora-quote" style="font-style: italic; opacity: 0.85; margin-top: 0.8rem;">
+          💬 "Un cálculo incorrecto en la pendiente o en la dirección &theta; hace la diferencia entre una estructura segura y un colapso."
+        </p>
+      </div>
+    </article>
 
-                <!-- CARD 3: MEDICINA & SALUD -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-3 py-1 text-right uppercase tracking-wider">
-                        MEDICINA & SALUD
-                    </div>
-                    <div class="p-5 flex-grow space-y-3">
-                        <h3 class="font-bold text-lg text-gray-800 dark:text-white">
-                            💊 Curva Farmacocinética y Dosificación
-                        </h3>
-                        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 text-xs font-semibold px-3 py-2 rounded-md">
-                            Forma Explícita: $y = mx + b$<br>(Razón de cambio)
-                        </div>
-                        <p class="text-xs text-gray-600 dark:text-gray-300">
-                            Cuando un médico administra un medicamento por goteo, la velocidad de infusión es la <strong>pendiente ($m$)</strong> y la concentración inicial en sangre es el punto <strong>($b$)</strong>.
-                        </p>
-                    </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 italic text-xs text-gray-500 dark:text-gray-400">
-                        "Determinar cuándo cae la concentración por debajo de la dosis terapéutica salva vidas al evitar sobredosis o fallos orgánicos."
-                    </div>
-                </div>
+    <!-- TARJETA 3: MEDICINA Y SALUD -->
+    <article class="card-aplicacion" style="background-color: #1e293b; border-radius: 8px; overflow: hidden; color: #ffffff;">
+      <div class="card-image-wrapper" style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Farmacocinética y Medicina" style="width: 100%; height: 200px; object-fit: cover; display: block;">
+        <span class="badge-area badge-med" style="position: absolute; top: 10px; right: 10px; background: #dc2626; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Medicina & Salud</span>
+      </div>
+      <div class="card-body" style="padding: 1.2rem;">
+        <h3>💊 Curva Farmacocinética y Dosificación</h3>
+        <div class="formula-highlight" style="background: rgba(255,255,255,0.05); padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px; font-family: monospace; font-size: 0.9rem;">
+          Forma Explícita: y = mx + b (Razón de Cambio)
+        </div>
+        <p>Cuando un médico administra un medicamento por goteo, la velocidad de infusión es la <strong>pendiente (m)</strong> y la concentración inicial en sangre es el punto <strong>(b)</strong>.</p>
+        <p class="metafora-quote" style="font-style: italic; opacity: 0.85; margin-top: 0.8rem;">
+          💬 "Determinar cuándo cae la concentración por debajo de la dosis terapéutica salva vidas al evitar sobredosis o fallos orgánicos."
+        </p>
+      </div>
+    </article>
 
-            </div>
-        </section>
+  </div>
+</section>
 
 
         <!-- ========================================== -->
