@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 // =======================================================
-// CONTROLADOR DEL LABORATORIO Y RENDERIZADO DIDÁCTICO
+// CONTROLADOR DEL LABORATORIO CON TRAZABILIDAD Y FORMATO BETA
 // =======================================================
 
 function calcularLaboratorio() {
@@ -59,25 +59,24 @@ function calcularLaboratorio() {
         return;
     }
 
-    // Cálculo formal de 7 pasos
+    // Cálculo matemático de los 7 pasos
     const res = MathEngine.calcularSecuenciaRecta(x1, y1, x2, y2);
 
-    // Renderizado del resumen numérico sobre la gráfica
+    // Renderizado de barra de parámetros clave
     renderizarResumenBarra(res, x1, y1, x2, y2);
 
-    // Renderizar tarjetas con desglose ampliado
-    renderizarTarjetasPasoAPaso(res, x1, y1, x2, y2);
+    // Renderizar tarjetas con la estructura detallada del sistema beta
+    renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2);
 
-    // Dibujar el canvas gráfico limpio
+    // Graficado en el lienzo interactivo
     dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res);
 }
 
-// BARRA DE RESUMEN DEBAJO DE LA GRÁFICA
 function renderizarResumenBarra(res, x1, y1, x2, y2) {
     const bar = document.getElementById('resumen-grafica-bar');
     if (!bar) return;
 
-    const mTexto = res.esVertical ? "Indefinida (Vertical)" : res.pendiente;
+    const mTexto = res.esVertical ? "Indefinida" : res.pendiente;
     const bTexto = res.esVertical ? "N/A" : `(0, ${res.ordenadaOrigen})`;
 
     bar.innerHTML = `
@@ -93,114 +92,182 @@ function renderizarResumenBarra(res, x1, y1, x2, y2) {
     }
 }
 
-// DESGLOSE ARITMÉTICO Y ÁLGEBRAICO EXPANDIDO
-function renderizarTarjetasPasoAPaso(res, x1, y1, x2, y2) {
+function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const container = document.getElementById('pasos-container');
     if (!container) return;
 
     const dx = x2 - x1;
     const dy = y2 - y1;
-    const m = res.pendiente;
-    const b = res.ordenadaOrigen;
+    const mVal = res.pendiente;
+    const bVal = res.ordenadaOrigen;
 
-    // Formateo de cadenas para mostrar operaciones intermadias con signos explícitos
-    const x1Sign = x1 < 0 ? `(${x1})` : `${x1}`;
-    const y1Sign = y1 < 0 ? `(${y1})` : `${y1}`;
-    const x2Sign = x2 < 0 ? `(${x2})` : `${x2}`;
-    const y2Sign = y2 < 0 ? `(${y2})` : `${y2}`;
+    // Ayudantes de formato con signos explícitos
+    const x1Str = x1 < 0 ? `(${x1})` : `${x1}`;
+    const y1Str = y1 < 0 ? `(${y1})` : `${y1}`;
+    const x2Str = x2 < 0 ? `(${x2})` : `${x2}`;
+    const y2Str = y2 < 0 ? `(${y2})` : `${y2}`;
 
-    const pasosData = [
-        {
-            num: 1,
-            titulo: "Vector Desplazamiento ($\\Delta \\vec{r}$)",
-            que: "Calculamos el avance horizontal ($\\Delta x$) y el cambio vertical ($\\Delta y$) restando las coordenadas del origen a las del destino.",
-            como: `
-                $$\\Delta x = x_2 - x_1 = ${x2Sign} - ${x1Sign} = ${dx.toFixed(2)}$$
-                $$\\Delta y = y_2 - y_1 = ${y2Sign} - ${y1Sign} = ${dy.toFixed(2)}$$
-                $$\\Delta \\vec{r} = (\\Delta x, \\Delta y) = (${dx.toFixed(2)}, \\, ${dy.toFixed(2)})$$
-            `,
-            porque: `Significa que para ir desde el Punto A hasta el Punto B se avanzan **${dx.toFixed(2)} unidades** en el eje X y **${dy.toFixed(2)} unidades** en el eje Y.`
-        },
-        {
-            num: 2,
-            titulo: "Magnitud del Desplazamiento ($\vert{}\\Delta \\vec{r}\vert{}$)",
-            que: "Aplicamos el Teorema de Pitágoras con las variaciones $\\Delta x$ y $\\Delta y$ para hallar la distancia directa entre ambos puntos.",
-            como: `
-                $$|\\Delta \\vec{r}| = \\sqrt{(\\Delta x)^2 + (\\Delta y)^2}$$
-                $$|\\Delta \\vec{r}| = \\sqrt{(${dx.toFixed(2)})^2 + (${dy.toFixed(2)})^2}$$
-                $$|\\Delta \\vec{r}| = \\sqrt{${(dx*dx).toFixed(2)} + ${(dy*dy).toFixed(2)}} = \\sqrt{${(dx*dx + dy*dy).toFixed(2)}} = ${res.magnitud}$$
-            `,
-            porque: "Es la longitud geométrica exacta del segmento rectilíneo dibujado en el plano."
-        },
-        {
-            num: 3,
-            titulo: "Dirección y Cuadrante ($\\theta$)",
-            que: "Obtenemos el ángulo del vector mediante la función arcotangente $\\arctan\\left(\\frac{\vert{}\\Delta y\vert{}}{\vert{}\\Delta x\vert{}}\\right)$ ajustando según el cuadrante.",
-            como: `
-                $$\\alpha = \\arctan\\left(\\left|\\frac{${dy.toFixed(2)}}{${dx.toFixed(2)}}\\right|\\right) = ${Math.abs(res.direccion.grados).toFixed(2)}^\\circ$$
-                $$\\text{Ubicación: } ${res.direccion.cuadrante}$$
-                $$\\theta = ${res.direccion.grados}^\\circ$$
-            `,
-            porque: "Nos indica la inclinación sexagesimal medida desde el eje X positivo en sentido antihorario."
-        },
-        {
-            num: 4,
-            titulo: "Pendiente de la Recta ($m$)",
-            que: "Dividimos la variación vertical entre la variación horizontal para obtener la inclinación constante.",
-            como: `
-                $$m = \\frac{\\Delta y}{\\Delta x} = \\frac{y_2 - y_1}{x_2 - x_1}$$
-                $$m = \\frac{${dy.toFixed(2)}}{${dx.toFixed(2)}} = ${m}$$
-            `,
-            porque: res.esVertical ? "Como $\\Delta x = 0$, la división por cero no está definida (recta vertical)." : `Indica que por cada unidad que la recta avanza hacia la derecha en X, sube o baja **${m} unidades** en Y.`
-        },
-        {
-            num: 5,
-            titulo: "Forma Punto-Pendiente",
-            que: "Sustituimos el Punto A $(x_1, y_1)$ y la pendiente $m$ en el modelo estándar $y - y_1 = m(x - x_1)$.",
-            como: `
-                $$y - ${y1Sign} = ${m} \\cdot (x - ${x1Sign})$$
-                $$${res.ecuaciones.puntoPendiente}$$
-            `,
-            porque: "Permite construir la ecuación formal de la recta conociendo únicamente un punto inicial y la tasa de cambio."
-        },
-        {
-            num: 6,
-            titulo: "Forma Explícita ($y = mx + b$)",
-            que: "Despejamos la variable $y$ resolviendo la multiplicación y simplificando los términos independientes.",
-            como: `
-                $$y = ${m}x + (${y1} - ${m} \\cdot ${x1})$$
-                $$${res.ecuaciones.explicita}$$
-            `,
-            porque: `Nos revela la ordenada al origen **$b = ${b}$**, que es el punto $(0, ${b})$ donde la recta cruza el eje vertical Y.`
-        },
-        {
-            num: 7,
-            titulo: "Forma General ($Ax + By + C = 0$)",
-            que: "Pasamos todos los términos al lado izquierdo de la igualdad para obtener la expresión canónica estándar.",
-            como: `
+    const dxStr = dx < 0 ? `(${dx.toFixed(2)})` : `${dx.toFixed(2)}`;
+    const dyStr = dy < 0 ? `(${dy.toFixed(2)})` : `${dy.toFixed(2)}`;
+
+    const tarjetasHTML = [
+        // PASO 1: VECTOR DESPLAZAMIENTO
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">1</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 1: Vector Desplazamiento ($\Delta \\vec{r}$)</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> Punto $A(x_1 = ${x1}, y_1 = ${y1})$ y Punto $B(x_2 = ${x2}, y_2 = ${y2})$.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; color: #64748b;">Sustitución en $\\Delta \\vec{r} = \\Delta x \\hat{i} + \\Delta y \\hat{j}$:</span>
+                $$\\Delta \\vec{r} = (${dx.toFixed(2)})\\hat{i} + (${dy.toFixed(2)})\\hat{j}$$
+            </div>
+
+            <ul style="font-size: 0.8rem; color: #475569; margin: 0 0 0.6rem 1rem; padding: 0;">
+                <li>Cambio Horizontal ($\\Delta x$): $x_2 - x_1 = ${x2Str} - ${x1Str} = ${dx.toFixed(2)}$</li>
+                <li>Cambio Vertical ($\\Delta y$): $y_2 - y_1 = ${y2Str} - ${y1Str} = ${dy.toFixed(2)}$</li>
+            </ul>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: $\\Delta \\vec{r} = (${dx.toFixed(2)})\\hat{i} + (${dy.toFixed(2)})\\hat{j}$</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> Muestra los componentes del movimiento en horizontal ($\\Delta x = ${dx.toFixed(2)}$) y vertical ($\\Delta y = ${dy.toFixed(2)}$).</div>
+            </div>
+        </div>
+        `,
+
+        // PASO 2: MAGNITUD DEL DESPLAZAMIENTO
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">2</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 2: Magnitud del Desplazamiento ($|\\Delta \\vec{r}|$)</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> Componentes del Paso 1: $\\Delta x = ${dx.toFixed(2)}$ y $\\Delta y = ${dy.toFixed(2)}$.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; color: #64748b;">Aplicando Teorema de Pitágoras $|\\Delta \\vec{r}| = \\sqrt{(\\Delta x)^2 + (\\Delta y)^2}$:</span>
+                $$|\\Delta \\vec{r}| = \\sqrt{${dxStr}^2 + ${dyStr}^2} = \\sqrt{${(dx*dx + dy*dy).toFixed(2)}} \\approx ${res.magnitud}$$
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: $|\\Delta \\vec{r}| = ${res.magnitud}$ unidades</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> Distancia en línea recta directa desde el punto inicial $A$ hasta el punto final $B$.</div>
+            </div>
+        </div>
+        `,
+
+        // PASO 3: DIRECCIÓN Y CUADRANTE
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">3</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 3: Dirección del Vector ($\\theta$)</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> $\\Delta y = ${dy.toFixed(2)}$ y $\\Delta x = ${dx.toFixed(2)}$.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                <strong>Análisis de cuadrante:</strong> El vector se ubica en el <strong>${res.direccion.cuadrante}</strong>.<br>
+                1. Ángulo de referencia: $\\alpha = \\arctan\\left(\\left|\\frac{${dy.toFixed(2)}}{${dx.toFixed(2)}}\\right|\\right) = ${Math.abs(res.direccion.grados).toFixed(2)}^\\circ$<br>
+                2. Ajuste por cuadrante: $\\theta = ${res.direccion.grados}^\\circ$
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: $\\theta = ${res.direccion.grados}^\\circ$</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> Ángulo de inclinación absoluto medido respecto al eje X positivo.</div>
+            </div>
+        </div>
+        `,
+
+        // PASO 4: CÁLCULO DE LA PENDIENTE
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">4</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 4: Cálculo de la Pendiente ($m$)</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> Puntos $A(${x1}, ${y1})$ y $B(${x2}, ${y2})$.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; color: #64748b;">Sustitución en $m = \\frac{y_2 - y_1}{x_2 - x_1}$:</span>
+                $$m = \\frac{${y2Str} - ${y1Str}}{${x2Str} - ${x1Str}} = \\frac{${dy.toFixed(2)}}{${dx.toFixed(2)}} = ${mVal}$$
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: $m = ${mVal}$</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> La trayectoria cambia $${mVal}$ unidades en Y por cada unidad que avanza en X.</div>
+            </div>
+        </div>
+        `,
+
+        // PASO 5: ECUACIÓN PUNTO-PENDIENTE
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">5</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 5: Ecuación Punto-Pendiente</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> Pendiente $m = ${mVal}$ (del Paso 4) y Punto $A(x_1 = ${x1}, y_1 = ${y1})$.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; color: #64748b;">Sustitución directa en $y - y_1 = m(x - x_1)$:</span>
+                $$y - ${y1Str} = ${mVal} \\cdot (x - ${x1Str})$$
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: $${res.ecuaciones.puntoPendiente}$</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> Estructura inicial lista para despejes algebraicos.</div>
+            </div>
+        </div>
+        `,
+
+        // PASO 6: FORMA EXPLÍCITA
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">6</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 6: Forma Explícita ($y = mx + b$)</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> Ecuación del Paso 5: $y - ${y1Str} = ${mVal}(x - ${x1Str})$.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; color: #64748b;">Despeje paso a paso de $y$:</span>
+                $$y = ${res.ecuaciones.explicita}$$
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: Ordenada al origen $b = ${bVal}$</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> Muestra exactamente el corte con el eje Y en $(0, ${bVal})$.</div>
+            </div>
+        </div>
+        `,
+
+        // PASO 7: FORMA GENERAL
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">7</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.98rem;">Paso 7: Forma General ($Ax + By + C = 0$)</h4>
+            </div>
+            <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Origen de datos:</strong> Igualar a cero la forma explícita del Paso 6.</p>
+            
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; color: #64748b;">Alineación canónica:</span>
                 $$${res.ecuaciones.general}$$
-            `,
-            porque: "Es la representación algebraica unificada para analizar sistemas de ecuaciones lineales y cortes cónicos."
-        }
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.82rem; color: #1e40af; font-weight: bold;">Resultado obtenido: Ecuación General Formalizada</div>
+                <div style="font-size: 0.78rem; color: #3b82f6; margin-top: 0.2rem;"><em>Significado:</em> Expresión universal estandarizada para geometría analítica.</div>
+            </div>
+        </div>
+        `
     ];
 
-    // Inyección HTML en el contenedor
-    container.innerHTML = pasosData.map(p => `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1.1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.03); min-width: 0;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
-                <span style="background: #004d40; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">${p.num}</span>
-                <h4 style="margin: 0; color: #004d40; font-size: 0.98rem; overflow-wrap: break-word; word-break: break-word;">${p.titulo}</h4>
-            </div>
-            <p style="font-size: 0.83rem; color: #475569; margin: 0 0 0.5rem 0; line-height: 1.35;"><strong>¿Qué se hizo?</strong> ${p.que}</p>
-            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border-left: 3px solid #0d6efd; margin-bottom: 0.5rem; overflow-x: auto; font-size: 0.85rem;">
-                <strong style="color: #0d6efd; font-size: 0.78rem;">¿Cómo se hizo?</strong>
-                <div style="margin-top: 0.2rem;">${p.como}</div>
-            </div>
-            <p style="font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.35;"><strong>¿Por qué?</strong> ${p.porque}</p>
-        </div>
-    `).join('');
+    container.innerHTML = tarjetasHTML.join('');
 
-    // Procesar expresiones matemáticas con KaTeX en títulos y fórmulas
+    // Procesar expresiones KaTeX de forma segura
     if (window.renderMathInElement) {
         renderMathInElement(container, {
             delimiters: [
@@ -212,20 +279,19 @@ function renderizarTarjetasPasoAPaso(res, x1, y1, x2, y2) {
     }
 }
 
-// RENDIMIENTO Y DIBUJO DEL PLANO CARTESIANO LIMPIO
+// DIBUJO DEL PLANO CARTESIANO EN CANVAS
 function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const canvas = document.getElementById('planoCartesianoCanvas');
     if (!canvas) return;
 
     const rect = canvas.parentNode.getBoundingClientRect();
-    canvas.width = rect.width || 500;
-    canvas.height = 340;
+    canvas.width = rect.width || 600;
+    canvas.height = 380;
 
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
 
-    // Rango dinámico
     const maxCoord = Math.max(Math.abs(x1), Math.abs(y1), Math.abs(x2), Math.abs(y2), 5) + 3;
     const scale = Math.min(width, height) / (maxCoord * 2);
     
@@ -235,7 +301,7 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const toPx = (x) => cx + (x * scale);
     const toPy = (y) => cy - (y * scale);
 
-    // Fondo limpio
+    // Fondo
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
@@ -255,7 +321,7 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(width, cy); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
 
-    // Triángulo de Pendiente (Punteado en Naranja)
+    // Triángulo de Pendiente (Naranja)
     ctx.setLineDash([4, 4]);
     ctx.strokeStyle = "#f59e0b";
     ctx.lineWidth = 2;
@@ -266,7 +332,7 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Trazado de la Recta Principal (Azul)
+    // Recta Principal (Azul)
     ctx.strokeStyle = "#2563eb";
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -283,7 +349,7 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     }
     ctx.stroke();
 
-    // Ordenada al origen (Verde)
+    // Corte Eje Y (Verde)
     if (!res.esVertical && res.ordenadaOrigen !== "N/A") {
         const b = parseFloat(res.ordenadaOrigen);
         ctx.fillStyle = "#10b981";
@@ -292,7 +358,7 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         ctx.fill();
     }
 
-    // Punto A (Azul Oscuro)
+    // Punto A (Azul)
     ctx.fillStyle = "#084298";
     ctx.beginPath();
     ctx.arc(toPx(x1), toPy(y1), 6, 0, Math.PI * 2);
@@ -304,14 +370,16 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     ctx.arc(toPx(x2), toPy(y2), 6, 0, Math.PI * 2);
     ctx.fill();
 
-    // Etiquetas sobre la gráfica limpia
+    // Etiquetas
     ctx.fillStyle = "#0f172a";
     ctx.font = "bold 11px sans-serif";
     ctx.fillText(`A(${x1}, ${y1})`, toPx(x1) + 8, toPy(y1) - 6);
     ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + 8, toPy(y2) - 6);
 }
 
-// Inicialización
+// Ejecutar al cargar la página
 document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(calcularLaboratorio, 200);
+});
     setTimeout(calcularLaboratorio, 200);
 });
