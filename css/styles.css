@@ -436,3 +436,74 @@ body {
     color: #b45309;
     margin-top: 0.5rem;
 }
+/* ========================================================
+   NUEVO DISEÑO: SIMULADOR Y CÓDIGO DE COLORES PEDAGÓGICO
+   ======================================================== */
+
+/* Contenedor del lienzo panorámico */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+/* Panel flotante superpuesto en el gráfico */
+.panel-flotante-resultados {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(6px);
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Código de Colores para Coordenadas */
+.coord-a { color: #2563eb; font-weight: 700; } /* Azul: Punto A */
+.coord-b { color: #dc2626; font-weight: 700; } /* Rojo: Punto B */
+
+/* Andamiaje y Cajas de Resultados */
+.txt-andamiaje { 
+  font-size: 0.9rem; 
+  color: #475569; 
+  font-style: italic; 
+  margin-bottom: 12px; 
+  background-color: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #94a3b8;
+}
+
+.resultado-destacado {
+  background-color: #f0fdf4;
+  border-left: 5px solid #22c55e;
+  color: #166534;
+  padding: 12px 18px;
+  border-radius: 4px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.resultado-badge {
+  background-color: #16a34a;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
