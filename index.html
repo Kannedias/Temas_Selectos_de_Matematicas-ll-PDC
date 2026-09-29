@@ -15,21 +15,20 @@
 </head>
 <body>
 
-    <!-- CABECERA INSTITUCIONAL Y DE AUTORÍA -->
-    <header class="laboratorio-header">
-        <div class="header-container">
-            <div class="header-info">
-                <div class="badge-version">Unidad 1 • Geometría Analítica</div>
-                <h1 class="app-title">Laboratorio Interactivo: La Recta en 2D</h1>
-                <p class="app-subtitle">Temas Selectos de Matemáticas II — Conalep Playa del Carmen</p>
-            </div>
-            <div class="header-author">
-                <span class="status-indicator"><span class="dot"></span> Sistema Activo</span>
-                <p class="author-name"><strong>Desarrollado por:</strong> Prof. Juan Luis</p>
-                <p class="copyright-notice">© 2026 Todos los derechos reservados.</p>
-            </div>
+<!-- CABECERA INSTITUCIONAL -->
+<header class="main-header" style="background-color: #004d40; color: #ffffff; padding: 1rem 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+        <div>
+            <div style="font-size: 0.85rem; color: #a7f3d0; margin-bottom: 2px;">🟢 Sistema Activo</div>
+            <div style="font-size: 0.9rem; font-weight: 600;">Desarrollado por: Prof. Juan Luis</div>
+            <div style="font-size: 0.75rem; color: #cbd5e1;">© 2026 Todos los derechos reservados.</div>
         </div>
-    </header>
+        <div>
+            <!-- Clase totalmente aislada para evitar que JS la sobreescriba -->
+            <span class="badge-static-header">Forma Canónica</span>
+        </div>
+    </div>
+</header>
 
     <!-- NAVEGACIÓN PRINCIPAL -->
     <nav class="main-nav">
