@@ -299,82 +299,98 @@
             </div>
         </section>
 
-<!-- ===================================================
-         APARTADO 3: LABORATORIO INTERACTIVO (AQUÍ PEGAS EL CÓDIGO)
-         =================================================== -->
-    <section id="sec-laboratorio" class="tab-content" style="display: none;">
-        
-        <div class="pedagogico-header" style="margin-bottom: 1.5rem;">
-            <h2 style="color: #004d40; font-size: 1.5rem; margin-bottom: 0.5rem;">🔬 Simulador Gráfico y Cálculo Automático</h2>
-            <p style="color: #475569;">Ingresa las coordenadas de los puntos P₁ y P₂ para visualizar la gráfica e interpretar los datos.</p>
+<!-- PESTAÑA: LABORATORIO INTERACTIVO -->
+<section id="sec-laboratorio" class="tab-content" style="display: none;">
+  
+  <div class="pedagogico-header" style="margin-bottom: 1.25rem;">
+    <h2 style="color: #004d40; font-size: 1.4rem; margin-bottom: 0.25rem;">🔬 Simulador Gráfico y Cálculo Automático</h2>
+    <p style="color: #475569; margin: 0; font-size: 0.9rem;">Ingresa las coordenadas de los puntos $A$ y $B$ para visualizar la gráfica e interpretar la solución paso a paso.</p>
+  </div>
+
+  <!-- GRID SUPERIOR: ENTRADAS COMPACTAS (280px) + PLANO CARTESIANO AMPLIO -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; align-items: start;">
+    
+    <!-- COLUMNA IZQUIERDA: PUNTOS Y CONTROLES COMPACTOS -->
+    <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
+      <h3 style="margin: 0 0 0.75rem 0; color: #004d40; font-size: 1.1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem;">
+        📍 Puntos de Entrada
+      </h3>
+      
+      <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
+        <!-- PUNTO A -->
+        <div style="background-color: #f0f7ff; border: 1px solid #b6d4fe; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.6rem;">
+          <strong style="color: #084298; font-size: 0.85rem;">Punto A $(x_1, y_1)$</strong>
+          <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+            <div style="flex: 1;">
+              <span style="font-size: 0.75rem; color: #555;">$x_1$:</span>
+              <input type="number" step="any" id="lab-x1" value="-2" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+            </div>
+            <div style="flex: 1;">
+              <span style="font-size: 0.75rem; color: #555;">$y_1$:</span>
+              <input type="number" step="any" id="lab-y1" value="-3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+            </div>
+          </div>
         </div>
 
-        <!-- GRID SUPERIOR: ENTRADAS + PLANO CARTESIANO -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-            
-            <!-- COLUMNA IZQUIERDA: PUNTOS DE LA RECTA -->
-            <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; color: #004d40;">Puntos de la Recta</h3>
-                
-                <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
-                    <!-- PUNTO A -->
-                    <div style="background-color: #f0f7ff; border: 1px solid #b6d4fe; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                        <strong style="color: #084298;">Punto A <span style="font-size: 0.9em;">(x₁, y₁)</span></strong>
-                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                            <input type="number" step="any" id="lab-x1" value="-2" placeholder="x1" required style="width: 50%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
-                            <input type="number" step="any" id="lab-y1" value="-3" placeholder="y1" required style="width: 50%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
-                        </div>
-                    </div>
-
-                    <!-- PUNTO B -->
-                    <div style="background-color: #fff0f0; border: 1px solid #f5c2c7; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                        <strong style="color: #842029;">Punto B <span style="font-size: 0.9em;">(x₂, y₂)</span></strong>
-                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                            <input type="number" step="any" id="lab-x2" value="4" placeholder="x2" required style="width: 50%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
-                            <input type="number" step="any" id="lab-y2" value="5" placeholder="y2" required style="width: 50%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
-                        </div>
-                    </div>
-
-                    <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.75rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem;">
-                        Calcular y Graficar
-                    </button>
-                </form>
-
-                <!-- TIP INTERACTIVO -->
-                <div style="margin-top: 1rem; background-color: #f8f9fa; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; color: #6c757d; border-left: 4px solid #ffc107;">
-                    💡 <strong>Tip de interacción gráfica:</strong><br>
-                    • Usa la rueda del ratón para hacer zoom.<br>
-                    • Arrastra con el clic para desplazar la gráfica.<br>
-                    <a href="#" onclick="resetZoom(); return false;" style="color: #0d6efd; text-decoration: none; font-weight: bold;">Restablecer Zoom y Vista</a>
-                </div>
+        <!-- PUNTO B -->
+        <div style="background-color: #fff0f0; border: 1px solid #f5c2c7; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
+          <strong style="color: #842029; font-size: 0.85rem;">Punto B $(x_2, y_2)$</strong>
+          <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+            <div style="flex: 1;">
+              <span style="font-size: 0.75rem; color: #555;">$x_2$:</span>
+              <input type="number" step="any" id="lab-x2" value="4" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
             </div>
-
-            <!-- COLUMNA DERECHA: PLANO CARTESIANO -->
-            <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                    <h3 style="margin: 0; color: #333;">Plano Cartesiano Interactivo</h3>
-                    <span style="font-size: 0.8rem; color: #6c757d;">Visualización de Pendiente y Ordenada</span>
-                </div>
-                
-                <!-- CONTENEDOR DEL CANVAS -->
-                <div style="position: relative; height: 320px; width: 100%;">
-                    <canvas id="planoCartesianoCanvas"></canvas>
-                </div>
+            <div style="flex: 1;">
+              <span style="font-size: 0.75rem; color: #555;">$y_2$:</span>
+              <input type="number" step="any" id="lab-y2" value="3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
             </div>
-
+          </div>
         </div>
 
-        <!-- SECCIÓN INFERIOR: TARJETAS PASO A PASO -->
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 10px; border: 1px solid #e0e0e0;">
-            <h3 style="margin-top: 0; color: #333;">Explicación Paso a Paso de la Solución</h3>
-            
-            <!-- GRID DE TARJETAS (SE GENERAN DINÁMICAMENTE CON JS) -->
-            <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
-                <!-- Las 7 tarjetas se inyectarán aquí -->
-            </div>
-        </div>
+        <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.6rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
+          🚀 Calcular y Graficar
+        </button>
+      </form>
 
-    </section>
+      <!-- TIP DE NAVEGACIÓN COMPACTO -->
+      <div style="margin-top: 0.75rem; background-color: #f8f9fa; padding: 0.5rem 0.6rem; border-radius: 6px; font-size: 0.78rem; color: #6c757d; border-left: 3px solid #ffc107;">
+        💡 <strong>Tip visual:</strong> Rueda del ratón para zoom, arrastrar para mover lienzo.<br>
+        <a href="#" onclick="calcularLaboratorio(); return false;" style="color: #0d6efd; text-decoration: none; font-weight: bold; font-size: 0.78rem;">Restablecer Vista</a>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: PLANO CARTESIANO Y LEYENDA -->
+    <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+        <h3 style="margin: 0; color: #333; font-size: 1.1rem;">📊 Plano Cartesiano Interactivo</h3>
+        <span style="font-size: 0.8rem; background: #e2e8f0; color: #334155; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 500;">Vista Vectorial 2D</span>
+      </div>
+      
+      <!-- CANVAS -->
+      <div style="position: relative; width: 100%; height: 340px; background: #fafafa; border-radius: 6px; overflow: hidden; border: 1px solid #f1f5f9;">
+        <canvas id="planoCartesianoCanvas"></canvas>
+      </div>
+
+      <!-- RESUMEN DE RESULTADOS DEBAJO DEL GRAFICO -->
+      <div id="resumen-grafica-bar" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.82rem;">
+        <!-- Se inyecta dinámicamente -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECCIÓN INFERIOR: TARJETAS PASO A PASO DETALLADAS -->
+  <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0;">
+    <h3 style="margin-top: 0; margin-bottom: 0.5rem; color: #004d40; font-size: 1.2rem;">📝 Explicación Detallada Paso a Paso (7 Pasos)</h3>
+    <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 1rem;">Sigue la sustitución algebraica directa con cada signo y operación para comprender cómo se construye la solución.</p>
+    
+    <!-- GRID RESPONSIVO DE TARJETAS -->
+    <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+      <!-- Las 7 tarjetas se inyectan dinámicamente con KaTeX corregido -->
+    </div>
+  </div>
+
+</section>
 
     </main>
 
