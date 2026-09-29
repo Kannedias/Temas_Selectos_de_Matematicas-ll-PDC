@@ -319,3 +319,28 @@ body {
         text-align: left;
     }
 }
+/* ===================================================
+   FIX: BLINDAJE DE BADGE ESTÁTICO EN HEADER
+   =================================================== */
+.badge-static-header {
+  display: inline-flex !important;
+  background-color: #dc2626 !important; /* Rojo institucional */
+  color: #ffffff !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  border-radius: 12px !important;
+  text-transform: uppercase !important;
+  position: relative !important;
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  z-index: 100 !important;
+}
+
+/* Evita que los scripts apliquen opacidad o parpadeo a la tarjeta */
+.card-aplicacion .badge-formula-card {
+  position: static !important;
+  display: inline-block !important;
+  animation: none !important;
+}
