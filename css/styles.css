@@ -197,7 +197,7 @@ body {
 }
 
 .card-image-wrapper {
-  position: relative;
+  position: relative; /* Súper importante para que la etiqueta se pegue a la foto */
   width: 100%;
   height: 180px;
   overflow: hidden;
@@ -229,6 +229,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 2; /* Garantiza que siempre flote encima de la foto */
 }
 
 .badge-ti { background-color: #2563eb; }
