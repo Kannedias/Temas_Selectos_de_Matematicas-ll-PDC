@@ -139,17 +139,19 @@ body {
     padding: 0 20px;
 }
 
+/* Oculta todas las pestañas por defecto */
 .tab-content {
-    display: none;
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: none;
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+/* REGLE FALTANTE: Muestra únicamente la pestaña activa */
 .tab-content.active {
-    display: block;
+  display: block !important;
 }
 
 /* ===================================================
