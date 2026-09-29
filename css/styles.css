@@ -231,9 +231,18 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.badge-ti { background-color: #2563eb; }
-.badge-ing { background-color: var(--primary); }
-.badge-med { background-color: #dc2626; }
+/* ETIQUETAS DE ÁREA EN TARJETAS CONALEP */
+.badge-ti { 
+  background-color: #2563eb; /* Azul para TI */
+}
+
+.badge-ing { 
+  background-color: var(--gold-accent); /* Dorado CONALEP para Ingeniería */
+}
+
+.badge-med { 
+  background-color: var(--accent); /* Verde Esmeralda CONALEP para Medicina */
+}
 
 .card-body {
     padding: 20px;
