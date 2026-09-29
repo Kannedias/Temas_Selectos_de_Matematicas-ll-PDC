@@ -40,28 +40,69 @@
     <!-- CONTENEDOR PRINCIPAL -->
     <main class="content-container">
 
-        <!-- SECCIÓN 1: ENFOQUE PEDAGÓGICO / FUNDAMENTOS -->
-        <section id="sec-fundamentos" class="tab-content active">
-            <h2>💡 ¿Para qué sirve la Recta en el Plano 2D?</h2>
-            <p>La línea recta no es solo un dibujo con regla; en la ciencia y la vida cotidiana representa la **relación constante entre dos magnitudes**.</p>
-            
-            <div class="cards-grid">
-                <div class="card-info">
-                    <h3>🚀 Trayectorias y Navegación</h3>
-                    <p>Un dron, un avión o un barco que se desplaza de un punto $A(x_1, y_1)$ a un punto $B(x_2, y_2)$ utiliza el <strong>Vector Desplazamiento ($\Delta \vec{r}$)</strong> para calcular la distancia más corta y la dirección de su brújula ($\theta$).</p>
-                </div>
+        <!-- SECCIÓN PEDAGÓGICA: FUNDAMENTOS -->
+<section id="sec-fundamentos" class="tab-content active">
+  <div class="pedagogico-header">
+    <h2>💡 ¿Para qué sirven las Matemáticas en el Mundo Real?</h2>
+    <p>Las fórmulas no son números abstractos: son el <strong>código fuente</strong>, la <strong>física de estructuras</strong> y los <strong>algoritmos médicos</strong> que transforman el mundo.</p>
+  </div>
 
-                <div class="card-info">
-                    <h3>📈 Inclinaciones y Rampas</h3>
-                    <p>La <strong>Pendiente ($m$)</strong> nos indica qué tan empinada es una superficie. En arquitectura o ingeniería vial, define la seguridad de una rampa o carretera.</p>
-                </div>
+  <div class="metaforas-grid">
+    <!-- TARJETA 1: TI Y SOFTWARE -->
+    <div class="card-aplicacion">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Videojuegos y Gráficos TI">
+        <span class="badge-area badge-ti">Sistemas & TI</span>
+      </div>
+      <div class="card-body">
+        <h3>🎮 El Algoritmo de Renderizado y Colisiones</h3>
+        <div class="formula-highlight">
+          Ecuación General: Ax + By + C = 0 &bull; Vectors &Delta;r
+        </div>
+        <p>¿Cómo sabe un videojuego en 3D o 2D que un disparo impactó a un objetivo? En cada fotograma, el motor (Unity/Unreal) calcula el <strong>Raycasting</strong> trazando una recta entre dos puntos.</p>
+        <p class="metafora-quote">
+          💬 <em>"Si no entiendes la ecuación de la recta, no puedes programar físicas de movimiento, colisiones ni gráficos optimizados."</em>
+        </p>
+      </div>
+    </div>
 
-                <div class="card-info">
-                    <h3>📉 Modelos Económicos y Físicos</h3>
-                    <p>La forma explícita $y = mx + b$ permite predecir eventos: el consumo de gasolina según los kilómetros recorridos, el cobro de un taxi o la depreciación del valor de un equipo con el tiempo.</p>
-                </div>
-            </div>
-        </section>
+    <!-- TARJETA 2: INGENIERÍA -->
+    <div class="card-aplicacion">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=600&q=80" alt="Ingeniería y Puentes">
+        <span class="badge-area badge-ing">Ingeniería</span>
+      </div>
+      <div class="card-body">
+        <h3>🏗️ Resistencia de Materiales y Cargas</h3>
+        <div class="formula-highlight">
+          Magnitud: |&Delta;r| &bull; Inclinación &theta; &bull; Pendiente (m)
+        </div>
+        <p>En el diseño de puentes, vigas y rampas, una línea no es solo un dibujo. Representa un <strong>Vector de Fuerza</strong> que soporta toneladas de peso sobre un ángulo de inclinación preciso.</p>
+        <p class="metafora-quote">
+          💬 <em>"Un cálculo incorrecto en la pendiente o en la dirección &theta; hace la diferencia entre una estructura segura y un colapso."</em>
+        </p>
+      </div>
+    </div>
+
+    <!-- TARJETA 3: MEDICINA Y SALUD -->
+    <div class="card-aplicacion">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Farmacocinética y Medicina">
+        <span class="badge-area badge-med">Medicina & Salud</span>
+      </div>
+      <div class="card-body">
+        <h3>💊 Curva Farmacocinética y Dosificación</h3>
+        <div class="formula-highlight">
+          Forma Explícita: y = mx + b (Razón de Cambio)
+        </div>
+        <p>Cuando un médico administra un medicamento por goteo, la velocidad de infusión es la <strong>pendiente (m)</strong> y la concentración inicial en sangre es el punto <strong>(b)</strong>.</p>
+        <p class="metafora-quote">
+          💬 <em>"Determinar cuándo cae la concentración por debajo de la dosis terapéutica salva vidas al evitar sobredosis o fallos orgánicos."</em>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
         <!-- SECCIÓN 2: PRONTUARIO DE LAS 7 FÓRMULAS -->
         <section id="sec-formulas" class="tab-content">
