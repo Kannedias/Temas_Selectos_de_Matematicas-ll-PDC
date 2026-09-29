@@ -107,21 +107,196 @@
         </section>
 
         <!-- PESTAÑA 2: GUÍA Y FÓRMULAS (SECUENCIA DE 7 PASOS) -->
+<!-- PESTAÑA 2: GUÍA RÁPIDA Y FÓRMULAS (7 PASOS + REFUERZO) -->
         <section id="sec-formulas" class="tab-content">
             <div class="pedagogico-header">
-                <h2>📐 Secuencia de Resolución de 7 Pasos</h2>
-                <p>Dado un punto inicial $P_1(x_1, y_1)$ y un punto final $P_2(x_2, y_2)$, esta es la secuencia matemática unificada para analizar la recta:</p>
+                <h2>📚 Prontuario Técnico y Guía de Consulta Rápida</h2>
+                <p>Las 7 fórmulas esenciales para el análisis de la recta y el vector desplazamiento en 2D, con ejemplos prácticos y reglas algebraicas fundamentales.</p>
             </div>
-            
-            <ol class="formulas-list">
-                <li><strong>1. Vector Desplazamiento:</strong> $\Delta \vec{r} = (\Delta x, \Delta y) = (x_2 - x_1, y_2 - y_1)$</li>
-                <li><strong>2. Magnitud del Desplazamiento:</strong> $|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$</li>
-                <li><strong>3. Dirección del Vector:</strong> $\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right)$ <em>(con ajuste por cuadrante si $\Delta x < 0$)</em></li>
-                <li><strong>4. Pendiente de la Recta:</strong> $m = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$</li>
-                <li><strong>5. Forma Punto-Pendiente:</strong> $y - y_1 = m(x - x_1)$</li>
-                <li><strong>6. Forma Explícita (Pendiente-Ordenada):</strong> $y = mx + b$</li>
-                <li><strong>7. Forma General:</strong> $Ax + By + C = 0$</li>
-            </ol>
+
+            <!-- GRID DE LAS 7 FÓRMULAS CON ESTILO MODERNO -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+
+                <!-- 1. VECTOR DESPLAZAMIENTO -->
+                <article class="card-aplicacion" style="border-top: 4px solid #2563eb;">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">1. Vector Desplazamiento ($\Delta \vec{r}$)</h3>
+                            <span class="badge-area badge-ti">Física 2D</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$\Delta \vec{r} = (\Delta x, \Delta y) = (x_2 - x_1, y_2 - y_1)$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Indica cuánto te moviste horizontalmente ($\Delta x$) y cuánto verticalmente ($\Delta y$) entre dos puntos.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid #2563eb;">
+                            <strong>⚡ Ejemplo:</strong> Si vas de $A(2,3)$ a $B(-4,-5)$: <br>
+                            $\Delta x = -4 - 2 = -6$ | $\Delta y = -5 - 3 = -8$.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> Respeta siempre la fórmula $(x_2 - x_1)$. Si $x_1 = -3$, la resta se vuelve positiva: $x_2 - (-3) = x_2 + 3$.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 2. MAGNITUD DEL DESPLAZAMIENTO -->
+                <article class="card-aplicacion" style="border-top: 4px solid #9333ea;">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">2. Magnitud del Desplazamiento ($|\Delta \vec{r}|$)</h3>
+                            <span class="badge-area" style="background-color: #9333ea;">Geometría</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Es la distancia real en línea recta entre los dos puntos (Teorema de Pitágoras).</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid #9333ea;">
+                            <strong>⚡ Ejemplo:</strong> Con $\Delta x = -6$ y $\Delta y = -8$: <br>
+                            $|\Delta \vec{r}| = \sqrt{(-6)^2 + (-8)^2} = \sqrt{36 + 64} = 10$.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> Todo número negativo elevado al cuadrado da POSITIVO: $(-6)^2 = +36$. Nunca dejes un número negativo dentro de esta raíz.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 3. DIRECCIÓN DEL VECTOR -->
+                <article class="card-aplicacion" style="border-top: 4px solid var(--accent);">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">3. Dirección del Vector ($\theta$)</h3>
+                            <span class="badge-area badge-med">Trigonometría</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right) + C$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Es la inclinación en grados ($^\circ$) respecto a la horizontal, medida en sentido antihorario.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid var(--accent);">
+                            <strong>⚡ Ejemplo:</strong> Si $\Delta x < 0$ (Cuadrantes II y III), suma $180^\circ$ al resultado de $\arctan$.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> La calculadora solo da el ángulo del Cuadrante I. Si tu vector va a la izquierda ($\Delta x < 0$), ¡DEBES sumar $180^\circ$!
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 4. PENDIENTE DE LA RECTA -->
+                <article class="card-aplicacion" style="border-top: 4px solid var(--gold-accent);">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">4. Pendiente de la Recta ($m$)</h3>
+                            <span class="badge-area badge-ing">Inclinación</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$m = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Razón de cambio. Si $m > 0$ la recta sube, si $m < 0$ baja, si $m = 0$ es completamente horizontal.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid var(--gold-accent);">
+                            <strong>⚡ Ejemplo:</strong> Con $\Delta y = -8$ y $\Delta x = -6$: <br>
+                            $m = \frac{-8}{-6} = \frac{4}{3} \approx 1.33$.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> Mantén el orden $y_2 - y_1$ arriba y $x_2 - x_1$ abajo. ¡No mezcles las coordenadas del Punto 1 con el Punto 2!
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 5. FORMA PUNTO-PENDIENTE -->
+                <article class="card-aplicacion" style="border-top: 4px solid #0284c7;">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">5. Forma Punto-Pendiente</h3>
+                            <span class="badge-area" style="background-color: #0284c7;">Álgebra</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$y - y_1 = m(x - x_1)$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Es la plantilla inicial para construir la ecuación de cualquier recta conociendo $m$ y el primer punto.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid #0284c7;">
+                            <strong>⚡ Ejemplo:</strong> Con $P_1(2,3)$ y $m = \frac{4}{3}$: <br>
+                            $y - 3 = \frac{4}{3}(x - 2)$.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> Solo sustituyes $y_1$, $x_1$ y $m$. Las variables $x$ e $y$ sin subíndice se quedan escritas como letras.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 6. FORMA EXPLÍCITA -->
+                <article class="card-aplicacion" style="border-top: 4px solid #16a34a;">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">6. Forma Explícita ($y = mx + b$)</h3>
+                            <span class="badge-area" style="background-color: #16a34a;">Modelado</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$y = mx + b \quad \text{donde } b = y_1 - m x_1$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Muestra directamente el comportamiento: $m$ es el ritmo de cambio y $b$ es dónde corta al eje vertical $Y$.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid #16a34a;">
+                            <strong>⚡ Ejemplo:</strong> Despejando la anterior: <br>
+                            $y = 1.33x + 0.33$ (donde $b = 0.33$).
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> Para graficar fácil: pon un punto en $(0, b)$ sobre el eje Y y usa la pendiente $m$ para avanzar el siguiente paso.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 7. FORMA GENERAL -->
+                <article class="card-aplicacion" style="border-top: 4px solid #dc2626; grid-column: 1 / -1;">
+                    <div style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">7. Forma General ($Ax + By + C = 0$)</h3>
+                            <span class="badge-area" style="background-color: #dc2626;">Forma Canónica</span>
+                        </div>
+                        <div class="formula-highlight" style="text-align: center; margin: 0.75rem 0;">
+                            $$Ax + By + C = 0$$
+                        </div>
+                        <p style="font-size: 0.9rem;"><strong>📐 ¿Cómo entenderla?</strong> Es la representación estándar estandarizada e igualada a cero utilizada en programación y algoritmos.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); background: #f8fafc; padding: 0.5rem; border-radius: 4px; border-left: 3px solid #dc2626;">
+                            <strong>⚡ Ejemplo:</strong> Multiplicando $y - 3 = \frac{4}{3}(x - 2)$ por $3$ para quitar fracciones: <br>
+                            $3y - 9 = 4x - 8 \implies 4x - 3y + 1 = 0$.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #b45309; margin-top: 0.5rem;">
+                            💡 <strong>Tip Examen:</strong> Procura que el coeficiente $A$ (el que acompaña a $x$) quede preferentemente POSITIVO para mantener la estética matemática formal.
+                        </p>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- SECCIÓN DE REFUERZO: REGLAS ALGEBRAICAS ESENCIALES -->
+            <div class="card-aplicacion" style="margin-top: 2rem; border-left: 5px solid var(--accent);">
+                <div style="padding: 1.5rem;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">🛡️ Puntos de Referencia y Refuerzo Algebraico</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                        
+                        <div>
+                            <h4 style="color: var(--secondary); margin-bottom: 0.5rem;">➕ Regla de Signos (Multiplicación / División)</h4>
+                            <ul style="font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
+                                <li>$(+) \cdot (+) = +$ y $(- ) \cdot (- ) = +$ (Signos iguales dan <strong>positivo</strong>).</li>
+                                <li>$(+) \cdot (- ) = -$ y $(- ) \cdot (+) = -$ (Signos diferentes dan <strong>negativo</strong>).</li>
+                                <li><strong style="color: #dc2626;">Atención en Restas:</strong> $x_2 - (-5)$ se convierte en $x_2 + 5$.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 style="color: var(--secondary); margin-bottom: 0.5rem;">🎯 Despejes Limpios (Cancelación)</h4>
+                            <p style="font-size: 0.9rem; line-height: 1.5;">
+                                Cuando despejes un denominador, multiplica ambos lados por el mismo número:
+                            </p>
+                            <div class="formula-highlight" style="font-size: 0.85rem; padding: 0.5rem;">
+                                $$2 = \frac{y_2 - 3}{3} \implies (3) \cdot 2 = \left(\frac{y_2 - 3}{3}\right) \cdot (3)$$
+                                $$6 = y_2 - 3 \implies y_2 = 9$$
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                💬 El $3$ que multiplica neutraliza al $3$ que divide (operaciones inversas).
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- PESTAÑA 3: LABORATORIO / SIMULADOR -->
