@@ -70,7 +70,35 @@
 <!-- TARJETA 2: INGENIERÍA -->
     <article class="card-aplicacion">
       <div class="card-image-wrapper">
-        <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=600&q=80&v=2" alt="Ingeniería y Puentes">
+        <!-- SVG Vectorial autocontenido (Garantiza carga instantánea sin depender de URLs externas) -->
+        <svg class="card-svg-graphic" viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-label="Ingeniería y Puentes">
+          <defs>
+            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#0f172a" />
+              <stop offset="100%" stop-color="#1e293b" />
+            </linearGradient>
+            <linearGradient id="bridgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#d97706" />
+              <stop offset="100%" stop-color="#f59e0b" />
+            </linearGradient>
+          </defs>
+          <!-- Fondo y cielo estructural -->
+          <rect width="600" height="350" fill="url(#skyGrad)" />
+          <path d="M0 280 Q 300 240 600 280 L 600 350 L 0 350 Z" fill="#0284c7" opacity="0.3" />
+          <!-- Estructura del Puente / Vigas reticuladas -->
+          <path d="M 50 260 L 550 260" stroke="url(#bridgeGrad)" stroke-width="8" />
+          <path d="M 50 260 Q 300 100 550 260" stroke="url(#bridgeGrad)" stroke-width="6" fill="none" />
+          <!-- Tirantes de tensión vectorial (Ángulos y Pendientes) -->
+          <line x1="100" y1="260" x2="160" y2="180" stroke="#fef08a" stroke-width="2.5" opacity="0.85" />
+          <line x1="180" y1="260" x2="220" y2="140" stroke="#fef08a" stroke-width="2.5" opacity="0.85" />
+          <line x1="260" y1="260" x2="280" y2="120" stroke="#fef08a" stroke-width="2.5" opacity="0.85" />
+          <line x1="340" y1="260" x2="320" y2="120" stroke="#fef08a" stroke-width="2.5" opacity="0.85" />
+          <line x1="420" y1="260" x2="380" y2="140" stroke="#fef08a" stroke-width="2.5" opacity="0.85" />
+          <line x1="500" y1="260" x2="440" y2="180" stroke="#fef08a" stroke-width="2.5" opacity="0.85" />
+          <!-- Pilares de soporte -->
+          <rect x="140" y="260" width="20" height="90" fill="#475569" />
+          <rect x="440" y="260" width="20" height="90" fill="#475569" />
+        </svg>
         <span class="badge-area badge-ing">Ingeniería</span>
       </div>
       <div class="card-body">
