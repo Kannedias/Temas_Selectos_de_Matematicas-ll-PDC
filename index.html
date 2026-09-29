@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temas Selectos de Matemáticas II | Conalep PDC</title>
+    <!-- Estilos locales -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- KaTeX para renderizado de fórmulas matemáticas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+    <!-- CABECERA INSTITUCIONAL Y DE AUTORÍA -->
+    <header class="laboratorio-header">
+        <div class="header-container">
+            <div class="header-info">
+                <div class="badge-version">Unidad 1 • Geometría Analítica</div>
+                <h1 class="app-title">Laboratorio Interactivo: La Recta en 2D</h1>
+                <p class="app-subtitle">Temas Selectos de Matemáticas II — Conalep PDC</p>
+            </div>
+            <div class="header-author">
+                <span class="status-indicator"><span class="dot"></span> Sistema Activo</span>
+                <p class="author-name"><strong>Desarrollado por:</strong> Prof. Juan Luis</p>
+                <p class="copyright-notice">© 2026 Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN PRINCIPAL -->
+    <nav class="main-nav">
+        <button class="nav-tab active" onclick="cambiarPestana('fundamentos')">💡 ¿Para qué sirve?</button>
+        <button class="nav-tab" onclick="cambiarPestana('formulas')">📐 7 Fórmulas Clave</button>
+        <button class="nav-tab" onclick="cambiarPestana('laboratorio')">🧪 Laboratorio & Gráfica</button>
+        <button class="nav-tab" onclick="cambiarPestana('retos')">🎯 Retos por Niveles</button>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="content-container">
+
+        <!-- SECCIÓN 1: ENFOQUE PEDAGÓGICO / FUNDAMENTOS -->
+        <section id="sec-fundamentos" class="tab-content active">
+            <h2>💡 ¿Para qué sirve la Recta en el Plano 2D?</h2>
+            <p>La línea recta no es solo un dibujo con regla; en la ciencia y la vida cotidiana representa la **relación constante entre dos magnitudes**.</p>
+            
+            <div class="cards-grid">
+                <div class="card-info">
+                    <h3>🚀 Trayectorias y Navegación</h3>
+                    <p>Un dron, un avión o un barco que se desplaza de un punto $A(x_1, y_1)$ a un punto $B(x_2, y_2)$ utiliza el <strong>Vector Desplazamiento ($\Delta \vec{r}$)</strong> para calcular la distancia más corta y la dirección de su brújula ($\theta$).</p>
+                </div>
+
+                <div class="card-info">
+                    <h3>📈 Inclinaciones y Rampas</h3>
+                    <p>La <strong>Pendiente ($m$)</strong> nos indica qué tan empinada es una superficie. En arquitectura o ingeniería vial, define la seguridad de una rampa o carretera.</p>
+                </div>
+
+                <div class="card-info">
+                    <h3>📉 Modelos Económicos y Físicos</h3>
+                    <p>La forma explícita $y = mx + b$ permite predecir eventos: el consumo de gasolina según los kilómetros recorridos, el cobro de un taxi o la depreciación del valor de un equipo con el tiempo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: PRONTUARIO DE LAS 7 FÓRMULAS -->
+        <section id="sec-formulas" class="tab-content">
+            <h2>📐 Secuencia de Resolución de 7 Pasos</h2>
+            <p>Dado un punto inicial $P_1(x_1, y_1)$ y un punto final $P_2(x_2, y_2)$, esta es la secuencia matemática unificada para analizar la recta:</p>
+            
+            <ol class="formulas-list">
+                <li><strong>Vector Desplazamiento:</strong> $\Delta \vec{r} = (\Delta x, \Delta y) = (x_2 - x_1, y_2 - y_1)$</li>
+                <li><strong>Magnitud del Desplazamiento:</strong> $|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$</li>
+                <li><strong>Dirección del Vector:</strong> $\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right)$ <em>(con ajuste por cuadrante si $\Delta x < 0$)</em></li>
+                <li><strong>Pendiente de la Recta:</strong> $m = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$</li>
+                <li><strong>Forma Punto-Pendiente:</strong> $y - y_1 = m(x - x_1)$</li>
+                <li><strong>Forma Explícita (Pendiente-Ordenada):</strong> $y = mx + b$</li>
+                <li><strong>Forma General:</strong> $Ax + By + C = 0$</li>
+            </ol>
+        </section>
+
+        <!-- SECCIÓN 3: LABORATORIO / CALCULADORA -->
+        <section id="sec-laboratorio" class="tab-content">
+            <h2>🧪 Simulador Interactivo</h2>
+            <p>Ingresa dos coordenadas para calcular automáticamente la secuencia completa y visualizar el gráfico.</p>
+            <!-- Aquí irán los inputs y el lienzo/canvas -->
+            <div id="contenedor-laboratorio">
+                <!-- Se conectará desde JS -->
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: RETOS POR NIVELES -->
+        <section id="sec-retos" class="tab-content">
+            <h2>🎯 Módulo de Evaluación e Inconvenientes Ocultos</h2>
+            <p>Selecciona tu nivel de desafío para practicar con problemas aleatorios.</p>
+            <!-- Selector de Niveles -->
+            <div id="contenedor-retos">
+                <!-- Se conectará desde JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
