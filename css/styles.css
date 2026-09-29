@@ -403,3 +403,53 @@ body {
 .badge-ingenieria { background-color: #d97706; } /* Naranja */
 .badge-medicina   { background-color: #dc2626; } /* Rojo */
 }
+/* CONTROL DE PESTAÑAS Y VISIBILIDAD DE APARTADOS */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block !important;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #a7f3d0;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active, .tab-btn:hover {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+
+/* REGULA LOS BADGES SIN PARPADEO */
+.badge-static-header {
+  display: inline-flex !important;
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  border-radius: 12px !important;
+  text-transform: uppercase !important;
+  position: relative !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+.badge-formula-card {
+  display: inline-block !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  position: relative !important;
+  animation: none !important;
+  transform: none !important;
+}
