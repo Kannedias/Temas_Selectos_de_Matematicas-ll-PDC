@@ -1,15 +1,15 @@
-/* VARIABLES GLOBALES - PALETA CONALEP Y TEMA MODERNO */
+/* VARIABLES GLOBALES - TEMÁTICA OFICIAL CONALEP */
 :root {
     --primary: #00594C;         /* Verde Oscuro Institucional Conalep */
-    --secondary: #003B32;       /* Verde Profundo */
-    --accent: #00806A;          /* Verde Esmeralda */
-    --accent-hover: #00a88f;    /* Verde Claro */
-    --gold-accent: #d97706;     /* Dorado / Ámbar institucional */
+    --secondary: #003B32;       /* Verde Profundo para Headers / Fondos de tarjeta */
+    --accent: #00806A;          /* Verde Esmeralda para Botones / Pestañas activas */
+    --accent-hover: #00a88f;    /* Verde Claro para interacción Hover */
+    --gold-accent: #d97706;     /* Dorado / Ámbar institucional para destacados */
     --text-main: #1e293b;       /* Texto oscuro principal */
     --text-muted: #64748b;      /* Texto secundario */
-    --text-light: #f8fafc;      /* Texto claro */
-    --bg-main: #f8fafc;         /* Fondo Gris Suave */
-    --card-bg: #ffffff;         /* Fondo Blanco para Tarjetas */
+    --text-light: #f8fafc;      /* Texto claro sobre fondos oscuros */
+    --bg-main: #f1f5f9;         /* Fondo Gris Suave institucional */
+    --card-bg: #ffffff;         /* Fondo de Tarjetas Blanco pulcro */
     --border-color: #cbd5e1;    /* Bordes limpios */
 }
 
