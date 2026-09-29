@@ -358,25 +358,29 @@
       </div>
     </div>
 
-    <!-- COLUMNA DERECHA: PLANO CARTESIANO ESPACIOSO -->
-    <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04); flex-grow: 1;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-        <h3 style="margin: 0; color: #333; font-size: 1.05rem;">📊 Plano Cartesiano Interactivo</h3>
-        <span style="font-size: 0.78rem; background: #e2e8f0; color: #334155; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 500;">Vista Vectorial 2D</span>
-      </div>
-      
-      <!-- CANVAS DE GRAN TAMAÑO -->
-      <div style="position: relative; width: 100%; height: 380px; background: #ffffff; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
-        <canvas id="planoCartesianoCanvas"></canvas>
-      </div>
-
-      <!-- RESUMEN DE PARÁMETROS CLAVE DEBAJO DEL CANVAS -->
-      <div id="resumen-grafica-bar" style="margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: space-between; background: #f8fafc; padding: 0.5rem 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.82rem;">
-        <!-- Inyección dinámica -->
-      </div>
-    </div>
-
+<!-- COLUMNA DERECHA: PLANO CARTESIANO ESPACIOSO -->
+<div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04); flex-grow: 1;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+    <h3 style="margin: 0; color: #333; font-size: 1.05rem;">📊 Plano Cartesiano Interactivo</h3>
+    <span style="font-size: 0.78rem; background: #e2e8f0; color: #334155; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 500;">Vista Vectorial 2D</span>
   </div>
+  
+  <!-- CANVAS PANORÁMICO CON PANEL FLOTANTE -->
+  <div class="canvas-wrapper" style="position: relative; width: 100%; aspect-ratio: 16/9; min-height: 380px; background: #f8fafc; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
+    
+    <!-- Tu canvas original intacto -->
+    <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+    
+    <!-- NUEVO: Panel flotante superpuesto en la esquina inferior derecha -->
+    <div class="panel-flotante-resultados">
+      <div><strong>Punto A:</strong> <span class="coord-a" id="res-pto-a">(-2, -3)</span></div>
+      <div><strong>Punto B:</strong> <span class="coord-b" id="res-pto-b">(-4, -7)</span></div>
+      <div><strong>Pendiente ($m$):</strong> <span id="res-pendiente">2.00</span></div>
+      <div><strong>Ecuación:</strong> <span id="res-ecuacion">$y = 2.00x + 1.00$</span></div>
+    </div>
+    
+  </div>
+</div>
 
   <!-- SECCIÓN INFERIOR: PASO A PASO RAZONADO (FORMATO SISTEMA BETA CON TRAZABILIDAD DE DATOS) -->
   <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0;">
