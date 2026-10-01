@@ -510,53 +510,45 @@ body {
 
 
 /* ===================================================
-   DISEÑO RESPONSIVO: CAJAS Y FÓRMULAS (LABORATORIO)
+   DISEÑO RESPONSIVO: CAJAS COMPACTAS (PÍLDORAS) CORREGIDO
    =================================================== */
 .contenedor-puntos {
     display: flex;
-    flex-wrap: wrap; /* En celular, si no caben, se pondrán una debajo de otra */
+    flex-wrap: wrap; /* Permite que las píldoras bajen a la siguiente línea si no caben */
+    justify-content: center;
     gap: 1rem;
     margin-bottom: 1.25rem;
 }
 
-.caja-datos-a, .caja-datos-b {
-    flex: 1;
-    min-width: 130px; /* Tamaño mínimo seguro para pantallas de celular */
-    padding: 0.8rem;
-    border-radius: 6px;
-    text-align: center;
-    background-color: #f8fafc; /* Fondo súper tenue para que resalte el texto */
-}
-
-.caja-datos-a { border: 2px solid #2563eb; }
-.caja-datos-b { border: 2px solid #dc2626; }
-
-.caja-titulo-a {
-    font-size: 0.75rem; color: #2563eb; display: block; margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700;
-}
-.caja-titulo-b {
-    font-size: 0.75rem; color: #dc2626; display: block; margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700;
-}
-
-/* Contenedor matemático blindado para móviles */
-.math-scrollable {
-    background: #f8fafc;
-    padding: 1.25rem 1rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 1.25rem;
-    overflow-x: auto; /* Permite scroll horizontal táctil si la fórmula es larguísima */
-    white-space: nowrap; /* Evita que la ecuación se rompa a la mitad en 2 líneas */
-}
-
-.resultado-azul-destacado {
-    background-color: #eff6ff;
-    border-left: 5px solid #2563eb; /* Borde azul sólido */
-    color: #1e3a8a;
-    padding: 1rem 1.25rem;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    display: flex;
+.pill-punto-a {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #1e40af;
+    display: flex; /* Cambiado a flex para mejor control interno */
     align-items: center;
+    gap: 0.4rem;
+    word-break: break-word; /* Permite que el texto largo se parta */
+    flex: 1 1 auto; /* Permite que crezca o se encoja según sea necesario */
+    max-width: fit-content; /* Evita que crezca más de lo necesario */
 }
+
+.pill-punto-b {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #9f1239;
+    display: flex; /* Cambiado a flex */
+    align-items: center;
+    gap: 0.4rem;
+    word-break: break-word;
+    flex: 1 1 auto;
+    max-width: fit-content;
+}
+
+.dot-a { background: #3b82f6; min-width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 4px rgba(59,130,246,0.4); flex-shrink: 0; }
+.dot-b { background: #ef4444; min-width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 4px rgba(239,68,68,0.4); flex-shrink: 0; }
