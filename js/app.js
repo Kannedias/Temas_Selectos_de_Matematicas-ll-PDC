@@ -84,6 +84,10 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     // Formateador sin ceros redundantes (ej: 6.00 a 6)
     const fmt = (num) => Number(num).toString();
 
+    // Formateo para las cajas superiores: Reducimos el espacio después de la coma
+    const strCoordA = `${cA}{${fmt(x1)}},${cA}{${fmt(y1)}}`;
+    const strCoordB = `${cB}{${fmt(x2)}},${cB}{${fmt(y2)}}`;
+
     // Formateo seguro para la sustitución con colores
     const x1Fmt = x1 < 0 ? `(${cA}{${fmt(x1)}})` : `${cA}{${fmt(x1)}}`;
     const y1Fmt = y1 < 0 ? `(${cA}{${fmt(y1)}})` : `${cA}{${fmt(y1)}}`;
@@ -114,11 +118,11 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             <div class="contenedor-puntos">
                 <div class="pill-punto-a">
                     <span class="dot-a"></span>
-                    <strong>Punto A ($x_1, y_1$):</strong> $$${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}$$
+                    <strong>Punto A ($x_1, y_1$):</strong> $$${strCoordA}$$
                 </div>
                 <div class="pill-punto-b">
                     <span class="dot-b"></span>
-                    <strong>Punto B ($x_2, y_2$):</strong> $$${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}$$
+                    <strong>Punto B ($x_2, y_2$):</strong> $$${strCoordB}$$
                 </div>
             </div>
 
