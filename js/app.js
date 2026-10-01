@@ -77,14 +77,18 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const dx = x2 - x1;
     const dy = y2 - y1;
 
-    // Colores institucionales para trazar visualmente de dónde viene cada número
-    const cA = "\\textcolor{#2563eb}"; // Azul para Origen A
-    const cB = "\\textcolor{#dc2626}"; // Rojo para Destino B
+    // Colores institucionales de KaTeX
+    const cA = "\\textcolor{#2563eb}"; // Azul
+    const cB = "\\textcolor{#dc2626}"; // Rojo
 
-    // Función limpiadora: Convierte 6.00 en 6, pero respeta si fuera 2.5
+    // Formateador sin ceros redundantes (ej: 6.00 a 6)
     const fmt = (num) => Number(num).toString();
 
-    // Formateo seguro para el Paso 1 (envuelve en paréntesis los negativos y aplica color)
+    // Formateo para las cajas superiores
+    const strCoordA = `${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}`;
+    const strCoordB = `${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}`;
+
+    // Formateo seguro para la sustitución con colores
     const x1Fmt = x1 < 0 ? `(${cA}{${fmt(x1)}})` : `${cA}{${fmt(x1)}}`;
     const y1Fmt = y1 < 0 ? `(${cA}{${fmt(y1)}})` : `${cA}{${fmt(y1)}}`;
     const x2Fmt = x2 < 0 ? `(${cB}{${fmt(x2)}})` : `${cB}{${fmt(x2)}}`;
@@ -95,36 +99,40 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
         // ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (DINÁMICO)
+        // PASO 1: VECTOR DESPLAZAMIENTO (RESPONSIVO Y COLOR)
         // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
                 <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">1</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Vector Desplazamiento ($\\Delta \\vec{r}$)</h4>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Vector Desplazamiento ($\\Delta \\vec{r}$)</h4>
             </div>
             
-            <div style="text-align: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
-                <p style="font-size: 0.9rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>Sustitución en:</strong> $$\\Delta \\vec{r} = \\Delta x \\hat{i} + \\Delta y \\hat{j}$$</p>
+            <div style="text-align: center; margin-bottom: 1.25rem;">
+                <p style="font-size: 0.85rem; color: #1e293b; margin: 0 0 0.4rem 0; font-weight: 700;">Sustitución en:</p>
+                <p style="font-size: 1rem; color: #475569; margin: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem;">$$\\Delta \\vec{r} = \\Delta x \\hat{i} + \\Delta y \\hat{j}$$</p>
             </div>
 
-            <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem;">
+            <!-- Cajas Responsivas -->
+            <div class="contenedor-puntos">
                 <div class="caja-datos-a">
-                    <span style="font-size: 0.75rem; color: #1e40af; display: block; margin-bottom: 0.2rem; text-transform: uppercase;"><strong>Punto A</strong></span>
-                    $$${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}$$
+                    <span class="caja-titulo-a">PUNTO A</span>
+                    <span style="font-size: 1.15rem;">$$${strCoordA}$$</span>
                 </div>
                 <div class="caja-datos-b">
-                    <span style="font-size: 0.75rem; color: #9f1239; display: block; margin-bottom: 0.2rem; text-transform: uppercase;"><strong>Punto B</strong></span>
-                    $$${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}$$
+                    <span class="caja-titulo-b">PUNTO B</span>
+                    <span style="font-size: 1.15rem;">$$${strCoordB}$$</span>
                 </div>
             </div>
 
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 1rem; font-size: 1.05rem;">
-                $$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$
-                $$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$
-                $$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$
+            <!-- Contenedor de operaciones con Scroll para celulares -->
+            <div class="math-scrollable">
+                <p style="margin: 0 0 1rem 0;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
+                <p style="margin: 0 0 0.75rem 0;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
+                <p style="margin: 0;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
+            <!-- Resultado Destacado -->
             <div class="resultado-azul-destacado">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt})\\hat{i} + (${dyFmt})\\hat{j}$</span>
             </div>
