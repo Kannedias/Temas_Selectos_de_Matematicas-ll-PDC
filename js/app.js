@@ -154,13 +154,13 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
             <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">2</span>
-            <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Magnitud del Desplazamiento ($|\\Delta \\vec{r}|$)</h4>
+            <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Magnitud del Desplazamiento <p>($|\\Delta \\vec{r}|$)</p></h4>
             </div>
             
             <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
                 <p style="font-size: 0.85rem; color: #1e293b; margin: 0 0 0.4rem 0; font-weight: 700;">Sustitución en:</p>
-                <p style="font-size: 0.95rem; color: #475569; margin: 0 0 0.5rem 0;">$$\\Delta \\vec{r} = \\Delta x  + \\Delta y $$</p>
-                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1}) + (${cB}{y_2} - ${cA}{y_1})$$</p>
+                <p style="font-size: 0.95rem; color: #475569; margin: 0 0 0.5rem 0;">$$|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$$</p>
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$ + $$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
             <!-- Contenedor Compacto de Operaciones (Espaciado del signo + reducido con \, ) -->
