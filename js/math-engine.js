@@ -19,12 +19,10 @@ const MathEngine = {
         let anguloRadianes = Math.atan2(dy, dx);
         let anguloGrados = anguloRadianes * (180 / Math.PI);
         
-        // Normalización del ángulo entre 0° y 360°
         if (anguloGrados < 0) {
             anguloGrados += 360;
         }
 
-        // Determinación del cuadrante
         let cuadrante = "Primer Cuadrante";
         if (dx < 0 && dy >= 0) cuadrante = "Segundo Cuadrante";
         else if (dx < 0 && dy < 0) cuadrante = "Tercer Cuadrante";
@@ -32,19 +30,22 @@ const MathEngine = {
         else if (dx === 0 && dy !== 0) cuadrante = "Eje Vertical";
         else if (dy === 0 && dx !== 0) cuadrante = "Eje Horizontal";
 
-        // NUEVO: Ángulo de Referencia (α) para el andamiaje pedagógico
+        // ======================================================================
+        // 🚨 MODIFICACIÓN: CÁLCULO DEL ÁNGULO DE REFERENCIA PARA LA EXPLICACIÓN
+        // ======================================================================
         let anguloReferencia = 0;
         if (dx !== 0) {
             anguloReferencia = Math.abs(Math.atan(dy / dx) * (180 / Math.PI));
         } else if (dy !== 0) {
             anguloReferencia = 90;
         }
+        // ======================================================================
 
         // PASO 4: Pendiente (m)
         const esVertical = dx === 0;
         const pendiente = esVertical ? null : dy / dx;
 
-        // PASO 5: Forma Punto-Pendiente [ y - y1 = m(x - x1) ]
+        // PASO 5: Forma Punto-Pendiente
         let formaPuntoPendiente = "";
         if (esVertical) {
             formaPuntoPendiente = `x = ${x1}`;
@@ -54,7 +55,7 @@ const MathEngine = {
             formaPuntoPendiente = `y ${signoY1} = ${pendiente.toFixed(2)}(x ${signoX1})`;
         }
 
-        // PASO 6: Forma Explícita (Pendiente-Ordenada) [ y = mx + b ]
+        // PASO 6: Forma Explícita
         let b = null;
         let formaExplicita = "";
         if (esVertical) {
@@ -65,12 +66,11 @@ const MathEngine = {
             formaExplicita = `y = ${pendiente.toFixed(2)}x ${signoB}`;
         }
 
-        // PASO 7: Forma General [ Ax + By + C = 0 ]
+        // PASO 7: Forma General
         let formaGeneral = "";
         if (esVertical) {
             formaGeneral = `x - ${x1} = 0`;
         } else {
-            // Ax - y + (y1 - m*x1) = 0 => m*x - y + b = 0
             const A = pendiente;
             const B = -1;
             const C = b;
@@ -86,9 +86,9 @@ const MathEngine = {
             direccion: {
                 grados: anguloGrados.toFixed(2),
                 cuadrante: cuadrante,
-                anguloReferencia: anguloReferencia.toFixed(2) // Dato necesario para la explicación pedagógica
+                anguloReferencia: anguloReferencia.toFixed(2) // <- Dato inyectado para app.js
             },
-            pendiente: esVertical ? "Indefinida (Recta vertical)" : pendiente.toFixed(2),
+            pendiente: esVertical ? "Indefinida" : pendiente.toFixed(2),
             esVertical: esVertical,
             ordenadaOrigen: b !== null ? b.toFixed(2) : "N/A",
             ecuaciones: {
