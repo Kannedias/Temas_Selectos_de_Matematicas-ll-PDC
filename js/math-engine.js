@@ -32,6 +32,14 @@ const MathEngine = {
         else if (dx === 0 && dy !== 0) cuadrante = "Eje Vertical";
         else if (dy === 0 && dx !== 0) cuadrante = "Eje Horizontal";
 
+        // NUEVO: Ángulo de Referencia (α) para el andamiaje pedagógico
+        let anguloReferencia = 0;
+        if (dx !== 0) {
+            anguloReferencia = Math.abs(Math.atan(dy / dx) * (180 / Math.PI));
+        } else if (dy !== 0) {
+            anguloReferencia = 90;
+        }
+
         // PASO 4: Pendiente (m)
         const esVertical = dx === 0;
         const pendiente = esVertical ? null : dy / dx;
@@ -77,7 +85,8 @@ const MathEngine = {
             magnitud: magnitud.toFixed(2),
             direccion: {
                 grados: anguloGrados.toFixed(2),
-                cuadrante: cuadrante
+                cuadrante: cuadrante,
+                anguloReferencia: anguloReferencia.toFixed(2) // Dato necesario para la explicación pedagógica
             },
             pendiente: esVertical ? "Indefinida (Recta vertical)" : pendiente.toFixed(2),
             esVertical: esVertical,
