@@ -111,14 +111,14 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
 
             <!-- Cajas Responsivas (En una sola línea tipo 'Píldoras') -->
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="contenedor-puntos">
                 <div class="pill-punto-a">
                     <span class="dot-a"></span>
-                    <strong>Punto A ($x_1, y_1$):</strong> $${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}$$
+                    <strong>Punto A ($x_1, y_1$):</strong> $$${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}$$
                 </div>
                 <div class="pill-punto-b">
                     <span class="dot-b"></span>
-                    <strong>Punto B ($x_2, y_2$):</strong> $${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}$$
+                    <strong>Punto B ($x_2, y_2$):</strong> $$${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}$$
                 </div>
             </div>
 
