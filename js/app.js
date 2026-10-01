@@ -98,11 +98,8 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
 
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
-        // ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (CORREGIDO Y EXPLICADO)
-        // ==============================================
-        // ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (COMPACTO Y CENTRADO)
+// ==============================================
+        // PASO 1: VECTOR DESPLAZAMIENTO (SIGNO + COMPACTO)
         // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -129,12 +126,12 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 </div>
             </div>
 
-            <!-- Contenedor Compacto de Operaciones -->
+            <!-- Contenedor Compacto de Operaciones (Espaciado del signo + reducido con \, ) -->
             <div class="math-scrollable" style="text-align: center; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
                 <div style="width: 100%; max-width: 320px; text-align: left;">
                     <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
                 </div>
-                <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
+                <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\, + \\, (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
                 
                 <div style="width: 100%; max-width: 320px; text-align: left;">
                     <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>2. Cálculo de incrementos:</strong> Obtenemos la distancia recorrida en cada eje.</p>
