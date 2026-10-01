@@ -101,6 +101,9 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         // ==============================================
         // PASO 1: VECTOR DESPLAZAMIENTO (CORREGIDO Y EXPLICADO)
         // ==============================================
+        // ==============================================
+        // PASO 1: VECTOR DESPLAZAMIENTO (COMPACTO Y CENTRADO)
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
@@ -114,7 +117,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1})\\hat{i} + (${cB}{y_2} - ${cA}{y_1})\\hat{j}$$</p>
             </div>
 
-            <!-- Cajas Responsivas (En una sola línea tipo 'Píldoras') -->
+            <!-- Cajas Responsivas -->
             <div class="contenedor-puntos">
                 <div class="pill-punto-a">
                     <span class="dot-a"></span>
@@ -126,17 +129,21 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 </div>
             </div>
 
-            <!-- Contenedor de operaciones con explicaciones (Scroll para celulares) -->
-            <div class="math-scrollable" style="text-align: left; padding: 1rem;">
-                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
-                <p style="margin: 0 0 1rem 0; text-align: center; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
+            <!-- Contenedor Compacto de Operaciones -->
+            <div class="math-scrollable" style="text-align: center; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="width: 100%; max-width: 320px; text-align: left;">
+                    <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
+                </div>
+                <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
                 
-                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>2. Cálculo de incrementos:</strong> Obtenemos la distancia recorrida en cada eje.</p>
-                <p style="margin: 0 0 0.5rem 0; text-align: center; font-size: 0.95rem;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
-                <p style="margin: 0; text-align: center; font-size: 0.95rem;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
+                <div style="width: 100%; max-width: 320px; text-align: left;">
+                    <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>2. Cálculo de incrementos:</strong> Obtenemos la distancia recorrida en cada eje.</p>
+                </div>
+                <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
+                <p style="margin: 0; font-size: 0.95rem;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
-            <!-- Resultado Destacado (Intacto) -->
+            <!-- Resultado Destacado -->
             <div class="resultado-azul-destacado">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt})\\hat{i} + (${dyFmt})\\hat{j}$</span>
             </div>
