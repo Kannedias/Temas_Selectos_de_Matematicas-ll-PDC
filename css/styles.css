@@ -121,51 +121,27 @@ body {
 /* ========================================================
    4. PESTAÑA 1: FUNDAMENTOS / METÁFORAS
    ======================================================== */
-.metaforas-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
-    gap: 20px !important;
-    margin-top: 20px !important;
-}
-
-.card-image-wrapper {
-    position: relative !important;
-    width: 100% !important;
-    height: 180px !important;
-    overflow: hidden !important;
-    background-color: var(--secondary) !important;
-}
-
-.card-image-wrapper img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    transition: transform 0.4s ease, opacity 0.4s ease;
-}
-
-.card-aplicacion:hover .card-image-wrapper img { transform: scale(1.06); }
-
+/* Estilo base para las etiquetas (Se quedan fijas y ordenadas en las fórmulas) */
 .badge-area {
-    position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
-    padding: 6px 14px !important;
-    border-radius: 20px !important;
+    position: static !important; 
+    display: inline-block !important;
+    padding: 4px 12px !important;
+    border-radius: 12px !important;
     font-size: 0.75rem !important;
     font-weight: 700 !important;
     color: #ffffff !important;
     text-transform: uppercase !important;
-    z-index: 10 !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
 }
 
-.badge-ti { background-color: #2563eb !important; }
-.badge-ing { background-color: var(--gold-accent) !important; }
-.badge-med { background-color: var(--accent) !important; }
-
-.card-body { padding: 20px !important; display: flex !important; flex-direction: column !important; flex-grow: 1 !important; }
-.card-body h3 { margin-top: 0; font-size: 1.2rem; color: var(--primary); font-weight: 700; }
-.metafora-quote { font-style: italic; color: #64748b; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: auto; font-size: 0.88rem; }
-
+/* EXCEPCIÓN: Solo flotan de forma absoluta cuando están sobre una imagen (Fundamentos) */
+.card-image-wrapper .badge-area {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+}
 /* ========================================================
    5. PESTAÑA 2: FÓRMULAS Y GUÍA RÁPIDA
    ======================================================== */
