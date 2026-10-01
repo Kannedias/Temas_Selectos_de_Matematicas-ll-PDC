@@ -84,10 +84,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     // Formateador sin ceros redundantes (ej: 6.00 a 6)
     const fmt = (num) => Number(num).toString();
 
-    // Formateo para las cajas superiores
-    const strCoordA = `${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}`;
-    const strCoordB = `${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}`;
-
     // Formateo seguro para la sustitución con colores
     const x1Fmt = x1 < 0 ? `(${cA}{${fmt(x1)}})` : `${cA}{${fmt(x1)}}`;
     const y1Fmt = y1 < 0 ? `(${cA}{${fmt(y1)}})` : `${cA}{${fmt(y1)}}`;
@@ -99,7 +95,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
         // ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (RESPONSIVO Y COLOR)
+        // PASO 1: VECTOR DESPLAZAMIENTO (CORREGIDO Y EXPLICADO)
         // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -108,31 +104,35 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Vector Desplazamiento ($\\Delta \\vec{r}$)</h4>
             </div>
             
-            <div style="text-align: center; margin-bottom: 1.25rem;">
+            <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
                 <p style="font-size: 0.85rem; color: #1e293b; margin: 0 0 0.4rem 0; font-weight: 700;">Sustitución en:</p>
-                <p style="font-size: 1rem; color: #475569; margin: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem;">$$\\Delta \\vec{r} = \\Delta x \\hat{i} + \\Delta y \\hat{j}$$</p>
+                <p style="font-size: 0.95rem; color: #475569; margin: 0 0 0.5rem 0;">$$\\Delta \\vec{r} = \\Delta x \\hat{i} + \\Delta y \\hat{j}$$</p>
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1})\\hat{i} + (${cB}{y_2} - ${cA}{y_1})\\hat{j}$$</p>
             </div>
 
-            <!-- Cajas Responsivas -->
-            <div class="contenedor-puntos">
-                <div class="caja-datos-a">
-                    <span class="caja-titulo-a">PUNTO A</span>
-                    <span style="font-size: 1.15rem;">$$${strCoordA}$$</span>
+            <!-- Cajas Responsivas (En una sola línea tipo 'Píldoras') -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="pill-punto-a">
+                    <span class="dot-a"></span>
+                    <strong>Punto A ($x_1, y_1$):</strong> $${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}$$
                 </div>
-                <div class="caja-datos-b">
-                    <span class="caja-titulo-b">PUNTO B</span>
-                    <span style="font-size: 1.15rem;">$$${strCoordB}$$</span>
+                <div class="pill-punto-b">
+                    <span class="dot-b"></span>
+                    <strong>Punto B ($x_2, y_2$):</strong> $${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}$$
                 </div>
             </div>
 
-            <!-- Contenedor de operaciones con Scroll para celulares -->
-            <div class="math-scrollable">
-                <p style="margin: 0 0 1rem 0;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
-                <p style="margin: 0 0 0.75rem 0;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
-                <p style="margin: 0;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
+            <!-- Contenedor de operaciones con explicaciones (Scroll para celulares) -->
+            <div class="math-scrollable" style="text-align: left; padding: 1rem;">
+                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
+                <p style="margin: 0 0 1rem 0; text-align: center; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\quad + \\quad (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
+                
+                <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>2. Cálculo de incrementos:</strong> Obtenemos la distancia recorrida en cada eje.</p>
+                <p style="margin: 0 0 0.5rem 0; text-align: center; font-size: 0.95rem;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
+                <p style="margin: 0; text-align: center; font-size: 0.95rem;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
-            <!-- Resultado Destacado -->
+            <!-- Resultado Destacado (Intacto) -->
             <div class="resultado-azul-destacado">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt})\\hat{i} + (${dyFmt})\\hat{j}$</span>
             </div>
@@ -223,7 +223,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
 }
 
 // =======================================================
-// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS (NO TOCAR)
+// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS
 // =======================================================
 function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const canvas = document.getElementById('planoCartesianoCanvas');
