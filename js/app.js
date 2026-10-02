@@ -314,66 +314,224 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             `;
         })(),
         // ==============================================
-        // PASO 4 AL 7: ESTÁTICOS / LIMPIOS 
+        // PASO 4: PENDIENTE DE LA RECTA
         // ==============================================
-        `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">4</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Pendiente de la Recta ($m$)</h4>
-            </div>
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
-                $$m = \\frac{y_2 - y_1}{x_2 - x_1}$$
-            </div>
-        </div>
-        `,
-        `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">5</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Punto-Pendiente</h4>
-            </div>
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
-                $$y - y_1 = m(x - x_1)$$
-            </div>
-        </div>
-        `,
-        `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">6</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Explícita ($y = mx + b$)</h4>
-            </div>
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
-                $$y = mx + b$$
-            </div>
-        </div>
-        `,
-        `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); grid-column: 1 / -1;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">7</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma General ($Ax + By + C = 0$)</h4>
-            </div>
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
-                $$Ax + By + C = 0$$
-            </div>
-        </div>
-        `
-    ];
+        (function() {
+            let m_val = dx === 0 ? null : dy / dx;
+            let m_str = m_val === null ? "\\text{Indefinida}" : (Number.isInteger(m_val) ? m_val.toString() : m_val.toFixed(2));
+            let calculo = dx === 0 
+                ? `<p style="margin: 0; font-size: 0.95rem;">$$m = \\frac{${dy}}{0} \\implies \\text{Indefinida}$$</p>`
+                : `<p style="margin: 0; font-size: 0.95rem;">$$m = \\frac{${dy}}{${dx}} = ${m_str}$$</p>`;
 
-    container.innerHTML = tarjetasHTML.join('');
+            return `
+            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">4</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Pendiente de la Recta ($m$)</h4>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
+                    <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$m = \\frac{\\Delta y}{\\Delta x}$$</p>
+                </div>
 
-    if (window.renderMathInElement) {
-        renderMathInElement(container, {
-            delimiters: [
-                {left: "$$", right: "$$", display: true},
-                {left: "$", right: "$", display: false}
-            ],
-            throwOnError: false
-        });
-    }
-}
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <p style="font-size: 0.85rem; color: #475569; margin: 0;">Se retoman los incrementos calculados:</p>
+                </div>
+
+                <div class="contenedor-puntos" style="justify-content: center; gap: 1.5rem; margin-bottom: 1rem; display: flex; flex-wrap: wrap;">
+                    <div class="pill-delta">
+                        <span class="dot-dy" style="background: #14b8a6; min-width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
+                        <span>$\\Delta y = ${dy}$</span>
+                    </div>
+                    <div class="pill-delta">
+                        <span class="dot-dx" style="background: #8b5cf6; min-width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
+                        <span>$\\Delta x = ${dx}$</span>
+                    </div>
+                </div>
+
+                <div class="math-scrollable" style="padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Se sustituyen los valores para obtener la inclinación:</p>
+                    </div>
+                    ${calculo}
+                </div>
+
+                <div class="resultado-exito-destacado">
+                    <span><strong>Resultado:</strong> $m = ${m_str}$</span>
+                </div>
+            </div>
+            `;
+        })(),
+
+        // ==============================================
+        // PASO 5: FORMA PUNTO-PENDIENTE
+        // ==============================================
+        (function() {
+            let m_val = dx === 0 ? null : dy / dx;
+            let m_str = m_val === null ? "\\text{Indefinida}" : (Number.isInteger(m_val) ? m_val.toString() : m_val.toFixed(2));
+            
+            let y1_str = y1 < 0 ? `+ ${Math.abs(y1)}` : `- ${y1}`;
+            let x1_str = x1 < 0 ? `+ ${Math.abs(x1)}` : `- ${x1}`;
+            let y1_raw = y1 < 0 ? `(-${Math.abs(y1)})` : `${y1}`;
+            let x1_raw = x1 < 0 ? `(-${Math.abs(x1)})` : `${x1}`;
+
+            let contenido = m_val === null 
+                ? `<p style="font-size: 0.95rem; text-align:center; color:#dc2626;">Al ser una recta vertical, no se usa la forma punto-pendiente.</p>`
+                : `<div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Sustituyendo $m$ y el punto $A(x_1, y_1)$:</p>
+                   </div>
+                   <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$y - ${y1_raw} = ${m_str}(x - ${x1_raw})$$</p>
+                   <div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Ajustando signos de las coordenadas:</p>
+                   </div>
+                   <p style="margin: 0; font-size: 0.95rem;">$$y ${y1_str} = ${m_str}(x ${x1_str})$$</p>`;
+
+            let resultado = m_val === null
+                ? `x = ${x1}`
+                : `y ${y1_str} = ${m_str}(x ${x1_str})`;
+
+            return `
+            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">5</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Forma Punto-Pendiente</h4>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
+                    <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$y - y_1 = m(x - x_1)$$</p>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <p style="font-size: 0.85rem; color: #475569; margin: 0;">Se utiliza la pendiente calculada y el Punto A:</p>
+                </div>
+
+                <div class="contenedor-puntos" style="justify-content: center; gap: 1.5rem; margin-bottom: 1rem; display: flex; flex-wrap: wrap;">
+                    <div class="pill-delta">
+                        <span style="background: #eab308; min-width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
+                        <span>$m = ${m_str}$</span>
+                    </div>
+                    <div class="pill-delta">
+                        <span style="background: #3b82f6; min-width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
+                        <span>$A(${x1}, ${y1})$</span>
+                    </div>
+                </div>
+
+                <div class="math-scrollable" style="padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    ${contenido}
+                </div>
+
+                <div class="resultado-exito-destacado">
+                    <span><strong>Resultado:</strong> $${resultado}$</span>
+                </div>
+            </div>
+            `;
+        })(),
+
+        // ==============================================
+        // PASO 6: FORMA EXPLÍCITA
+        // ==============================================
+        (function() {
+            let m_val = dx === 0 ? null : dy / dx;
+            let m_str = m_val === null ? "\\text{Indefinida}" : (Number.isInteger(m_val) ? m_val.toString() : m_val.toFixed(2));
+            
+            let y1_str = y1 < 0 ? `+ ${Math.abs(y1)}` : `- ${y1}`;
+            let y1_inv = y1 < 0 ? `- ${Math.abs(y1)}` : `+ ${y1}`;
+            
+            let b_val = m_val === null ? null : (y1 - m_val * x1);
+            let mx1_val = m_val === null ? null : (-m_val * x1);
+            
+            let mx1_str = mx1_val === null ? "" : (mx1_val < 0 ? `- ${Math.abs(mx1_val).toFixed(2)}` : `+ ${mx1_val.toFixed(2)}`);
+            let b_str = b_val === null ? "" : (b_val < 0 ? `- ${Math.abs(b_val).toFixed(2)}` : `+ ${b_val.toFixed(2)}`);
+            if(mx1_str.endsWith(".00")) mx1_str = mx1_str.replace(".00", "");
+            if(b_str.endsWith(".00")) b_str = b_str.replace(".00", "");
+
+            let contenido = m_val === null 
+                ? `<p style="font-size: 0.95rem; text-align:center; color:#dc2626;">No aplicable a rectas verticales.</p>`
+                : `<div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">1. Multiplicamos la pendiente por el paréntesis:</p>
+                   </div>
+                   <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$y ${y1_str} = ${m_str}x ${mx1_str}$$</p>
+                   <div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">2. Despejamos $y$ pasando el término independiente:</p>
+                   </div>
+                   <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$y = ${m_str}x ${mx1_str} ${y1_inv}$$</p>
+                   <div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">3. Simplificamos agrupando términos numéricos para obtener $b$:</p>
+                   </div>
+                   <p style="margin: 0; font-size: 0.95rem;">$$y = ${m_str}x ${b_str}$$</p>`;
+
+            let resultado = m_val === null
+                ? `x = ${x1}`
+                : `y = ${m_str}x ${b_str}`;
+
+            return `
+            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">6</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Forma Explícita ($y = mx + b$)</h4>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
+                    <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$y = mx + b$$</p>
+                </div>
+
+                <div class="math-scrollable" style="padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    ${contenido}
+                </div>
+
+                <div class="resultado-exito-destacado">
+                    <span><strong>Resultado:</strong> $${resultado}$</span>
+                </div>
+            </div>
+            `;
+        })(),
+
+        // ==============================================
+        // PASO 7: FORMA GENERAL
+        // ==============================================
+        (function() {
+            let m_val = dx === 0 ? null : dy / dx;
+            let m_str = m_val === null ? "" : (Number.isInteger(m_val) ? m_val.toString() : m_val.toFixed(2));
+            let b_val = m_val === null ? null : (y1 - m_val * x1);
+            let b_str = b_val === null ? "" : (b_val < 0 ? `- ${Math.abs(b_val).toFixed(2)}` : `+ ${b_val.toFixed(2)}`);
+            if(b_str.endsWith(".00")) b_str = b_str.replace(".00", "");
+            
+            let contenido = m_val === null
+                ? `<p style="font-size: 0.95rem; text-align:center;">Para una recta vertical, se iguala a cero directamente: $$x - ${x1} = 0$$</p>`
+                : `<div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Trasladamos $y$ al lado derecho para igualar a cero:</p>
+                   </div>
+                   <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$0 = ${m_str}x - y ${b_str}$$</p>
+                   <div style="width: 100%; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Reordenamos la ecuación (Forma $Ax + By + C = 0$):</p>
+                   </div>
+                   <p style="margin: 0; font-size: 0.95rem;">$$${m_str}x - y ${b_str} = 0$$</p>`;
+
+            let resultado = m_val === null
+                ? `x - ${x1} = 0`
+                : `${m_str}x - y ${b_str} = 0`;
+
+            return `
+            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); grid-column: 1 / -1;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">7</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Forma General ($Ax + By + C = 0$)</h4>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
+                    <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$Ax + By + C = 0$$</p>
+                </div>
+
+                <div class="math-scrollable" style="padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    ${contenido}
+                </div>
+
+                <div class="resultado-exito-destacado" style="justify-content: center;">
+                    <span><strong>Resultado:</strong> $${resultado}$</span>
+                </div>
+            </div>
+            `;
+        })()
 
 // =======================================================
 // BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS
