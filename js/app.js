@@ -70,31 +70,80 @@ function renderizarResumenBarra(res, x1, y1, x2, y2) {
 // =======================================================
 // BLOQUE 3: CONSTRUCTOR DE LAS 7 TARJETAS
 // =======================================================
-function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
-    const container = document.getElementById('pasos-container');
-    if (!container) return;
-
+function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
+    // 1. Aquí asumo que ya tienes tus variables base definidas
     const dx = x2 - x1;
     const dy = y2 - y1;
+    // ... (tus otras variables de formato)
 
-    // Colores institucionales de KaTeX
-    const cA = "\\textcolor{#2563eb}"; // Azul
-    const cB = "\\textcolor{#dc2626}"; // Rojo
-
-    // Formateador sin ceros redundantes (ej: 6.00 a 6)
-    const fmt = (num) => Number(num).toString();
-
-    // Formateo para las cajas superiores: Reducimos el espacio después de la coma
-    const strCoordA = `${cA}{${fmt(x1)}},${cA}{${fmt(y1)}}`;
-    const strCoordB = `${cB}{${fmt(x2)}},${cB}{${fmt(y2)}}`;
-
-    // Formateo seguro para la sustitución con colores
-    const x1Fmt = x1 < 0 ? `(${cA}{${fmt(x1)}})` : `${cA}{${fmt(x1)}}`;
-    const y1Fmt = y1 < 0 ? `(${cA}{${fmt(y1)}})` : `${cA}{${fmt(y1)}}`;
-    const x2Fmt = x2 < 0 ? `(${cB}{${fmt(x2)}})` : `${cB}{${fmt(x2)}}`;
-    const y2Fmt = y2 < 0 ? `(${cB}{${fmt(y2)}})` : `${cB}{${fmt(y2)}}`;
-    const dxFmt = fmt(dx);
-    const dyFmt = fmt(dy);
+    // 2. PEGA ESTO AQUÍ: Toda la lógica de cuadrantes antes de las tarjetas
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+    const valFraccion = absDx === 0 ? 0 : (absDy / absDx);
+    const strFraccion = Number.isInteger(valFraccion) ? valFraccion.toString() : valFraccion.toFixed(3);
+    const anguloBase = (Math.atan2(absDy, absDx) * (180 / Math.PI)).toFixed(2);
+    
+    let analisisCuadrante = "";
+    let calculoFormula = "";
+    
+    if (dx === 0 && dy === 0) {
+        analisisCuadrante = "El vector es nulo, no tiene dirección definida.";
+        calculoFormula = `<p style="margin: 0; font-size: 0.95rem;">$$\\theta = 0^\\circ$$</p>`;
+    } else if (dx > 0 && dy >= 0) {
+        analisisCuadrante = `Como ambas componentes son positivas ($\\Delta x > 0$ y $\\Delta y \\geq 0$), el vector se encuentra ubicado en el <strong>primer cuadrante</strong>.`;
+        calculoFormula = `
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo con la función trigonométrica:</p>
+            </div>
+            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\theta = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right)$$</p>
+            <div style="width: 100%; text-align: left; background-color: #fef3c7; border-left: 3px solid #f59e0b; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem;">
+                <p style="font-size: 0.8rem; color: #92400e; margin: 0;">💡 <strong>Tip de Calculadora:</strong> Para calcularlo, presiona <strong>SHIFT</strong> + <strong>tan</strong> ($\\tan^{-1}$) seguido de <strong>${strFraccion}</strong>.</p>
+            </div>
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el primer cuadrante, el ángulo calculado es el definitivo:</p>
+            </div>
+            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = \\arctan(${strFraccion}) = ${res.direccion.grados}^\\circ$$</p>`;
+    } else if (dx < 0 && dy >= 0) {
+        analisisCuadrante = `Como $\\Delta x < 0$ y $\\Delta y \\geq 0$, el vector se encuentra ubicado en el <strong>segundo cuadrante</strong>.`;
+        calculoFormula = `
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
+            </div>
+            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el segundo cuadrante, se ajusta sumando $180^\\circ$ al ángulo original:</p>
+            </div>
+            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 180^\\circ - ${anguloBase}^\\circ = ${res.direccion.grados}^\\circ$$</p>`;
+    } else if (dx < 0 && dy < 0) {
+        analisisCuadrante = `Como ambas componentes son negativas ($\\Delta x < 0$ y $\\Delta y < 0$), el vector se encuentra ubicado en el <strong>tercer cuadrante</strong>.`;
+        calculoFormula = `
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
+            </div>
+            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el tercer cuadrante, el ángulo se ajusta sumando $180^\\circ$:</p>
+            </div>
+            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 180^\\circ + ${anguloBase}^\\circ = ${res.direccion.grados}^\\circ$$</p>`;
+    } else if (dx > 0 && dy < 0) {
+        analisisCuadrante = `Como $\\Delta x > 0$ y $\\Delta y < 0$, el vector se encuentra ubicado en el <strong>cuarto cuadrante</strong>.`;
+        calculoFormula = `
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
+            </div>
+            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el cuarto cuadrante, se ajusta restando de $360^\\circ$:</p>
+            </div>
+            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 360^\\circ - ${anguloBase}^\\circ = ${res.direccion.grados}^\\circ$$</p>`;
+    } else if (dx === 0) {
+        analisisCuadrante = `Como $\\Delta x = 0$, el vector se encuentra directamente sobre el <strong>eje Y</strong>.`;
+        calculoFormula = `
+            <div style="width: 100%; text-align: left;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Al estar sobre el eje, la dirección es directa por inspección:</p>
+            </div>
+            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = ${res.direccion.grados}^\\circ$$</p>`;
+    }
 
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
