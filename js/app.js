@@ -532,7 +532,20 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
             `;
         })()
-    ]; // <--- ¡AQUÍ ESTÁ EL CIERRE DEL ARREGLO QUE FALTABA!
+    ]; // CIERRE DEL ARREGLO DE TARJETAS
+
+    container.innerHTML = tarjetasHTML.join('');
+
+    if (window.renderMathInElement) {
+        renderMathInElement(container, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    }
+} // CIERRE DE LA FUNCIÓN PRINCIPAL
 
 // =======================================================
 // BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS
