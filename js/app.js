@@ -147,8 +147,8 @@ function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
 
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
-// ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO 
+        // ==============================================
+        // PASO 1: VECTOR DESPLAZAMIENTO (BLINDADO)
         // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -160,18 +160,18 @@ function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
             <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
                 <p style="font-size: 0.85rem; color: #1e293b; margin: 0 0 0.4rem 0; font-weight: 700;">Sustitución en:</p>
                 <p style="font-size: 0.95rem; color: #475569; margin: 0 0 0.5rem 0;">$$\\Delta \\vec{r} = (\\Delta x, \\Delta y)$$</p>
-                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1}, \\, ${cB}{y_2} - ${cA}{y_1})$$</p>
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (x_2 - x_1, \\, y_2 - y_1)$$</p>
             </div>
 
             <!-- Cajas Responsivas (Píldoras) -->
             <div class="contenedor-puntos">
                 <div class="pill-punto-a">
                     <span class="dot-a"></span>
-                    <strong>Punto A ($x_1, y_1$):</strong> $$${strCoordA}$$
+                    <strong>Punto A ($x_1, y_1$):</strong> $$(${x1Fmt}, ${y1Fmt})$$
                 </div>
                 <div class="pill-punto-b">
                     <span class="dot-b"></span>
-                    <strong>Punto B ($x_2, y_2$):</strong> $$${strCoordB}$$
+                    <strong>Punto B ($x_2, y_2$):</strong> $$(${x2Fmt}, ${y2Fmt})$$
                 </div>
             </div>
 
@@ -189,7 +189,7 @@ function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
                 <p style="margin: 0; font-size: 0.95rem;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
-            <!-- Resultado Destacado con Nuevo Color -->
+            <!-- Resultado Destacado -->
             <div class="resultado-exito-destacado">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt}, \\, ${dyFmt})$</span>
             </div>
