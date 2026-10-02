@@ -70,85 +70,36 @@ function renderizarResumenBarra(res, x1, y1, x2, y2) {
 // =======================================================
 // BLOQUE 3: CONSTRUCTOR DE LAS 7 TARJETAS
 // =======================================================
-function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
-    // 1. Aquí asumo que ya tienes tus variables base definidas
+function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
+    const container = document.getElementById('pasos-container');
+    if (!container) return;
+
     const dx = x2 - x1;
     const dy = y2 - y1;
-    // ... (tus otras variables de formato)
 
-    // 2. PEGA ESTO AQUÍ: Toda la lógica de cuadrantes antes de las tarjetas
-    const absDx = Math.abs(dx);
-    const absDy = Math.abs(dy);
-    const valFraccion = absDx === 0 ? 0 : (absDy / absDx);
-    const strFraccion = Number.isInteger(valFraccion) ? valFraccion.toString() : valFraccion.toFixed(3);
-    const anguloBase = (Math.atan2(absDy, absDx) * (180 / Math.PI)).toFixed(2);
-    
-    let analisisCuadrante = "";
-    let calculoFormula = "";
-    
-    if (dx === 0 && dy === 0) {
-        analisisCuadrante = "El vector es nulo, no tiene dirección definida.";
-        calculoFormula = `<p style="margin: 0; font-size: 0.95rem;">$$\\theta = 0^\\circ$$</p>`;
-    } else if (dx > 0 && dy >= 0) {
-        analisisCuadrante = `Como ambas componentes son positivas ($\\Delta x > 0$ y $\\Delta y \\geq 0$), el vector se encuentra ubicado en el <strong>primer cuadrante</strong>.`;
-        calculoFormula = `
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo con la función trigonométrica:</p>
-            </div>
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\theta = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right)$$</p>
-            <div style="width: 100%; text-align: left; background-color: #fef3c7; border-left: 3px solid #f59e0b; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem;">
-                <p style="font-size: 0.8rem; color: #92400e; margin: 0;">💡 <strong>Tip de Calculadora:</strong> Para calcularlo, presiona <strong>SHIFT</strong> + <strong>tan</strong> ($\\tan^{-1}$) seguido de <strong>${strFraccion}</strong>.</p>
-            </div>
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el primer cuadrante, el ángulo calculado es el definitivo:</p>
-            </div>
-            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = \\arctan(${strFraccion}) = ${res.direccion.grados}^\\circ$$</p>`;
-    } else if (dx < 0 && dy >= 0) {
-        analisisCuadrante = `Como $\\Delta x < 0$ y $\\Delta y \\geq 0$, el vector se encuentra ubicado en el <strong>segundo cuadrante</strong>.`;
-        calculoFormula = `
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
-            </div>
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el segundo cuadrante, se ajusta sumando $180^\\circ$ al ángulo original:</p>
-            </div>
-            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 180^\\circ - ${anguloBase}^\\circ = ${res.direccion.grados}^\\circ$$</p>`;
-    } else if (dx < 0 && dy < 0) {
-        analisisCuadrante = `Como ambas componentes son negativas ($\\Delta x < 0$ y $\\Delta y < 0$), el vector se encuentra ubicado en el <strong>tercer cuadrante</strong>.`;
-        calculoFormula = `
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
-            </div>
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el tercer cuadrante, el ángulo se ajusta sumando $180^\\circ$:</p>
-            </div>
-            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 180^\\circ + ${anguloBase}^\\circ = ${res.direccion.grados}^\\circ$$</p>`;
-    } else if (dx > 0 && dy < 0) {
-        analisisCuadrante = `Como $\\Delta x > 0$ y $\\Delta y < 0$, el vector se encuentra ubicado en el <strong>cuarto cuadrante</strong>.`;
-        calculoFormula = `
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
-            </div>
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el cuarto cuadrante, se ajusta restando de $360^\\circ$:</p>
-            </div>
-            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 360^\\circ - ${anguloBase}^\\circ = ${res.direccion.grados}^\\circ$$</p>`;
-    } else if (dx === 0) {
-        analisisCuadrante = `Como $\\Delta x = 0$, el vector se encuentra directamente sobre el <strong>eje Y</strong>.`;
-        calculoFormula = `
-            <div style="width: 100%; text-align: left;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Al estar sobre el eje, la dirección es directa por inspección:</p>
-            </div>
-            <p style="margin: 0; font-size: 0.95rem;">$$\\theta = ${res.direccion.grados}^\\circ$$</p>`;
-    }
+    // Colores institucionales de KaTeX
+    const cA = "\\textcolor{#2563eb}"; // Azul
+    const cB = "\\textcolor{#dc2626}"; // Rojo
+
+    // Formateador sin ceros redundantes (ej: 6.00 a 6)
+    const fmt = (num) => Number(num).toString();
+
+    // Formateo para las cajas superiores: Reducimos el espacio después de la coma
+    const strCoordA = `${cA}{${fmt(x1)}},${cA}{${fmt(y1)}}`;
+    const strCoordB = `${cB}{${fmt(x2)}},${cB}{${fmt(y2)}}`;
+
+    // Formateo seguro para la sustitución con colores
+    const x1Fmt = x1 < 0 ? `(${cA}{${fmt(x1)}})` : `${cA}{${fmt(x1)}}`;
+    const y1Fmt = y1 < 0 ? `(${cA}{${fmt(y1)}})` : `${cA}{${fmt(y1)}}`;
+    const x2Fmt = x2 < 0 ? `(${cB}{${fmt(x2)}})` : `${cB}{${fmt(x2)}}`;
+    const y2Fmt = y2 < 0 ? `(${cB}{${fmt(y2)}})` : `${cB}{${fmt(y2)}}`;
+    const dxFmt = fmt(dx);
+    const dyFmt = fmt(dy);
 
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
-        // ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (BLINDADO)
+// ==============================================
+        // PASO 1: VECTOR DESPLAZAMIENTO 
         // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -160,18 +111,18 @@ function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
             <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
                 <p style="font-size: 0.85rem; color: #1e293b; margin: 0 0 0.4rem 0; font-weight: 700;">Sustitución en:</p>
                 <p style="font-size: 0.95rem; color: #475569; margin: 0 0 0.5rem 0;">$$\\Delta \\vec{r} = (\\Delta x, \\Delta y)$$</p>
-                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (x_2 - x_1, \\, y_2 - y_1)$$</p>
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1}, \\, ${cB}{y_2} - ${cA}{y_1})$$</p>
             </div>
 
             <!-- Cajas Responsivas (Píldoras) -->
             <div class="contenedor-puntos">
                 <div class="pill-punto-a">
                     <span class="dot-a"></span>
-                    <strong>Punto A ($x_1, y_1$):</strong> $$(${x1Fmt}, ${y1Fmt})$$
+                    <strong>Punto A ($x_1, y_1$):</strong> $$${strCoordA}$$
                 </div>
                 <div class="pill-punto-b">
                     <span class="dot-b"></span>
-                    <strong>Punto B ($x_2, y_2$):</strong> $$(${x2Fmt}, ${y2Fmt})$$
+                    <strong>Punto B ($x_2, y_2$):</strong> $$${strCoordB}$$
                 </div>
             </div>
 
@@ -189,7 +140,7 @@ function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
                 <p style="margin: 0; font-size: 0.95rem;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
-            <!-- Resultado Destacado -->
+            <!-- Resultado Destacado con Nuevo Color -->
             <div class="resultado-exito-destacado">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt}, \\, ${dyFmt})$</span>
             </div>
@@ -239,130 +190,20 @@ function renderizarTarjetasPasoAPasoBeta(x1, y1, x2, y2, res) {
             </div>
         </div>
         `,
-
-// ==============================================
-        // PASO 3: DIRECCIÓN DEL VECTOR (LÓGICA AUTÓNOMA BLINDADA)
         // ==============================================
-        (function() {
-            // Variables locales exclusivas para el Paso 3
-            const absDx = Math.abs(dx);
-            const absDy = Math.abs(dy);
-            const valFraccion = absDx === 0 ? 0 : (absDy / absDx);
-            const strFraccion = Number.isInteger(valFraccion) ? valFraccion.toString() : valFraccion.toFixed(3);
-            const anguloBase = (Math.atan2(absDy, absDx) * (180 / Math.PI)).toFixed(2);
-            const anguloFinal = (typeof res !== 'undefined' && res.direccion) ? res.direccion.grados : anguloBase;
-            
-            let analisisCuadrante = "";
-            let calculoFormula = "";
-            
-            if (dx === 0 && dy === 0) {
-                analisisCuadrante = "El vector es nulo, no tiene dirección definida.";
-                calculoFormula = `<p style="margin: 0; font-size: 0.95rem;">$$\\theta = 0^\\circ$$</p>`;
-            } else if (dx > 0 && dy >= 0) {
-                analisisCuadrante = `Como ambas componentes son positivas ($\\Delta x > 0$ y $\\Delta y \\geq 0$), el vector se encuentra ubicado en el <strong>primer cuadrante</strong>.`;
-                calculoFormula = `
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo con la función trigonométrica:</p>
-                    </div>
-                    <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\theta = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right)$$</p>
-                    <div style="width: 100%; text-align: left; background-color: #fef3c7; border-left: 3px solid #f59e0b; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem;">
-                        <p style="font-size: 0.8rem; color: #92400e; margin: 0;">💡 <strong>Tip de Calculadora:</strong> Para calcularlo, presiona <strong>SHIFT</strong> + <strong>tan</strong> ($\\tan^{-1}$) seguido de <strong>${strFraccion}</strong>.</p>
-                    </div>
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el primer cuadrante, el ángulo calculado es el definitivo:</p>
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem;">$$\\theta = \\arctan(${strFraccion}) = ${anguloFinal}^\\circ$$</p>`;
-            } else if (dx < 0 && dy >= 0) {
-                analisisCuadrante = `Como $\\Delta x < 0$ y $\\Delta y \\geq 0$, el vector se encuentra ubicado en el <strong>segundo cuadrante</strong>.`;
-                calculoFormula = `
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
-                    </div>
-                    <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el segundo cuadrante, se ajusta sumando $180^\\circ$ al ángulo original:</p>
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 180^\\circ - ${anguloBase}^\\circ = ${anguloFinal}^\\circ$$</p>`;
-            } else if (dx < 0 && dy < 0) {
-                analisisCuadrante = `Como ambas componentes son negativas ($\\Delta x < 0$ y $\\Delta y < 0$), el vector se encuentra ubicado en el <strong>tercer cuadrante</strong>.`;
-                calculoFormula = `
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
-                    </div>
-                    <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el tercer cuadrante, el ángulo se ajusta sumando $180^\\circ$:</p>
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 180^\\circ + ${anguloBase}^\\circ = ${anguloFinal}^\\circ$$</p>`;
-            } else if (dx > 0 && dy < 0) {
-                analisisCuadrante = `Como $\\Delta x > 0$ y $\\Delta y < 0$, el vector se encuentra ubicado en el <strong>cuarto cuadrante</strong>.`;
-                calculoFormula = `
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>a.</strong> Se determina el ángulo de referencia en positivo:</p>
-                    </div>
-                    <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$\\alpha = \\arctan\\left(\\frac{${absDy}}{${absDx}}\\right) = \\arctan(${strFraccion}) = ${anguloBase}^\\circ$$</p>
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>b.</strong> Al estar en el cuarto cuadrante, se ajusta restando de $360^\\circ$:</p>
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem;">$$\\theta = 360^\\circ - ${anguloBase}^\\circ = ${anguloFinal}^\\circ$$</p>`;
-            } else if (dx === 0) {
-                analisisCuadrante = `Como $\\Delta x = 0$, el vector se encuentra directamente sobre el <strong>eje Y</strong>.`;
-                calculoFormula = `
-                    <div style="width: 100%; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0;">Al estar sobre el eje, la dirección es directa por inspección:</p>
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem;">$$\\theta = ${anguloFinal}^\\circ$$</p>`;
-            }
-
-            // Retornamos el HTML inyectando las variables que acabamos de calcular
-            return `
-            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">3</span>
-                    <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Dirección del Vector ($\\theta$)</h4>
-                </div>
-                
-                <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
-                    <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\theta = \\arctan\\left(\\frac{\\Delta y}{\\Delta x}\\right)$$</p>
-                </div>
-
-                <div style="text-align: center; margin-bottom: 1rem;">
-                    <p style="font-size: 0.85rem; color: #475569; margin: 0;">Se retoman los incrementos calculados:</p>
-                </div>
-
-                <div class="contenedor-puntos" style="justify-content: center; gap: 1.5rem; margin-bottom: 1rem; display: flex; flex-wrap: wrap;">
-                    <div class="pill-delta">
-                        <span class="dot-dx"></span>
-                        <span>$\\Delta x = ${dx}$</span>
-                    </div>
-                    <div class="pill-delta">
-                        <span class="dot-dy"></span>
-                        <span>$\\Delta y = ${dy}$</span>
-                    </div>
-                </div>
-
-                <div class="math-scrollable" style="padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                    
-                    <div style="width: 100%; background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; text-align: left;">
-                        <p style="font-size: 0.85rem; color: #1e3a8a; margin: 0;"><strong>Análisis de cuadrante:</strong> ${analisisCuadrante}</p>
-                    </div>
-                    
-                    <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-                        ${calculoFormula}
-                    </div>
-                </div>
-
-                <div class="resultado-exito-destacado">
-                    <span><strong>Resultado final:</strong> $\\theta = ${anguloFinal}^\\circ$</span>
-                </div>
+        // PASO 3 AL 7: ESTÁTICOS / LIMPIOS 
+        // ==============================================
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">3</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Dirección del Vector ($\\theta$)</h4>
             </div>
-            `;
-        })(),
-        
-        // ==============================================
-        // PASO 4 AL 7: ESTÁTICOS / LIMPIOS 
-        // ==============================================
-        
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                $$\\theta = \\arctan\\left(\\frac{\\Delta y}{\\Delta x}\\right)$$
+            </div>
+        </div>
+        `,
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
