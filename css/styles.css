@@ -586,3 +586,73 @@ body {
     display: flex;
     align-items: center;
 }
+/* ===================================================
+   ESTILOS EXCLUSIVOS PARA EL PASO 3 (DIRECCIÓN)
+   =================================================== */
+
+/* Caja azul para el Análisis de Cuadrante */
+.analisis-cuadrante {
+    background-color: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.analisis-cuadrante p {
+    font-size: 0.85rem;
+    color: #1e3a8a;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Caja de Tip didáctico (Calculadora) */
+.tip-calculadora {
+    background-color: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.75rem;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.tip-calculadora p {
+    font-size: 0.8rem;
+    color: #92400e;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Contenedor para alinear los incisos a y b */
+.paso3-incisos {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.paso3-incisos .instruccion {
+    font-size: 0.85rem;
+    color: #475569;
+    margin: 0 0 0.5rem 0;
+}
+
+.paso3-incisos .ecuacion {
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Contenedor responsivo para las píldoras de Delta en Paso 3 */
+.paso3-deltas-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
