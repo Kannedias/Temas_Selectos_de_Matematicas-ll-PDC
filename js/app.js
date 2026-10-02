@@ -148,9 +148,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         </div>
         `,
         // ==============================================
-        // PASO 2 AL 7: ESTÁTICOS / LIMPIOS 
-        // ==============================================
-// ==============================================
         // PASO 2: MAGNITUD DEL DESPLAZAMIENTO (DINÁMICO)
         // ==============================================
         `
@@ -168,11 +165,12 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             <!-- Contenedor Compacto de Operaciones -->
             <div class="math-scrollable" style="text-align: center; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
                 <div style="width: 100%; max-width: 320px; text-align: left;">
-                    <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.25rem 0;">Se sustituyen los valores obtenidos de $\\Delta x$ y $\\Delta y$:</p>
+                    <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.25rem 0;">Se sustituyen los valores obtenidos:</p>
                 </div>
+                <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">$$\\Delta x = ${dxFmt} \\quad \\text{y} \\quad \\Delta y = ${dyFmt}$$</p>
                 <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$|\\Delta \\vec{r}| = \\sqrt{(${dxFmt})^2 + (${dyFmt})^2}$$</p>
                 
-                <p style="margin: 0; font-size: 0.95rem;">$$|\\Delta \\vec{r}| = \\sqrt{${Math.pow(dx, 2)} + ${Math.pow(dy, 2)}} = \\sqrt{${Math.pow(dx, 2) + Math.pow(dy, 2)}}$$</p>
+                <p style="margin: 0; font-size: 0.95rem;">$$|\\Delta \\vec{r}| = \\sqrt{${fmt(dx * dx)} + ${fmt(dy * dy)}} = \\sqrt{${fmt(dx * dx + dy * dy)}}$$</p>
             </div>
 
             <!-- Resultado Destacado -->
