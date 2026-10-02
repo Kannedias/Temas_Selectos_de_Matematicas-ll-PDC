@@ -526,12 +526,13 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                     ${contenido}
                 </div>
 
-                <div class="resultado-exito-destacado" style="justify-content: center;">
+                <<div class="resultado-exito-destacado" style="justify-content: center;">
                     <span><strong>Resultado:</strong> $${resultado}$</span>
                 </div>
             </div>
             `;
         })()
+    ]; // <--- ¡AQUÍ ESTÁ EL CIERRE DEL ARREGLO QUE FALTABA!
 
 // =======================================================
 // BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS
