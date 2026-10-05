@@ -264,36 +264,43 @@
 
             </div>
 
-            <!-- SECCIÓN DE REFUERZO: REGLAS ALGEBRAICAS ESENCIALES -->
-            <div class="card-aplicacion" style="margin-top: 2rem; border-left: 5px solid var(--accent);">
-                <div style="padding: 1.5rem;">
-                    <h3 style="color: var(--primary); margin-bottom: 1rem;">🛡️ Puntos de Referencia y Refuerzo Algebraico</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                        
-                        <div>
-                            <h4 style="color: var(--secondary); margin-bottom: 0.5rem;">➕ Regla de Signos (Multiplicación / División)</h4>
-                            <ul style="font-size: 0.9rem; padding-left: 1.2rem; line-height: 1.6;">
-                                <li>$(+) \cdot (+) = +$ y $(- ) \cdot (- ) = +$ (Signos iguales dan <strong>positivo</strong>).</li>
-                                <li>$(+) \cdot (- ) = -$ y $(- ) \cdot (+) = -$ (Signos diferentes dan <strong>negativo</strong>).</li>
-                                <li><strong style="color: #dc2626;">Atención en Restas:</strong> $x_2 - (-5)$ se convierte en $x_2 + 5$.</li>
+            <!-- ==========================================
+                 Refuerzo Algebraico y Tips Adicionales 
+                 ========================================== -->
+            <div style="background: #ffffff; padding: 1.5rem; border-radius: 8px; border-left: 5px solid #00806A; margin-top: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h3 style="color: #004d40; margin-bottom: 1rem;">🛡️ Refuerzo Algebraico y Tips Antierrores</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    
+                    <!-- Tarjeta Original: Leyes de Signos -->
+                    <div>
+                        <h4 style="color: #00695c; margin-bottom: 0.5rem;">➕ Leyes de Signos y Despejes</h4>
+                        <p style="font-size: 0.9rem; color: #334155; line-height: 1.5;">
+                            <strong>Multiplicación / División:</strong><br>
+                            Signos iguales dan positivo ($(-)\cdot(-) = +$), signos diferentes dan negativo ($(+)\cdot(-) = -$).
+                        </p>
+                        <p style="font-size: 0.9rem; color: #334155; line-height: 1.5; margin-top: 0.5rem;">
+                            <strong>Sustitución con signos:</strong><br>
+                            Si la fórmula tiene un "menos" y el número también, se vuelve "más": $x - (-3) \rightarrow x + 3$.
+                        </p>
+                    </div>
+
+                    <!-- NUEVA TARJETA: REGLA DE LOS CUADRANTES (Paso 3) -->
+                    <div>
+                        <h4 style="color: #00695c; margin-bottom: 0.5rem;">🧭 Regla de Cuadrantes (Ángulo $\theta$)</h4>
+                        <p style="font-size: 0.9rem; line-height: 1.5; color: #334155; margin-bottom: 0.5rem;">
+                            La calculadora ($\tan^{-1}$) ignora los signos negativos y siempre arroja el ángulo base. <strong>Analiza los signos de $\Delta x$ y $\Delta y$</strong>[cite: 11] para sumar el ajuste correcto:
+                        </p>
+                        <div style="background: #f8fafc; border-left: 3px solid #059669; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #334155;">
+                            <ul style="list-style-type: none; padding: 0; margin: 0; line-height: 1.6;">
+                                <li><strong>Cuadrante I</strong> ($+, +$): Ángulo Directo[cite: 11]</li>
+                                <li><strong>Cuadrante II</strong> ($-, +$): Suma $+180^\circ$[cite: 12]</li>
+                                <li><strong>Cuadrante III</strong> ($-, -$): Suma $+180^\circ$[cite: 11]</li>
+                                <li><strong>Cuadrante IV</strong> ($+, -$): Suma $+360^\circ$[cite: 11]</li>
                             </ul>
                         </div>
-
-                        <div>
-                            <h4 style="color: var(--secondary); margin-bottom: 0.5rem;">🎯 Despejes Limpios (Cancelación)</h4>
-                            <p style="font-size: 0.9rem; line-height: 1.5;">
-                                Cuando despejes un denominador, multiplica ambos lados por el mismo número:
-                            </p>
-                            <div class="formula-highlight" style="font-size: 0.85rem; padding: 0.5rem;">
-                                $$2 = \frac{y_2 - 3}{3} \implies (3) \cdot 2 = \left(\frac{y_2 - 3}{3}\right) \cdot (3)$$
-                                $$6 = y_2 - 3 \implies y_2 = 9$$
-                            </div>
-                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
-                                💬 El $3$ que multiplica neutraliza al $3$ que divide (operaciones inversas).
-                            </p>
-                        </div>
-
                     </div>
+
                 </div>
             </div>
         </section>
