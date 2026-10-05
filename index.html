@@ -511,7 +511,68 @@
 
             </div>
           </div>
+        </section>
+        <!-- ==========================================
+             PESTAÑA 4: RETOS Y DESAFÍOS (NIVELES 1 Y 2)
+             ========================================== -->
+        <section id="sec-retos" class="tab-content">
+            <div class="pedagogico-header" style="margin-bottom: 1.5rem;">
+                <h2 style="color: #004d40; font-size: 1.5rem; margin-bottom: 0.5rem;">🎯 Módulo de Retos y Examen</h2>
+                <p style="color: #475569;">Demuestra tu dominio resolviendo casos directos o interpretando escenarios reales.</p>
+            </div>
 
+            <!-- Panel de Configuración Inicial -->
+            <div class="card-aplicacion" id="panel-configuracion-reto" style="background: #ffffff; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #004d40;">Configuración del Examen</h3>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; align-items: center; flex-wrap: wrap;">
+                    <select id="nivel-reto" style="padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px; flex-grow: 1; max-width: 400px; font-weight: bold; color: #1e293b;">
+                        <option value="1">Nivel 1: Destreza Numérica Directa</option>
+                        <option value="2">Nivel 2: Contextualización (Incógnitas Ocultas)</option>
+                    </select>
+                    <button onclick="iniciarRetoSeguro()" style="background-color: #00806A; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                        🚀 Iniciar Reto Seguro
+                    </button>
+                </div>
+                <p style="color: #dc2626; font-size: 0.85rem; margin-top: 15px; font-weight: 600;">
+                    ⚠️ Atención: Al iniciar el reto se bloqueará la navegación, no podrás copiar/pegar y el sistema detectará si abandonas la pestaña.
+                </p>
+            </div>
+
+            <!-- Zona Activa del Reto (Oculta hasta iniciar) -->
+            <div id="zona-activa-reto" class="anti-cheat" style="display: none;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 id="titulo-nivel" style="margin: 0; color: #004d40; font-size: 1.25rem;">Nivel Activo</h3>
+                    <span style="background: #dc2626; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">Modo Seguro Activado 🔒</span>
+                </div>
+
+                <!-- Planteamiento -->
+                <div id="planteamiento-problema" style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 1.25rem; border-radius: 4px; margin-bottom: 1.5rem; font-size: 1.05rem; color: #166534;">
+                </div>
+
+                <!-- Campos de Respuesta (Reutilizando diseño limpio) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">1. Vector (Δx, Δy):</label><input type="text" id="ans-vector" placeholder="Ej: 5, -2" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">2. Magnitud (|Δr|):</label><input type="number" id="ans-magnitud" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">3. Dirección (θ°):</label><input type="number" id="ans-direccion" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">4. Pendiente (m):</label><input type="number" id="ans-pendiente" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">5. Punto-Pendiente:</label><input type="text" id="ans-pp" placeholder="Ej: y - 3 = 2(x + 1)" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">6. Forma Explícita:</label><input type="text" id="ans-exp" placeholder="Ej: y = 2x + 5" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">7. Forma General:</label><input type="text" id="ans-gen" placeholder="Ej: 2x - y + 5 = 0" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid #cbd5e1; padding-top: 15px;">
+                    <button onclick="comprobarReto()" style="background: #2563eb; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer;">✔️ Comprobar Respuestas</button>
+                    <button onclick="desglosarReto()" style="background: #d97706; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer;">🔍 Ver Proceso a Detalle</button>
+                    <button onclick="anularReto()" style="background: #dc2626; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto;">❌ Cancelar Examen</button>
+                </div>
+
+                <!-- Contenedor dinámico para retroalimentación y desglose de tarjetas -->
+                <div id="feedback-reto-msg" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;"></div>
+                <div id="desglose-reto-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 20px;"></div>
+                
+            </div>
         </section>
 
     </main>
