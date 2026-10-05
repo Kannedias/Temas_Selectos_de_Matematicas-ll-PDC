@@ -371,28 +371,43 @@
                 <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
               </div>
 
-              <!-- AQUÍ ENTRA EL PANEL DE CAPAS INTERACTIVAS -->
-              <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
-                  <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: #1e293b;">Capas del Gráfico:</h4>
-                  <div style="display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; color: #475569;">
-                      <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                          <input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()"> Puntos A y B
+<!-- AQUÍ ENTRA EL PANEL DE CAPAS INTERACTIVAS (DISEÑO PREMIUM) -->
+              <div style="margin-top: 1.25rem; padding: 1.25rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);">
+                  <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                      <span style="font-size: 1.1rem;">🎛️</span> Capas del Gráfico:
+                  </h4>
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.85rem; color: #334155;">
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Puntos A y B</strong>
                       </label>
-                      <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                          <input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()"> Triángulo (Δx, Δy)
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Triángulo ($\Delta x, \Delta y$)</strong>
                       </label>
-                      <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                          <input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()"> Magnitud (|Δr|)
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Magnitud ($|\Delta \vec{r}|$)</strong>
                       </label>
-                      <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                          <input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()"> Ángulo (θ)
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Ángulo ($\theta$)</strong>
                       </label>
-                      <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                          <input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()"> Pendiente (m)
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Pendiente ($m$)</strong>
                       </label>
-                      <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                          <input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()"> Ordenada (b)
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Ordenada ($b$)</strong>
                       </label>
+
                   </div>
               </div>
               <!-- FIN DEL PANEL DE CAPAS -->
