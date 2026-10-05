@@ -616,3 +616,27 @@ body {
     align-items: center;
     margin-top: 1rem;
 }
+
+<div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+    <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: #1e293b;">Capas del Gráfico:</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; color: #475569;">
+        <label style="display: flex; align-items: center; gap: 0.25rem;">
+            <input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()"> Puntos A y B
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.25rem;">
+            <input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()"> Triángulo (Δx, Δy)
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.25rem;">
+            <input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()"> Magnitud (|Δr|)
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.25rem;">
+            <input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()"> Ángulo (θ)
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.25rem;">
+            <input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()"> Pendiente (m)
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.25rem;">
+            <input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()"> Ordenada (b)
+        </label>
+    </div>
+</div>
