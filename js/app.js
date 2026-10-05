@@ -547,12 +547,28 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     }
 } // CIERRE DE LA FUNCIÓN PRINCIPAL
 
-// =======================================================
+// ==============================================
 // BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS
-// =======================================================
+// ==============================================
 function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const canvas = document.getElementById('planoCartesianoCanvas');
     if (!canvas) return;
+
+    // Obtener los contenedores (o crearlos si no existen) de los checkboxes
+    let chkPuntos = document.getElementById('chk-puntos');
+    let chkTriangulo = document.getElementById('chk-triangulo');
+    let chkPendiente = document.getElementById('chk-pendiente');
+    let chkMagnitud = document.getElementById('chk-magnitud');
+    let chkOrdenada = document.getElementById('chk-ordenada');
+    let chkAngulo = document.getElementById('chk-angulo');
+
+    // Comprobar estado de visibilidad (por defecto verdaderos si no existen)
+    const mostrarPuntos = chkPuntos ? chkPuntos.checked : true;
+    const mostrarTriangulo = chkTriangulo ? chkTriangulo.checked : true;
+    const mostrarPendiente = chkPendiente ? chkPendiente.checked : true;
+    const mostrarMagnitud = chkMagnitud ? chkMagnitud.checked : true;
+    const mostrarOrdenada = chkOrdenada ? chkOrdenada.checked : true;
+    const mostrarAngulo = chkAngulo ? chkAngulo.checked : true;
 
     const rect = canvas.parentNode.getBoundingClientRect();
     canvas.width = rect.width || 600;
@@ -563,7 +579,7 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const height = canvas.height;
 
     const maxCoord = Math.max(Math.abs(x1), Math.abs(y1), Math.abs(x2), Math.abs(y2), 5) + 3;
-    const scale = Math.min(width, height) / (maxCoord * 2);
+    const scale = Math.min(width, height) / (maxCoord * 2.2);
     
     const cx = width / 2;
     const cy = height / 2;
@@ -571,9 +587,11 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const toPx = (x) => cx + (x * scale);
     const toPy = (y) => cy - (y * scale);
 
+    // Fondo blanco
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
+    // Cuadrícula
     ctx.strokeStyle = "#f1f5f9";
     ctx.lineWidth = 1;
     for (let x = -Math.floor(maxCoord); x <= Math.floor(maxCoord); x++) {
@@ -583,21 +601,38 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         ctx.beginPath(); ctx.moveTo(0, toPy(y)); ctx.lineTo(width, toPy(y)); ctx.stroke();
     }
 
+    // Ejes X e Y
     ctx.strokeStyle = "#cbd5e1";
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(width, cy); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
+    ctx.fillStyle = "#64748b";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("X", width - 15, cy - 10);
+    ctx.fillText("Y", cx + 10, 15);
 
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = "#f59e0b";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(toPx(x1), toPy(y1));
-    ctx.lineTo(toPx(x2), toPy(y1));
-    ctx.lineTo(toPx(x2), toPy(y2));
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Triángulo de Incrementos (Pendiente Δx, Δy)
+    if (mostrarTriangulo) {
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = mostrarPendiente ? 3 : 2; // Resaltar si pendiente está activo
+        ctx.beginPath();
+        ctx.moveTo(toPx(x1), toPy(y1));
+        ctx.lineTo(toPx(x2), toPy(y1));
+        ctx.lineTo(toPx(x2), toPy(y2));
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Etiqueta de Pendiente (m) en el triángulo
+        if (mostrarPendiente && !res.esVertical) {
+            ctx.fillStyle = "#d97706";
+            ctx.font = "bold 12px sans-serif";
+            const mText = Number.isInteger(res.pendiente) ? res.pendiente : parseFloat(res.pendiente).toFixed(2);
+            ctx.fillText(`m = ${mText}`, toPx(x2) + (x2 > x1 ? 15 : -40), toPy(y1 + (y2-y1)/2));
+        }
+    }
 
+    // Recta principal
     ctx.strokeStyle = "#2563eb";
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -614,28 +649,94 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     }
     ctx.stroke();
 
-    if (!res.esVertical && res.ordenadaOrigen !== "N/A") {
+    // Ángulo de inclinación (Paso 3)
+    if (mostrarAngulo && !res.esVertical && (x2 - x1) !== 0) {
+        const angRad = Math.atan2(y2 - y1, x2 - x1);
+        ctx.beginPath();
+        ctx.strokeStyle = "#10b981"; // Verde esmeralda
+        ctx.lineWidth = 2;
+        
+        // Trazar línea horizontal auxiliar desde A
+        ctx.setLineDash([3, 3]);
+        ctx.moveTo(toPx(x1), toPy(y1));
+        ctx.lineTo(toPx(x1 + (maxCoord/3)), toPy(y1));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Dibujar arco
+        ctx.beginPath();
+        const radioArco = 30;
+        // Invertimos y por el sistema de coordenadas del canvas
+        let startAngle = 0; 
+        let endAngle = -angRad;
+        if(angRad > 0) {
+            ctx.arc(toPx(x1), toPy(y1), radioArco, -angRad, 0);
+        } else {
+            ctx.arc(toPx(x1), toPy(y1), radioArco, 0, -angRad);
+        }
+        ctx.stroke();
+
+        // Etiqueta del ángulo
+        ctx.fillStyle = "#047857";
+        ctx.font = "bold 11px sans-serif";
+        const angText = typeof res.direccion === 'object' ? res.direccion.grados : res.direccion;
+        ctx.fillText(`θ = ${angText}°`, toPx(x1) + radioArco + 10, toPy(y1) - (angRad > 0 ? 15 : -15));
+    }
+
+    // Etiqueta Magnitud en medio de la recta
+    if (mostrarMagnitud) {
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
+        ctx.fillStyle = "#4f46e5"; // Indigo
+        ctx.font = "bold 13px sans-serif";
+        ctx.beginPath();
+        ctx.arc(toPx(mx), toPy(my), 14, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.fill();
+        ctx.fillStyle = "#4f46e5";
+        ctx.fillText(`|Δr| = ${res.magnitud}`, toPx(mx) - 25, toPy(my) - 15);
+    }
+
+    // Ordenada al origen (b)
+    if (mostrarOrdenada && !res.esVertical && res.ordenadaOrigen !== "N/A") {
         const b = parseFloat(res.ordenadaOrigen);
         ctx.fillStyle = "#10b981";
         ctx.beginPath();
-        ctx.arc(toPx(0), toPy(b), 5, 0, Math.PI * 2);
+        ctx.arc(toPx(0), toPy(b), 6, 0, Math.PI * 2);
         ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+        
+        // Coordenada (0, b)
+        ctx.fillStyle = "#065f46";
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillText(`b(0, ${b})`, toPx(0) + 10, toPy(b) - 8);
     }
 
-    ctx.fillStyle = "#084298";
-    ctx.beginPath();
-    ctx.arc(toPx(x1), toPy(y1), 6, 0, Math.PI * 2);
-    ctx.fill();
+    // Puntos de Origen y Destino (A y B)
+    if (mostrarPuntos) {
+        ctx.fillStyle = "#084298";
+        ctx.beginPath();
+        ctx.arc(toPx(x1), toPy(y1), 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
 
-    ctx.fillStyle = "#dc3545";
-    ctx.beginPath();
-    ctx.arc(toPx(x2), toPy(y2), 6, 0, Math.PI * 2);
-    ctx.fill();
+        ctx.fillStyle = "#dc3545";
+        ctx.beginPath();
+        ctx.arc(toPx(x2), toPy(y2), 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
 
-    ctx.fillStyle = "#0f172a";
-    ctx.font = "bold 11px sans-serif";
-    ctx.fillText(`A(${x1}, ${y1})`, toPx(x1) + 8, toPy(y1) - 6);
-    ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + 8, toPy(y2) - 6);
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "bold 12px sans-serif";
+        // Ajuste dinámico de texto para que no se encime
+        const offsetAx = x1 < x2 ? -45 : 12;
+        const offsetBx = x2 < x1 ? -45 : 12;
+        ctx.fillText(`A(${x1}, ${y1})`, toPx(x1) + offsetAx, toPy(y1) - 8);
+        ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + offsetBx, toPy(y2) - 8);
+    }
 }
 
 // =======================================================
