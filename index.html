@@ -264,35 +264,36 @@
 
             </div>
 
-            <!-- ==========================================
-                 Refuerzo Algebraico y Tips Adicionales 
+<!-- ==========================================
+                 SECCIÓN DE REFUERZO ALGEBRAICO Y TIPS (NIVELADA)
                  ========================================== -->
             <div style="background: #ffffff; padding: 1.5rem; border-radius: 8px; border-left: 5px solid #00806A; margin-top: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="color: #004d40; margin-bottom: 1rem;">🛡️ Refuerzo Algebraico y Tips Antierrores</h3>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <!-- Encabezado general que abarca todo el ancho -->
+                <h3 style="color: #004d40; margin: 0 0 1.25rem 0; font-size: 1.2rem;">🛡️ Refuerzo Algebraico y Tips Antierrores</h3>
+                
+                <!-- Cuadrícula con 2 tarjetas idénticas y niveladas -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; align-items: stretch;">
                     
-                    <!-- Tarjeta Original: Leyes de Signos -->
-                    <div>
-                        <h4 style="color: #00695c; margin-bottom: 0.5rem;">➕ Leyes de Signos y Despejes</h4>
-                        <p style="font-size: 0.9rem; color: #334155; line-height: 1.5;">
-                            <strong>Multiplicación / División:</strong><br>
-                            Signos iguales dan positivo ($(-)\cdot(-) = +$), signos diferentes dan negativo ($(+)\cdot(-) = -$).
-                        </p>
-                        <p style="font-size: 0.9rem; color: #334155; line-height: 1.5; margin-top: 0.5rem;">
-                            <strong>Sustitución con signos:</strong><br>
-                            Si la fórmula tiene un "menos" y el número también, se vuelve "más": $x - (-3) \rightarrow x + 3$.
-                        </p>
+                    <!-- TARJETA 1: SIGNOS Y DESPEJES -->
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                        <h4 style="color: #00695c; margin: 0 0 0.75rem 0; font-size: 1rem;">➕ Leyes de Signos y Despejes</h4>
+                        <div style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                            <p style="margin: 0 0 0.5rem 0;"><strong>Multiplicación / División:</strong><br>
+                            Signos iguales dan positivo ($(-)\cdot(-) = +$), signos diferentes dan negativo ($(+)\cdot(-) = -$).</p>
+                            <p style="margin: 0;"><strong>Sustitución con signos:</strong><br>
+                            Si la fórmula tiene un "menos" y el número también, se vuelve "más": $x - (-3) \rightarrow x + 3$.</p>
+                        </div>
                     </div>
 
-                <!-- TARJETA: REGLA DE LOS CUADRANTES -->
-                    <div>
-                        <h4 style="color: #00695c; margin-bottom: 0.5rem;">🧭 Regla de Cuadrantes (Ángulo $\theta$)</h4>
-                        <p style="font-size: 0.9rem; line-height: 1.5; color: #334155; margin-bottom: 0.5rem;">
-                            Calcula primero el ángulo base en positivo: $\alpha = \arctan\left(\frac{|\Delta y|}{|\Delta x|}\right)$. Luego aplica el ajuste según los signos de $\Delta x$ y $\Delta y$:
+                    <!-- TARJETA 2: REGLA DE CUADRANTES (CORREGIDA) -->
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                        <h4 style="color: #00695c; margin: 0 0 0.75rem 0; font-size: 1rem;">🧭 Regla de Cuadrantes (Ángulo $\theta$)</h4>
+                        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin: 0 0 0.6rem 0;">
+                            Calcula el ángulo base: $\alpha = \arctan\left(\frac{|\Delta y|}{|\Delta x|}\right)$ y aplica el ajuste según los signos de $\Delta x$ y $\Delta y$:
                         </p>
-                        <div style="background: #f8fafc; border-left: 3px solid #059669; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #334155;">
-                            <ul style="list-style-type: none; padding: 0; margin: 0; line-height: 1.7;">
+                        <div style="background: #ffffff; border-left: 3px solid #059669; padding: 0.6rem 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #334155; margin-top: auto;">
+                            <ul style="list-style-type: none; padding: 0; margin: 0; line-height: 1.6;">
                                 <li><strong>Cuadrante I</strong> ($+, +$): $\theta = \alpha$ (Directo)</li>
                                 <li><strong>Cuadrante II</strong> ($-, +$): $\theta = 180^\circ - \alpha$</li>
                                 <li><strong>Cuadrante III</strong> ($-, -$): $\theta = 180^\circ + \alpha$</li>
@@ -300,8 +301,9 @@
                             </ul>
                         </div>
                     </div>
+
                 </div>
-            </div>
+            </div>        
         </section>
 
         <!-- ===================================================
