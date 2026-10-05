@@ -273,30 +273,213 @@
         </div>
     </div>
 </section>
-        <!-- ==========================================
-             PESTAÑA 3: LABORATORIO INTERACTIVO
-             ========================================== -->
-        <section id="sec-laboratorio" class="tab-content">
-            <div class="pedagogico-header">
-                <h2>🔬 Simulador Gráfico y Cálculo Automático</h2>
-            </div>
-            <div class="lab-grid">
-                <div class="card">
-                    <h3>Coordenadas de Entrada</h3>
-                    <form id="lab-form" onsubmit="event.preventDefault(); calcularLaboratorio();">
-                        <label>X1: <input type="number" id="input-x1" value="2" class="input-base"></label>
-                        <label>Y1: <input type="number" id="input-y1" value="3" class="input-base"></label>
-                        <label>X2: <input type="number" id="input-x2" value="-4" class="input-base"></label>
-                        <label>Y2: <input type="number" id="input-y2" value="-5" class="input-base"></label>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Calcular Recta</button>
-                    </form>
-                </div>
-                <div class="card" style="text-align: center;">
-                    <canvas id="plano-cartesiano" width="500" height="400" style="border: 1px solid #cbd5e1; max-width: 100%; background: #f8fafc;"></canvas>
-                </div>
-            </div>
-        </section>
+<!-- ===================================================
+             PESTAÑA 3: LABORATORIO INTERACTIVO (ACTUALIZADO)
+             =================================================== -->
+        <section id="sec-laboratorio" class="tab-content" style="display: none;">
+          
+          <div class="pedagogico-header" style="margin-bottom: 1rem;">
+            <h2 style="color: #004d40; font-size: 1.35rem; margin-bottom: 0.2rem;">🔬 Simulador Gráfico y Cálculo Automático</h2>
+            <p style="color: #475569; margin: 0; font-size: 0.88rem;">Ingresa las coordenadas de los puntos $A$ y $B$ para visualizar la gráfica e interpretar la solución paso a paso.</p>
+          </div>
 
+          <!-- LAYOUT PRINCIPAL: ENTRADAS COMPACTAS + PLANO CARTESIANO AMPLIO -->
+          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; align-items: stretch;">
+            
+            <!-- COLUMNA IZQUIERDA: PUNTOS Y CONTROLES MUY COMPACTOS -->
+            <div class="card-aplicacion" style="flex: 0 0 260px; background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+              <h3 style="margin: 0 0 0.6rem 0; color: #004d40; font-size: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
+                📍 Puntos de Entrada
+              </h3>
+              
+              <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
+                <!-- PUNTO A -->
+                <div style="background-color: #f0f7ff; border: 1px solid #b6d4fe; padding: 0.6rem; border-radius: 6px; margin-bottom: 0.6rem;">
+                  <strong style="color: #084298; font-size: 0.85rem;">Punto A $(x_1, y_1)$</strong>
+                  <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+                    <div style="flex: 1;">
+                      <span style="font-size: 0.75rem; color: #555;">$x_1$:</span>
+                      <input type="number" step="any" id="lab-x1" value="-2" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+                    <div style="flex: 1;">
+                      <span style="font-size: 0.75rem; color: #555;">$y_1$:</span>
+                      <input type="number" step="any" id="lab-y1" value="-3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- PUNTO B -->
+                <div style="background-color: #fff0f0; border: 1px solid #f5c2c7; padding: 0.6rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                  <strong style="color: #842029; font-size: 0.85rem;">Punto B $(x_2, y_2)$</strong>
+                  <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+                    <div style="flex: 1;">
+                      <span style="font-size: 0.75rem; color: #555;">$x_2$:</span>
+                      <input type="number" step="any" id="lab-x2" value="4" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+                    <div style="flex: 1;">
+                      <span style="font-size: 0.75rem; color: #555;">$y_2$:</span>
+                      <input type="number" step="any" id="lab-y2" value="3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.6rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
+                  🚀 Calcular y Graficar
+                </button>
+              </form>
+
+              <div style="margin-top: 0.75rem; background-color: #f8f9fa; padding: 0.5rem; border-radius: 6px; font-size: 0.78rem; color: #6c757d; border-left: 3px solid #ffc107;">
+                💡 Zoom/Arrastrar en mapa.<br>
+                <a href="#" onclick="calcularLaboratorio(); return false;" style="color: #0d6efd; text-decoration: none; font-weight: bold;">Restablecer Vista</a>
+              </div>
+            </div>
+
+<!-- COLUMNA DERECHA: PLANO CARTESIANO ESPACIOSO Y CAPAS -->
+            <div class="card-aplicacion" style="flex: 1; min-width: 320px; background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h3 style="margin: 0; color: #333; font-size: 1.1rem;">📊 Plano Cartesiano Interactivo</h3>
+                <span style="font-size: 0.8rem; background: #e2e8f0; color: #334155; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 500;">Vista Vectorial 2D</span>
+              </div>
+              
+              <!-- CANVAS PANORÁMICO LIMPIO -->
+              <div class="canvas-wrapper" style="position: relative; width: 100%; height: 420px; background: #f8fafc; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
+                <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+              </div>
+
+<!-- AQUÍ ENTRA EL PANEL DE CAPAS INTERACTIVAS (DISEÑO PREMIUM) -->
+              <div style="margin-top: 1.25rem; padding: 1.25rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);">
+                  <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                      <span style="font-size: 1.1rem;">🎛️</span> Capas del Gráfico:
+                  </h4>
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.85rem; color: #334155;">
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Puntos A y B</strong>
+                      </label>
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Triángulo ($\Delta x, \Delta y$)</strong>
+                      </label>
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Magnitud ($|\Delta \vec{r}|$)</strong>
+                      </label>
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Ángulo ($\theta$)</strong>
+                      </label>
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Pendiente ($m$)</strong>
+                      </label>
+                      
+                      <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; background: #f8fafc; padding: 0.5rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';">
+                          <input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()" style="accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;"> 
+                          <strong>Ordenada ($b$)</strong>
+                      </label>
+
+                  </div>
+              </div>
+              <!-- FIN DEL PANEL DE CAPAS -->
+
+            </div>
+
+          <!-- SECCIÓN INFERIOR: PASO A PASO RAZONADO (ESTADO LIMPIO/FÓRMULAS BASE) -->
+          <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 10px; border: 1px solid #e0e0e0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
+              <h3 style="margin: 0; color: #004d40; font-size: 1.25rem;">📝 Procedimiento Razonado y Solución Paso a Paso</h3>
+              <span style="background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Modo Análisis</span>
+            </div>
+            
+            <!-- GRID DE TARJETAS DE PASO A PASO (LIMPIAS) -->
+            <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+              
+              <!-- Paso 1 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">1</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Vector Desplazamiento ($\Delta \vec{r}$)</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$\Delta \vec{r} = (x_2 - x_1)\hat{i} + (y_2 - y_1)\hat{j}$$
+                </div>
+              </div>
+
+              <!-- Paso 2 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">2</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Magnitud del Desplazamiento ($|\Delta \vec{r}|$)</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$$
+                </div>
+              </div>
+
+              <!-- Paso 3 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">3</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Dirección del Vector ($\theta$)</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right)$$
+                </div>
+              </div>
+
+              <!-- Paso 4 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">4</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Pendiente de la Recta ($m$)</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$m = \frac{y_2 - y_1}{x_2 - x_1}$$
+                </div>
+              </div>
+
+              <!-- Paso 5 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">5</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Punto-Pendiente</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$y - y_1 = m(x - x_1)$$
+                </div>
+              </div>
+
+              <!-- Paso 6 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">6</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Explícita ($y = mx + b$)</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$y = mx + b$$
+                </div>
+              </div>
+
+              <!-- Paso 7 -->
+              <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); grid-column: 1 / -1;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">7</span>
+                    <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma General ($Ax + By + C = 0$)</h4>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center;">
+                    $$Ax + By + C = 0$$
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
         <!-- ==========================================
              PESTAÑA 4: RETOS Y DESAFÍOS (NUEVO)
              ========================================== -->
