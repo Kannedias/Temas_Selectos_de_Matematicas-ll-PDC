@@ -735,47 +735,6 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + offsetBx, toPy(y2) - 8);
     }
 }
-
-// =======================================================
-// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS (MANTENIDO INTACTO)
-// =======================================================
-function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
-    const canvas = document.getElementById('planoCartesianoCanvas');
-    if (!canvas) return;
-    
-    // (Tu código original de dibujo del canvas se mantiene aquí tal cual)
-    const rect = canvas.parentNode.getBoundingClientRect();
-    canvas.width = rect.width || 600;
-    canvas.height = 380;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-    const maxCoord = Math.max(Math.abs(x1), Math.abs(y1), Math.abs(x2), Math.abs(y2), 5) + 3;
-    const scale = Math.min(width, height) / (maxCoord * 2.2);
-    const cx = width / 2; const cy = height / 2;
-    const toPx = (x) => cx + (x * scale);
-    const toPy = (y) => cy - (y * scale);
-
-    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, width, height);
-    ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(width, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
-
-    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 3;
-    ctx.beginPath();
-    if (res.esVertical) {
-        ctx.moveTo(toPx(x1), 0); ctx.lineTo(toPx(x1), height);
-    } else {
-        const m = parseFloat(res.pendiente); const b = parseFloat(res.ordenadaOrigen);
-        const xMin = -maxCoord * 2; const xMax = maxCoord * 2;
-        ctx.moveTo(toPx(xMin), toPy(m * xMin + b)); ctx.lineTo(toPx(xMax), toPy(m * xMax + b));
-    }
-    ctx.stroke();
-
-    ctx.fillStyle = "#084298"; ctx.beginPath(); ctx.arc(toPx(x1), toPy(y1), 6, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#dc3545"; ctx.beginPath(); ctx.arc(toPx(x2), toPy(y2), 6, 0, Math.PI * 2); ctx.fill();
-}
-
 // =======================================================
 // BLOQUE 6: LÓGICA DEL MÓDULO DE RETOS (NUEVO)
 // =======================================================
