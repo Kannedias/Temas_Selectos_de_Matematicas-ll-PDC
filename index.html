@@ -3,83 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Académico | Conalep Playa del Carmen</title>
+  <title>Portal Académico Matemáticas II | Conalep PDC</title>
   <link rel="stylesheet" href="css/base.css">
-  <style>
-    /* =======================================================
-       ETIQUETA: ESTILOS EXCLUSIVOS DEL DASHBOARD
-       ======================================================= */
-    .progress-bar-bg { background: #e2e8f0; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; margin: 10px 0; }
-    .progress-bar-fill { background: var(--conalep-accent); height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
-    
-    .grid-unidades { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
-    
-    .card-modulo {
-      background: #fff; padding: 1.2rem; border-radius: 6px; 
-      border: 1px solid var(--border-card); border-left: 4px solid var(--conalep-accent);
-      display: flex; flex-direction: column;
-    }
-    .card-modulo.locked { border-left-color: #94a3b8; background: #f1f5f9; opacity: 0.85; }
-    
-    .badge-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; align-self: flex-start; margin: 8px 0; }
-    .status-ok { background: #dcfce7; color: #166534; }
-    .status-act { background: #fef08a; color: #854d0e; }
-    .status-lock { background: #e2e8f0; color: #475569; }
-    .status-pend { background: #fee2e2; color: #991b1b; }
-
-    .table-evidencias { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-    .table-evidencias th, .table-evidencias td { padding: 10px; border-bottom: 1px solid var(--border-card); text-align: left; }
-    .table-evidencias th { background: #f8fafc; color: var(--conalep-dark); }
-  </style>
+  <!-- Carga de KaTeX para las fórmulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
 
-<!-- ==========================================
-       ETIQUETA: CABECERA DINÁMICA CON LOGO
+  <!-- ==========================================
+       CABECERA DINÁMICA CON LOGO
        ========================================== -->
   <header class="main-header">
-    <div class="header-container" style="display: flex; align-items: center; gap: 15px;">
-      
-      <!-- Lado Izquierdo: Logo y Título -->
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <!-- Asegúrate de colocar tu imagen del logo en la carpeta correcta -->
-        <img src="assets/logo-conalep.png" alt="Logo CONALEP" style="height: 50px; width: auto;">
+    <div class="header-container">
+      <div class="header-brand">
+        <!-- Reemplaza la URL src con la ruta exacta de tu logo si es necesario -->
+        <img src="image_4bef00.png" alt="Logo CONALEP">
         <div>
-          <div style="font-weight: 700; font-size: 1.15rem; letter-spacing: 0.5px;">CONALEP PLAYA DEL CARMEN</div>
-          <div style="font-size: 0.8rem; color: #a7f3d0;">Módulo: Temas Selectos de Matemáticas II</div>
+          <div class="brand-title">CONALEP PLAYA DEL CARMEN</div>
+          <div class="brand-sub">Módulo: Temas Selectos de Matemáticas II</div>
         </div>
       </div>
-
-      <!-- Lado Derecho: Menú de Usuario -->
       <div id="user-menu" class="hidden" style="background: rgba(0,0,0,0.15); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; gap: 10px; align-items: center;">
         <span id="welcome-name">👤 Bienvenido</span>
         <span style="color: #cbd5e1;">|</span>
         <button onclick="cerrarSesion()" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer;">Salir</button>
       </div>
-      
     </div>
   </header>
 
   <main class="container">
-    <!-- =======================================================
-         ETIQUETA: VISTA A - LOGIN
-         ======================================================= -->
+    <!-- ==========================================
+         VISTA A - LOGIN RÁPIDO
+         ========================================== -->
     <section id="vista-login" class="card-box" style="max-width: 400px; margin: 4rem auto; text-align: center;">
       <h2 style="color: var(--conalep-dark); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
       <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
       <select id="input-grupo" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
-        <option value="404-INFO">404 - Informática</option>
-        <option value="405-ADMN">405 - Administración</option>
+        <option value="505">505 - Informática / Pasantía</option>
+        <option value="508">508 - Administración / Dual</option>
       </select>
       <button class="btn-conalep" style="width: 100%; font-size: 1.05rem;" onclick="iniciarSesion()">🚀 Ingresar al Portal</button>
     </section>
 
-    <!-- =======================================================
-         ETIQUETA: VISTA B - DASHBOARD DEL ESTUDIANTE
-         ======================================================= -->
+    <!-- ==========================================
+         VISTA B - DASHBOARD DEL ALUMNO
+         ========================================== -->
     <section id="vista-dashboard" class="hidden">
       
-      <!-- Panel de Progreso -->
+      <!-- Panel de Progreso General -->
       <div class="card-box">
         <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Panel de Progreso General</h3>
         <p style="margin: 8px 0;"><strong>Estudiante:</strong> <span id="lbl-nombre">Alumno</span> &nbsp;|&nbsp; <strong>Grupo:</strong> <span id="lbl-grupo">--</span></p>
@@ -87,23 +60,66 @@
         <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Avance Global Semestral: <strong id="lbl-porcentaje">0%</strong> | Tareas Firmadas: 2 de 4</p>
       </div>
 
+      <!-- Rescate de la Sección Pedagógica (Fundamentos) -->
+      <div class="card-box" style="border-left: 4px solid var(--conalep-accent);">
+        <div class="pedagogico-header">
+            <h3 style="color: var(--conalep-dark); margin-top: 0;">💡 ¿Para qué sirven las Matemáticas en el Mundo Real?</h3>
+            <p>Las fórmulas no son números abstractos: son la física de estructuras, la animación digital y los algoritmos médicos que transforman el mundo.</p>
+        </div>
+        <div class="metaforas-grid">
+            <article class="card-aplicacion">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Videojuegos y Gráficos TI">
+                    <span class="badge-area badge-ti">Sistemas & TI</span>
+                </div>
+                <div class="card-body">
+                    <h4 style="margin-bottom: 5px;">🎮 El Algoritmo de Renderizado</h4>
+                    <div class="formula-highlight">Ax + By + C = 0 &bull; Vector &Delta;r</div>
+                    <p style="font-size: 0.85rem;">En cada fotograma, el motor de físicas traza una recta mediante <strong>Raycasting</strong> entre dos puntos en 2D.</p>
+                    <p class="metafora-quote">💬 "Si no entiendes la ecuación de la recta, no puedes programar físicas de movimiento."</p>
+                </div>
+            </article>
+            <article class="card-aplicacion">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=600&q=80" alt="Ingeniería y Estructuras">
+                    <span class="badge-area badge-ing">Ingeniería</span>
+                </div>
+                <div class="card-body">
+                    <h4 style="margin-bottom: 5px;">🏗️ Resistencia de Cargas</h4>
+                    <div class="formula-highlight">Magnitud: |&Delta;r| &bull; Pendiente (m)</div>
+                    <p style="font-size: 0.85rem;">En el diseño de rampas, una línea representa un <strong>Vector de Fuerza</strong> que soporta cargas mecánicas.</p>
+                    <p class="metafora-quote">💬 "Un error en la pendiente $m$ es la diferencia entre una estructura sólida y un colapso."</p>
+                </div>
+            </article>
+            <article class="card-aplicacion">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Farmacocinética y Medicina">
+                    <span class="badge-area badge-med">Medicina & Salud</span>
+                </div>
+                <div class="card-body">
+                    <h4 style="margin-bottom: 5px;">💊 Curva Farmacocinética</h4>
+                    <div class="formula-highlight">y = mx + b (Razón de Cambio)</div>
+                    <p style="font-size: 0.85rem;">Al administrar medicamento, la velocidad de infusión en sangre es la <strong>pendiente (m)</strong>.</p>
+                    <p class="metafora-quote">💬 "Determinar la caída de concentración previene fallos en tratamientos críticos."</p>
+                </div>
+            </article>
+        </div>
+      </div>
+
       <!-- Catálogo de Unidades -->
       <h3 style="margin-top: 2rem; color: var(--conalep-dark);">📚 Unidades Temáticas del Programa</h3>
       <div class="grid-unidades">
-        
         <div class="card-modulo">
           <h4 style="margin:0;">📐 Módulo 1.1: Sistemas y Vectores</h4>
           <span class="badge-status status-ok">🟢 Concluido</span>
           <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Plano cartesiano, vector desplazamiento y magnitud.</p>
         </div>
-
         <div class="card-modulo" style="border-color: #fef08a;">
           <h4 style="margin:0;">📈 Módulo 1.2: La Línea Recta</h4>
           <span class="badge-status status-act">🟡 En Curso</span>
           <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Pendiente, inclinación y las 3 formas de la ecuación.</p>
           <a href="unidad1_recta.html" class="btn-conalep" style="font-size: 0.85rem; padding: 0.5rem;">🚀 Entrar al Laboratorio</a>
         </div>
-
         <div class="card-modulo locked">
           <h4 style="margin:0;">⭕ Módulo 2.1: La Circunferencia</h4>
           <span class="badge-status status-lock">🔒 Próximamente</span>
@@ -113,7 +129,6 @@
 
       <!-- Historial y Ventanilla de Entregas -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-        
         <div class="card-box" style="margin: 0;">
           <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
           <div style="overflow-x: auto;">
@@ -126,21 +141,17 @@
             </table>
           </div>
         </div>
-
         <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
           <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
-          
           <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
           <select style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
             <option>U 1.2: Práctica 7 Pasos (Ejercicios Libreta)</option>
             <option>U 1.2: Reto Semilla</option>
           </select>
-          
           <input type="file" accept="image/*,application/pdf" style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
           <button class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);">📤 Enviar Evidencia a Revisión</button>
         </div>
-
       </div>
     </section>
   </main>
