@@ -2,7 +2,7 @@
    LÓGICA DE SESIÓN, DASHBOARD, GRÁFICAS Y ENVÍO A SHEETS
    ======================================================= */
 
-const SCRIPT_URL = "LA_URL_DE_TU_APPS_SCRIPT_AQUI"; // Asegúrate de colocar tu URL real
+const SCRIPT_URL = "https://script.google.com/macros/library/d/1vQfTPyGBqwKITYOTe8jUGoAQLUktEsjJJQeEif2ubrU_kTTeV2ADaKaW/9"; // Asegúrate de colocar tu URL real
 let miGrafica = null;
 let datosDesgloseParciales = []; 
 
