@@ -59,13 +59,16 @@
       <!-- PERFIL DEL ALUMNO Y GRÁFICA DE PARCIALES (Cambio 3 y 4) -->
       <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2rem;">
         
-        <!-- Ficha de Identidad y Foto -->
+<!-- Ficha de Identidad y Foto (Punto 2) -->
         <div class="card-box" style="margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div style="width: 110px; height: 110px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 15px; border: 4px solid var(--conalep-accent); overflow: hidden;">
-                <!-- Aquí irá la foto real en el futuro, por ahora un icono -->
-                📷
+            <div style="position: relative;">
+                <img id="img-perfil" src="assets/placeholder-avatar.png" alt="Foto" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--conalep-accent); cursor: pointer;" onclick="document.getElementById('input-foto-perfil').click();">
+                <div style="position: absolute; bottom: 0; right: 0; background: var(--conalep-dark); border-radius: 50%; padding: 6px; cursor: pointer;" onclick="document.getElementById('input-foto-perfil').click();">📷</div>
             </div>
-            <h3 id="lbl-nombre" style="color: var(--conalep-dark); margin: 0; font-size: 1.1rem;">Nombre del Alumno</h3>
+            <input type="file" id="input-foto-perfil" accept="image/*" style="display: none;" onchange="subirFotoPerfil()">
+            <p id="txt-subiendo-foto" style="font-size: 0.75rem; color: var(--conalep-gold); display: none;">⏳ Subiendo foto...</p>
+            
+            <h3 id="lbl-nombre" style="color: var(--conalep-dark); margin: 10px 0 0 0; font-size: 1.1rem; text-transform: uppercase;">Nombre del Alumno</h3>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin: 5px 0;">Matrícula: <strong id="lbl-matricula">--</strong></p>
             <span id="lbl-grupo" style="background: var(--conalep-accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
         </div>
