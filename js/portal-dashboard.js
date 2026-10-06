@@ -7,15 +7,14 @@ let miGrafica = null;
 
 function iniciarSesion() {
     const matricula = document.getElementById('input-matricula').value.trim();
+    const btnIngresar = document.querySelector('#vista-login button');
 
     if (matricula === "") {
         alert("⚠️ Por favor, ingresa tu matrícula para acceder.");
         return;
     }
 
-    // ==========================================
     // LOGIN DE ADMINISTRADOR (DOCENTE)
-    // ==========================================
     if (matricula === "ADMIN-JL") {
         document.getElementById('welcome-name').innerText = `👨‍🏫 Prof. Juan Luis`;
         document.getElementById('vista-login').classList.add('hidden');
@@ -24,27 +23,49 @@ function iniciarSesion() {
         return; 
     }
 
-    // ==========================================
-    // SIMULACIÓN DE ALUMNO Y CONEXIÓN A SHEETS
-    // ==========================================
-    const simulacionBaseDatos = {
-        primerNombre: "Jesús Israel",
-        nombreCompleto: "JESÚS ISRAEL ACEVEDO BRET",
-        grupo: "505"
-    };
-    
-    document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${simulacionBaseDatos.primerNombre}`;
-    document.getElementById('lbl-nombre').innerText = simulacionBaseDatos.nombreCompleto;
-    document.getElementById('lbl-matricula').innerText = matricula;
-    document.getElementById('lbl-grupo').innerText = `Grupo ${simulacionBaseDatos.grupo}`;
+    btnIngresar.innerText = "⏳ Verificando matrícula...";
+    btnIngresar.disabled = true;
 
-    document.getElementById('vista-login').classList.add('hidden');
-    document.getElementById('vista-dashboard').classList.remove('hidden');
-    document.getElementById('user-menu').classList.remove('hidden');
-    
-    dibujarGrafica();
+    // LOGIN REAL CON GOOGLE SHEETS
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "login", matricula: matricula })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            // Cargar datos reales en la interfaz
+            document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${data.primerNombre}`;
+            document.getElementById('lbl-nombre').innerText = data.nombreCompleto;
+            document.getElementById('lbl-matricula').innerText = matricula;
+            document.getElementById('lbl-grupo').innerText = `Grupo ${data.grupo}`;
 
-    // Consultar el avance real a la Base de Datos
+            document.getElementById('vista-login').classList.add('hidden');
+            document.getElementById('vista-dashboard').classList.remove('hidden');
+            document.getElementById('user-menu').classList.remove('hidden');
+            
+            dibujarGrafica();
+            consultarAvanceReal(matricula); // Llama a la validación de módulos
+
+            // Persistencia local
+            sessionStorage.setItem('matriculaActiva', matricula);
+            sessionStorage.setItem('nombreActivo', data.nombreCompleto);
+            sessionStorage.setItem('grupoActivo', data.grupo);
+        } else {
+            alert("❌ Matrícula no encontrada en el sistema.");
+        }
+    })
+    .catch(error => {
+        alert("⚠️ Error de conexión con la base de datos.");
+        console.error(error);
+    })
+    .finally(() => {
+        btnIngresar.innerText = "🚀 Ingresar al Portal";
+        btnIngresar.disabled = false;
+    });
+}
+
+function consultarAvanceReal(matricula) {
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar", matricula: matricula })
@@ -61,15 +82,7 @@ function iniciarSesion() {
             badge1_1.className = "badge-status status-pend";
             badge1_1.innerHTML = "🔴 Pendiente de Entrega";
         }
-    })
-    .catch(error => {
-        const badge1_1 = document.getElementById('status-mod-1.1');
-        if (badge1_1) badge1_1.innerHTML = "⚠️ Error de conexión";
     });
-
-    sessionStorage.setItem('matriculaActiva', matricula);
-    sessionStorage.setItem('nombreActivo', simulacionBaseDatos.nombreCompleto);
-    sessionStorage.setItem('grupoActivo', simulacionBaseDatos.grupo);
 }
 
 function cerrarSesion() {
