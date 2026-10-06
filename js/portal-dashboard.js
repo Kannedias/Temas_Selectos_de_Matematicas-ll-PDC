@@ -2,10 +2,7 @@
    LÓGICA DE SESIÓN, DASHBOARD, GRÁFICAS Y ENVÍO A SHEETS
    ======================================================= */
 
-// URL Oficial de tu Google Apps Script
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxN6sq6jWResoXjgGZ7xwhivUGM6rqFJcwfEcfK4Eqnjx63XwrLNm07-A-lmAvql5yB/exec";
-
-// Variable global para la gráfica de Chart.js
 let miGrafica = null;
 
 function iniciarSesion() {
@@ -24,11 +21,11 @@ function iniciarSesion() {
         document.getElementById('vista-login').classList.add('hidden');
         document.getElementById('vista-admin').classList.remove('hidden');
         document.getElementById('user-menu').classList.remove('hidden');
-        return; // Detiene la ejecución para que no cargue el panel de alumno
+        return; 
     }
 
     // ==========================================
-    // SIMULACIÓN DE ALUMNO (Conexión a Sheets)
+    // SIMULACIÓN DE ALUMNO Y CONEXIÓN A SHEETS
     // ==========================================
     const simulacionBaseDatos = {
         primerNombre: "Jesús Israel",
@@ -47,25 +44,7 @@ function iniciarSesion() {
     
     dibujarGrafica();
 
-    sessionStorage.setItem('matriculaActiva', matricula);
-    sessionStorage.setItem('nombreActivo', simulacionBaseDatos.nombreCompleto);
-    sessionStorage.setItem('grupoActivo', simulacionBaseDatos.grupo);
-}
-    // Configurar Ficha de Identidad
-    document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${simulacionBaseDatos.primerNombre}`;
-    document.getElementById('lbl-nombre').innerText = simulacionBaseDatos.nombreCompleto;
-    document.getElementById('lbl-matricula').innerText = matricula;
-    document.getElementById('lbl-grupo').innerText = `Grupo ${simulacionBaseDatos.grupo}`;
-
-    // Transición de Vistas
-    document.getElementById('vista-login').classList.add('hidden');
-    document.getElementById('vista-dashboard').classList.remove('hidden');
-    document.getElementById('user-menu').classList.remove('hidden');
-    
-    // Renderizar Gráfica de Avance (Cambio implementado)
-    dibujarGrafica();
-
-   // Consultar el avance real a la Base de Datos
+    // Consultar el avance real a la Base de Datos
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar", matricula: matricula })
@@ -73,6 +52,8 @@ function iniciarSesion() {
     .then(response => response.json())
     .then(data => {
         const badge1_1 = document.getElementById('status-mod-1.1');
+        if (!badge1_1) return;
+        
         if (data.modulo1_1 === "Concluido") {
             badge1_1.className = "badge-status status-ok";
             badge1_1.innerHTML = "🟢 Concluido";
@@ -82,10 +63,10 @@ function iniciarSesion() {
         }
     })
     .catch(error => {
-        document.getElementById('status-mod-1.1').innerHTML = "⚠️ Error de conexión";
+        const badge1_1 = document.getElementById('status-mod-1.1');
+        if (badge1_1) badge1_1.innerHTML = "⚠️ Error de conexión";
     });
 
-    // Persistencia local
     sessionStorage.setItem('matriculaActiva', matricula);
     sessionStorage.setItem('nombreActivo', simulacionBaseDatos.nombreCompleto);
     sessionStorage.setItem('grupoActivo', simulacionBaseDatos.grupo);
@@ -94,18 +75,20 @@ function iniciarSesion() {
 function cerrarSesion() {
     sessionStorage.clear();
     document.getElementById('vista-dashboard').classList.add('hidden');
+    
+    const vistaAdmin = document.getElementById('vista-admin');
+    if(vistaAdmin) vistaAdmin.classList.add('hidden');
+    
     document.getElementById('user-menu').classList.add('hidden');
     document.getElementById('vista-login').classList.remove('hidden');
     document.getElementById('input-matricula').value = "";
     
-    // Destruir la gráfica al salir para que no se duplique al volver a entrar
     if(miGrafica !== null) { 
         miGrafica.destroy(); 
         miGrafica = null;
     }
 }
 
-// NUEVA FUNCIÓN: Dibujar Gráfica de Parciales
 function dibujarGrafica() {
     const canvas = document.getElementById('graficaParciales');
     if (!canvas) return; 
@@ -113,7 +96,6 @@ function dibujarGrafica() {
     const ctx = canvas.getContext('2d');
     if(miGrafica !== null) { miGrafica.destroy(); }
 
-    // Ponderación: P1 (25%), P2 (30%) -> Suman 55% de aprobación temprana. P3 vale 45%.
     miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -143,7 +125,6 @@ function dibujarGrafica() {
     });
 }
 
-// FUNCIÓN INTACTA: Subir foto a Drive y registrar en Sheets
 function subirEvidencia() {
     const fileInput = document.getElementById('input-archivo');
     const actividad = document.getElementById('select-tarea').value;
@@ -158,7 +139,6 @@ function subirEvidencia() {
 
     const file = fileInput.files[0];
     
-    // Limitar tamaño a 5MB aprox para evitar colapso de red
     if (file.size > 5242880) {
         alert("⚠️ El archivo es demasiado pesado. Intenta subir una foto de menor calidad (máx 5MB).");
         return;
@@ -170,11 +150,11 @@ function subirEvidencia() {
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        // Extraer solo la cadena base64 limpia
         const base64Data = e.target.result.split(',')[1];
         
-   const payload = {
-            accion: "subir", // <--- Agrega esta línea
+        // PAQUETE CON LA ACCIÓN "SUBIR"
+        const payload = {
+            accion: "subir", 
             matricula: matricula,
             nombreArchivo: file.name,
             mimeType: file.type,
@@ -184,7 +164,6 @@ function subirEvidencia() {
             actividad: actividad
         };
 
-        // Enviar datos al Google Apps Script
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify(payload)
@@ -193,7 +172,7 @@ function subirEvidencia() {
         .then(data => {
             if(data.status === "éxito") {
                 alert("✅ ¡Tu evidencia se ha enviado correctamente a revisión!");
-                fileInput.value = ""; // Limpiar la casilla de archivo
+                fileInput.value = ""; 
             } else {
                 alert("❌ Ocurrió un error en el servidor: " + data.mensaje);
             }
