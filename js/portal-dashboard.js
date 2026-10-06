@@ -2,7 +2,7 @@
    LÓGICA DE SESIÓN, DASHBOARD, GRÁFICAS Y ENVÍO A SHEETS
    ======================================================= */
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzitxQFtHFwRx8fyFsSQv9oKinS7KkEt-FkZKJ0KxuUv1y4URmqCAKhXvPhG5hv_81PhQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqGwRD-LBjR5Pi9Gx-o1ucFh9osN7e6u9i9A5RiwtQUSuLZiLXnDUWF3FQ6MOypY1J/exec";
 let miGrafica = null;
 
 function iniciarSesion() {
