@@ -52,7 +52,7 @@ function iniciarSesion() {
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
             sessionStorage.setItem('grupoActivo', data.grupo);
         } else {
-            alert("❌ Matrícula no encontrada en el sistema.");
+            alert("❌ " + data.mensaje);
         }
     })
     .catch(error => {
