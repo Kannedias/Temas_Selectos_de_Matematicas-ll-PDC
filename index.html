@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <link rel="stylesheet" href="css/base.css">
+  <!-- Agrega esta línea para las gráficas: -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Académico Matemáticas II | Conalep PDC</title>
@@ -12,14 +15,14 @@
 </head>
 <body>
 
-  <!-- ==========================================
-       CABECERA DINÁMICA CON LOGO
+<!-- ==========================================
+       CABECERA DINÁMICA CON LOGO (Cambio 1 y 2)
        ========================================== -->
   <header class="main-header">
     <div class="header-container">
-      <div class="header-brand">
-        <!-- Reemplaza la URL src con la ruta exacta de tu logo si es necesario -->
-        <img src="image_4bef00.png" alt="Logo CONALEP">
+      <div class="header-brand" style="display: flex; align-items: center; gap: 15px;">
+        <!-- Logo Conalep -->
+        <img src="image_4bef00.png" alt="Logo CONALEP" style="height: 50px; width: auto;">
         <div>
           <div class="brand-title">CONALEP PLAYA DEL CARMEN</div>
           <div class="brand-sub">Módulo: Temas Selectos de Matemáticas II</div>
@@ -35,15 +38,11 @@
 
   <main class="container">
     <!-- ==========================================
-         VISTA A - LOGIN RÁPIDO
+         VISTA A - LOGIN RÁPIDO (Se eliminó el Grupo)
          ========================================== -->
     <section id="vista-login" class="card-box" style="max-width: 400px; margin: 4rem auto; text-align: center;">
       <h2 style="color: var(--conalep-dark); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
-      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
-      <select id="input-grupo" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
-        <option value="505">505 - Informática / Pasantía</option>
-        <option value="508">508 - Administración / Dual</option>
-      </select>
+      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
       <button class="btn-conalep" style="width: 100%; font-size: 1.05rem;" onclick="iniciarSesion()">🚀 Ingresar al Portal</button>
     </section>
 
@@ -52,59 +51,31 @@
          ========================================== -->
     <section id="vista-dashboard" class="hidden">
       
-      <!-- Panel de Progreso General -->
-      <div class="card-box">
-        <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Panel de Progreso General</h3>
-        <p style="margin: 8px 0;"><strong>Estudiante:</strong> <span id="lbl-nombre">Alumno</span> &nbsp;|&nbsp; <strong>Grupo:</strong> <span id="lbl-grupo">--</span></p>
-        <div class="progress-bar-bg"><div id="barra-avance" class="progress-bar-fill"></div></div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Avance Global Semestral: <strong id="lbl-porcentaje">0%</strong> | Tareas Firmadas: 2 de 4</p>
+      <!-- PERFIL DEL ALUMNO Y GRÁFICA DE PARCIALES (Cambio 3 y 4) -->
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <!-- Ficha de Identidad y Foto -->
+        <div class="card-box" style="margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="width: 110px; height: 110px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 15px; border: 4px solid var(--conalep-accent); overflow: hidden;">
+                <!-- Aquí irá la foto real en el futuro, por ahora un icono -->
+                📷
+            </div>
+            <h3 id="lbl-nombre" style="color: var(--conalep-dark); margin: 0; font-size: 1.1rem;">Nombre del Alumno</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 5px 0;">Matrícula: <strong id="lbl-matricula">--</strong></p>
+            <span id="lbl-grupo" style="background: var(--conalep-accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
+        </div>
+
+        <!-- Gráfica de Avance -->
+        <div class="card-box" style="margin: 0; display: flex; flex-direction: column;">
+            <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Ponderación de Evaluaciones</h3>
+            <div style="flex-grow: 1; position: relative; height: 180px; display: flex; justify-content: center; align-items: center;">
+                <canvas id="graficaParciales"></canvas>
+            </div>
+        </div>
+
       </div>
 
-      <!-- Rescate de la Sección Pedagógica (Fundamentos) -->
-      <div class="card-box" style="border-left: 4px solid var(--conalep-accent);">
-        <div class="pedagogico-header">
-            <h3 style="color: var(--conalep-dark); margin-top: 0;">💡 ¿Para qué sirven las Matemáticas en el Mundo Real?</h3>
-            <p>Las fórmulas no son números abstractos: son la física de estructuras, la animación digital y los algoritmos médicos que transforman el mundo.</p>
-        </div>
-        <div class="metaforas-grid">
-            <article class="card-aplicacion">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Videojuegos y Gráficos TI">
-                    <span class="badge-area badge-ti">Sistemas & TI</span>
-                </div>
-                <div class="card-body">
-                    <h4 style="margin-bottom: 5px;">🎮 El Algoritmo de Renderizado</h4>
-                    <div class="formula-highlight">Ax + By + C = 0 &bull; Vector &Delta;r</div>
-                    <p style="font-size: 0.85rem;">En cada fotograma, el motor de físicas traza una recta mediante <strong>Raycasting</strong> entre dos puntos en 2D.</p>
-                    <p class="metafora-quote">💬 "Si no entiendes la ecuación de la recta, no puedes programar físicas de movimiento."</p>
-                </div>
-            </article>
-            <article class="card-aplicacion">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=600&q=80" alt="Ingeniería y Estructuras">
-                    <span class="badge-area badge-ing">Ingeniería</span>
-                </div>
-                <div class="card-body">
-                    <h4 style="margin-bottom: 5px;">🏗️ Resistencia de Cargas</h4>
-                    <div class="formula-highlight">Magnitud: |&Delta;r| &bull; Pendiente (m)</div>
-                    <p style="font-size: 0.85rem;">En el diseño de rampas, una línea representa un <strong>Vector de Fuerza</strong> que soporta cargas mecánicas.</p>
-                    <p class="metafora-quote">💬 "Un error en la pendiente $m$ es la diferencia entre una estructura sólida y un colapso."</p>
-                </div>
-            </article>
-            <article class="card-aplicacion">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Farmacocinética y Medicina">
-                    <span class="badge-area badge-med">Medicina & Salud</span>
-                </div>
-                <div class="card-body">
-                    <h4 style="margin-bottom: 5px;">💊 Curva Farmacocinética</h4>
-                    <div class="formula-highlight">y = mx + b (Razón de Cambio)</div>
-                    <p style="font-size: 0.85rem;">Al administrar medicamento, la velocidad de infusión en sangre es la <strong>pendiente (m)</strong>.</p>
-                    <p class="metafora-quote">💬 "Determinar la caída de concentración previene fallos en tratamientos críticos."</p>
-                </div>
-            </article>
-        </div>
-      </div>
+      <!-- AQUÍ CONTINÚAN TUS TARJETAS DE UNIDADES 1.1, 1.2 Y VENTANILLA DE ENTREGAS... -->
 
       <!-- Catálogo de Unidades -->
       <h3 style="margin-top: 2rem; color: var(--conalep-dark);">📚 Unidades Temáticas del Programa</h3>
