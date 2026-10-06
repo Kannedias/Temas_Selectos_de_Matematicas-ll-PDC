@@ -141,16 +141,19 @@
             </table>
           </div>
         </div>
+        <!-- Ventanilla de Entrega Digital -->
         <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
           <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
+          
           <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
-          <select style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
+          <select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
             <option>U 1.2: Práctica 7 Pasos (Ejercicios Libreta)</option>
             <option>U 1.2: Reto Semilla</option>
           </select>
-          <input type="file" accept="image/*,application/pdf" style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
-          <button class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);">📤 Enviar Evidencia a Revisión</button>
+          
+          <input type="file" id="input-archivo" accept="image/*,application/pdf" style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
+          <button id="btn-enviar" class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);" onclick="subirEvidencia()">📤 Enviar Evidencia a Revisión</button>
         </div>
       </div>
     </section>
