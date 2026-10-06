@@ -219,3 +219,69 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+// PUNTO 2: Lógica para subir la foto de perfil a Drive y guardar URL en Sheets
+function subirFotoPerfil() {
+    const fileInput = document.getElementById('input-foto-perfil');
+    if (!fileInput.files.length) return;
+    
+    const file = fileInput.files[0];
+    const matricula = sessionStorage.getItem('matriculaActiva');
+    const txtEstado = document.getElementById('txt-subiendo-foto');
+    
+    txtEstado.style.display = 'block';
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result.split(',')[1];
+        
+        const payload = {
+            accion: "subir_foto_perfil",
+            matricula: matricula,
+            nombreArchivo: "Perfil_" + matricula + "_" + file.name,
+            mimeType: file.type,
+            archivoBase64: base64Data
+        };
+
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === "éxito") {
+                document.getElementById('img-perfil').src = data.url; // Actualiza la foto en pantalla
+                alert("✅ Foto de perfil actualizada correctamente.");
+            }
+        })
+        .finally(() => { txtEstado.style.display = 'none'; });
+    };
+    reader.readAsDataURL(file);
+}
+
+// PUNTOS 3, 4, 5 y 6: Cargar todos los datos desde Google Sheets al entrar
+function cargarDatosDashboard(matricula) {
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "cargar_dashboard_completo", matricula: matricula })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // PUNTO 2: Cargar foto si existe
+        if(data.fotoPerfil) document.getElementById('img-perfil').src = data.fotoPerfil;
+
+        // PUNTO 6: Llenar desplegable de Tareas Activas
+        const selectTarea = document.getElementById('select-tarea');
+        selectTarea.innerHTML = data.tareasCatalogo.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
+
+        // PUNTO 5: Llenar tabla de Historial
+        const tablaHistorial = document.getElementById('tabla-historial');
+        tablaHistorial.innerHTML = data.historial.map(h => `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 8px;">${h.actividad}</td>
+                <td style="padding: 8px;">${h.fecha}</td>
+                <td style="padding: 8px;"><span class="badge-status ${h.estado === 'Revisado' ? 'status-ok' : 'status-pend'}">${h.estado}</span></td>
+                <td style="padding: 8px;"><strong>${h.nota}</strong></td>
+            </tr>
+        `).join('');
+
+        // PUNTO 3: Guardar el desglose para mostrarlo al dar clic en la gráfica
+        window.desgloseCalificaciones = data.calificacionesParciales; 
+    });
+}
