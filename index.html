@@ -34,20 +34,29 @@
 </head>
 <body>
 
-  <!-- =======================================================
-       ETIQUETA: CABECERA DINÁMICA
-       ======================================================= -->
+<!-- ==========================================
+       ETIQUETA: CABECERA DINÁMICA CON LOGO
+       ========================================== -->
   <header class="main-header">
-    <div class="header-container">
-      <div>
-        <div style="font-weight: 700; font-size: 1.15rem;">CONALEP PLAYA DEL CARMEN</div>
-        <div style="font-size: 0.8rem; color: #a7f3d0;">Módulo: Temas Selectos de Matemáticas II</div>
+    <div class="header-container" style="display: flex; align-items: center; gap: 15px;">
+      
+      <!-- Lado Izquierdo: Logo y Título -->
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <!-- Asegúrate de colocar tu imagen del logo en la carpeta correcta -->
+        <img src="assets/logo-conalep.png" alt="Logo CONALEP" style="height: 50px; width: auto;">
+        <div>
+          <div style="font-weight: 700; font-size: 1.15rem; letter-spacing: 0.5px;">CONALEP PLAYA DEL CARMEN</div>
+          <div style="font-size: 0.8rem; color: #a7f3d0;">Módulo: Temas Selectos de Matemáticas II</div>
+        </div>
       </div>
+
+      <!-- Lado Derecho: Menú de Usuario -->
       <div id="user-menu" class="hidden" style="background: rgba(0,0,0,0.15); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; gap: 10px; align-items: center;">
         <span id="welcome-name">👤 Bienvenido</span>
         <span style="color: #cbd5e1;">|</span>
         <button onclick="cerrarSesion()" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer;">Salir</button>
       </div>
+      
     </div>
   </header>
 
