@@ -9,7 +9,6 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxN6sq6jWResoXjgGZ7x
 let miGrafica = null;
 
 function iniciarSesion() {
-    // Ya no buscamos el grupo en el HTML, solo la matrícula
     const matricula = document.getElementById('input-matricula').value.trim();
 
     if (matricula === "") {
@@ -18,15 +17,40 @@ function iniciarSesion() {
     }
 
     // ==========================================
-    // SIMULACIÓN DE LECTURA DE GOOGLE SHEETS
+    // LOGIN DE ADMINISTRADOR (DOCENTE)
     // ==========================================
-    // Aquí el sistema asume que buscó en tu hoja y extrajo estos datos:
+    if (matricula === "ADMIN-JL") {
+        document.getElementById('welcome-name').innerText = `👨‍🏫 Prof. Juan Luis`;
+        document.getElementById('vista-login').classList.add('hidden');
+        document.getElementById('vista-admin').classList.remove('hidden');
+        document.getElementById('user-menu').classList.remove('hidden');
+        return; // Detiene la ejecución para que no cargue el panel de alumno
+    }
+
+    // ==========================================
+    // SIMULACIÓN DE ALUMNO (Conexión a Sheets)
+    // ==========================================
     const simulacionBaseDatos = {
         primerNombre: "Jesús Israel",
         nombreCompleto: "JESÚS ISRAEL ACEVEDO BRET",
         grupo: "505"
     };
     
+    document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${simulacionBaseDatos.primerNombre}`;
+    document.getElementById('lbl-nombre').innerText = simulacionBaseDatos.nombreCompleto;
+    document.getElementById('lbl-matricula').innerText = matricula;
+    document.getElementById('lbl-grupo').innerText = `Grupo ${simulacionBaseDatos.grupo}`;
+
+    document.getElementById('vista-login').classList.add('hidden');
+    document.getElementById('vista-dashboard').classList.remove('hidden');
+    document.getElementById('user-menu').classList.remove('hidden');
+    
+    dibujarGrafica();
+
+    sessionStorage.setItem('matriculaActiva', matricula);
+    sessionStorage.setItem('nombreActivo', simulacionBaseDatos.nombreCompleto);
+    sessionStorage.setItem('grupoActivo', simulacionBaseDatos.grupo);
+}
     // Configurar Ficha de Identidad
     document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${simulacionBaseDatos.primerNombre}`;
     document.getElementById('lbl-nombre').innerText = simulacionBaseDatos.nombreCompleto;
@@ -64,24 +88,19 @@ function cerrarSesion() {
 // NUEVA FUNCIÓN: Dibujar Gráfica de Parciales
 function dibujarGrafica() {
     const canvas = document.getElementById('graficaParciales');
-    if (!canvas) return; // Evita errores si el canvas no ha cargado
+    if (!canvas) return; 
 
     const ctx = canvas.getContext('2d');
-    
-    // Evitar duplicados si se recarga la gráfica
     if(miGrafica !== null) { miGrafica.destroy(); }
 
+    // Ponderación: P1 (25%), P2 (30%) -> Suman 55% de aprobación temprana. P3 vale 45%.
     miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Parcial 1 (Aprobado)', 'Parcial 2 (En Curso)', 'Parcial 3 (Pendiente)'],
+            labels: ['Parcial 1 (25%) - Aprobado', 'Parcial 2 (30%) - En Curso', 'Parcial 3 (45%) - Pendiente'],
             datasets: [{
-                data: [35, 25, 40], // Ponderación de ejemplo
-                backgroundColor: [
-                    '#00806A', // Verde Conalep para completado
-                    '#d97706', // Ámbar para en curso
-                    '#e2e8f0'  // Gris para pendiente
-                ],
+                data: [25, 30, 45], 
+                backgroundColor: ['#00806A', '#d97706', '#e2e8f0'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
             }]
@@ -91,7 +110,14 @@ function dibujarGrafica() {
             maintainAspectRatio: false,
             cutout: '70%',
             plugins: {
-                legend: { position: 'right' }
+                legend: { position: 'right' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.label}: ${context.raw}% de la calificación final`;
+                        }
+                    }
+                }
             }
         }
     });
