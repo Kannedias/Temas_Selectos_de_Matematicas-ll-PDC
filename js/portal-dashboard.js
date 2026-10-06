@@ -65,6 +65,26 @@ function iniciarSesion() {
     // Renderizar Gráfica de Avance (Cambio implementado)
     dibujarGrafica();
 
+   // Consultar el avance real a la Base de Datos
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "consultar", matricula: matricula })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const badge1_1 = document.getElementById('status-mod-1.1');
+        if (data.modulo1_1 === "Concluido") {
+            badge1_1.className = "badge-status status-ok";
+            badge1_1.innerHTML = "🟢 Concluido";
+        } else {
+            badge1_1.className = "badge-status status-pend";
+            badge1_1.innerHTML = "🔴 Pendiente de Entrega";
+        }
+    })
+    .catch(error => {
+        document.getElementById('status-mod-1.1').innerHTML = "⚠️ Error de conexión";
+    });
+
     // Persistencia local
     sessionStorage.setItem('matriculaActiva', matricula);
     sessionStorage.setItem('nombreActivo', simulacionBaseDatos.nombreCompleto);
