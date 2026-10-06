@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Académico | Conalep Playa del Carmen</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    /* =======================================================
+       ETIQUETA: ESTILOS EXCLUSIVOS DEL DASHBOARD
+       ======================================================= */
+    .progress-bar-bg { background: #e2e8f0; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; margin: 10px 0; }
+    .progress-bar-fill { background: var(--conalep-accent); height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
+    
+    .grid-unidades { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
+    
+    .card-modulo {
+      background: #fff; padding: 1.2rem; border-radius: 6px; 
+      border: 1px solid var(--border-card); border-left: 4px solid var(--conalep-accent);
+      display: flex; flex-direction: column;
+    }
+    .card-modulo.locked { border-left-color: #94a3b8; background: #f1f5f9; opacity: 0.85; }
+    
+    .badge-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; align-self: flex-start; margin: 8px 0; }
+    .status-ok { background: #dcfce7; color: #166534; }
+    .status-act { background: #fef08a; color: #854d0e; }
+    .status-lock { background: #e2e8f0; color: #475569; }
+    .status-pend { background: #fee2e2; color: #991b1b; }
+
+    .table-evidencias { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+    .table-evidencias th, .table-evidencias td { padding: 10px; border-bottom: 1px solid var(--border-card); text-align: left; }
+    .table-evidencias th { background: #f8fafc; color: var(--conalep-dark); }
+  </style>
+</head>
+<body>
+
+  <!-- =======================================================
+       ETIQUETA: CABECERA DINÁMICA
+       ======================================================= -->
+  <header class="main-header">
+    <div class="header-container">
+      <div>
+        <div style="font-weight: 700; font-size: 1.15rem;">CONALEP PLAYA DEL CARMEN</div>
+        <div style="font-size: 0.8rem; color: #a7f3d0;">Módulo: Temas Selectos de Matemáticas II</div>
+      </div>
+      <div id="user-menu" class="hidden" style="background: rgba(0,0,0,0.15); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; gap: 10px; align-items: center;">
+        <span id="welcome-name">👤 Bienvenido</span>
+        <span style="color: #cbd5e1;">|</span>
+        <button onclick="cerrarSesion()" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer;">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- =======================================================
+         ETIQUETA: VISTA A - LOGIN
+         ======================================================= -->
+    <section id="vista-login" class="card-box" style="max-width: 400px; margin: 4rem auto; text-align: center;">
+      <h2 style="color: var(--conalep-dark); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
+      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
+      <select id="input-grupo" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
+        <option value="404-INFO">404 - Informática</option>
+        <option value="405-ADMN">405 - Administración</option>
+      </select>
+      <button class="btn-conalep" style="width: 100%; font-size: 1.05rem;" onclick="iniciarSesion()">🚀 Ingresar al Portal</button>
+    </section>
+
+    <!-- =======================================================
+         ETIQUETA: VISTA B - DASHBOARD DEL ESTUDIANTE
+         ======================================================= -->
+    <section id="vista-dashboard" class="hidden">
+      
+      <!-- Panel de Progreso -->
+      <div class="card-box">
+        <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Panel de Progreso General</h3>
+        <p style="margin: 8px 0;"><strong>Estudiante:</strong> <span id="lbl-nombre">Alumno</span> &nbsp;|&nbsp; <strong>Grupo:</strong> <span id="lbl-grupo">--</span></p>
+        <div class="progress-bar-bg"><div id="barra-avance" class="progress-bar-fill"></div></div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Avance Global Semestral: <strong id="lbl-porcentaje">0%</strong> | Tareas Firmadas: 2 de 4</p>
+      </div>
+
+      <!-- Catálogo de Unidades -->
+      <h3 style="margin-top: 2rem; color: var(--conalep-dark);">📚 Unidades Temáticas del Programa</h3>
+      <div class="grid-unidades">
+        
+        <div class="card-modulo">
+          <h4 style="margin:0;">📐 Módulo 1.1: Sistemas y Vectores</h4>
+          <span class="badge-status status-ok">🟢 Concluido</span>
+          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Plano cartesiano, vector desplazamiento y magnitud.</p>
+        </div>
+
+        <div class="card-modulo" style="border-color: #fef08a;">
+          <h4 style="margin:0;">📈 Módulo 1.2: La Línea Recta</h4>
+          <span class="badge-status status-act">🟡 En Curso</span>
+          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Pendiente, inclinación y las 3 formas de la ecuación.</p>
+          <a href="unidad1_recta.html" class="btn-conalep" style="font-size: 0.85rem; padding: 0.5rem;">🚀 Entrar al Laboratorio</a>
+        </div>
+
+        <div class="card-modulo locked">
+          <h4 style="margin:0;">⭕ Módulo 2.1: La Circunferencia</h4>
+          <span class="badge-status status-lock">🔒 Próximamente</span>
+          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Centro (h,k), radio y ecuación canónica.</p>
+        </div>
+      </div>
+
+      <!-- Historial y Ventanilla de Entregas -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        
+        <div class="card-box" style="margin: 0;">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
+          <div style="overflow-x: auto;">
+            <table class="table-evidencias">
+              <thead><tr><th>Actividad</th><th>Fecha</th><th>Estado</th><th>Nota</th></tr></thead>
+              <tbody>
+                <tr><td>U 1.1: Segmentos</td><td>18/09</td><td><span class="badge-status status-ok">Revisado</span></td><td>100</td></tr>
+                <tr><td>U 1.2: Práctica 7 Pasos</td><td>--</td><td><span class="badge-status status-pend">Pendiente</span></td><td>--</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
+          
+          <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
+          <select style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
+            <option>U 1.2: Práctica 7 Pasos (Ejercicios Libreta)</option>
+            <option>U 1.2: Reto Semilla</option>
+          </select>
+          
+          <input type="file" accept="image/*,application/pdf" style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
+          <button class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);">📤 Enviar Evidencia a Revisión</button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="js/portal-dashboard.js"></script>
+</body>
+</html>
