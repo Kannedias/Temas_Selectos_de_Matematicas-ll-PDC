@@ -1,37 +1,50 @@
 /* =======================================================
-   LÓGICA DE SESIÓN, DASHBOARD Y ENVÍO A GOOGLE SHEETS
+   LÓGICA DE SESIÓN, DASHBOARD, GRÁFICAS Y ENVÍO A SHEETS
    ======================================================= */
 
 // URL Oficial de tu Google Apps Script
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxN6sq6jWResoXjgGZ7xwhivUGM6rqFJcwfEcfK4Eqnjx63XwrLNm07-A-lmAvql5yB/exec";
 
+// Variable global para la gráfica de Chart.js
+let miGrafica = null;
+
 function iniciarSesion() {
+    // Ya no buscamos el grupo en el HTML, solo la matrícula
     const matricula = document.getElementById('input-matricula').value.trim();
-    const grupo = document.getElementById('input-grupo').value;
 
     if (matricula === "") {
         alert("⚠️ Por favor, ingresa tu matrícula para acceder.");
         return;
     }
 
-    const nombreSimulado = "Alumno Conalep"; 
+    // ==========================================
+    // SIMULACIÓN DE LECTURA DE GOOGLE SHEETS
+    // ==========================================
+    // Aquí el sistema asume que buscó en tu hoja y extrajo estos datos:
+    const simulacionBaseDatos = {
+        primerNombre: "Jesús Israel",
+        nombreCompleto: "JESÚS ISRAEL ACEVEDO BRET",
+        grupo: "505"
+    };
     
-    document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${nombreSimulado}`;
-    document.getElementById('lbl-nombre').innerText = `${nombreSimulado} (Matrícula: ${matricula})`;
-    document.getElementById('lbl-grupo').innerText = `Grupo ${grupo}`;
+    // Configurar Ficha de Identidad
+    document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${simulacionBaseDatos.primerNombre}`;
+    document.getElementById('lbl-nombre').innerText = simulacionBaseDatos.nombreCompleto;
+    document.getElementById('lbl-matricula').innerText = matricula;
+    document.getElementById('lbl-grupo').innerText = `Grupo ${simulacionBaseDatos.grupo}`;
 
+    // Transición de Vistas
     document.getElementById('vista-login').classList.add('hidden');
     document.getElementById('vista-dashboard').classList.remove('hidden');
     document.getElementById('user-menu').classList.remove('hidden');
     
-    setTimeout(() => {
-        document.getElementById('barra-avance').style.width = '50%';
-        document.getElementById('lbl-porcentaje').innerText = '50%';
-    }, 300);
+    // Renderizar Gráfica de Avance (Cambio implementado)
+    dibujarGrafica();
 
+    // Persistencia local
     sessionStorage.setItem('matriculaActiva', matricula);
-    sessionStorage.setItem('grupoActivo', grupo);
-    sessionStorage.setItem('nombreActivo', nombreSimulado);
+    sessionStorage.setItem('nombreActivo', simulacionBaseDatos.nombreCompleto);
+    sessionStorage.setItem('grupoActivo', simulacionBaseDatos.grupo);
 }
 
 function cerrarSesion() {
@@ -40,10 +53,51 @@ function cerrarSesion() {
     document.getElementById('user-menu').classList.add('hidden');
     document.getElementById('vista-login').classList.remove('hidden');
     document.getElementById('input-matricula').value = "";
-    document.getElementById('barra-avance').style.width = '0%';
+    
+    // Destruir la gráfica al salir para que no se duplique al volver a entrar
+    if(miGrafica !== null) { 
+        miGrafica.destroy(); 
+        miGrafica = null;
+    }
 }
 
-// NUEVA FUNCIÓN: Subir foto a Drive y registrar en Sheets
+// NUEVA FUNCIÓN: Dibujar Gráfica de Parciales
+function dibujarGrafica() {
+    const canvas = document.getElementById('graficaParciales');
+    if (!canvas) return; // Evita errores si el canvas no ha cargado
+
+    const ctx = canvas.getContext('2d');
+    
+    // Evitar duplicados si se recarga la gráfica
+    if(miGrafica !== null) { miGrafica.destroy(); }
+
+    miGrafica = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Parcial 1 (Aprobado)', 'Parcial 2 (En Curso)', 'Parcial 3 (Pendiente)'],
+            datasets: [{
+                data: [35, 25, 40], // Ponderación de ejemplo
+                backgroundColor: [
+                    '#00806A', // Verde Conalep para completado
+                    '#d97706', // Ámbar para en curso
+                    '#e2e8f0'  // Gris para pendiente
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+}
+
+// FUNCIÓN INTACTA: Subir foto a Drive y registrar en Sheets
 function subirEvidencia() {
     const fileInput = document.getElementById('input-archivo');
     const actividad = document.getElementById('select-tarea').value;
@@ -113,7 +167,6 @@ function subirEvidencia() {
 document.addEventListener("DOMContentLoaded", function() {
     if (sessionStorage.getItem('matriculaActiva')) {
         document.getElementById('input-matricula').value = sessionStorage.getItem('matriculaActiva');
-        document.getElementById('input-grupo').value = sessionStorage.getItem('grupoActivo');
         iniciarSesion(); 
     }
 
