@@ -173,7 +173,8 @@ function subirEvidencia() {
         // Extraer solo la cadena base64 limpia
         const base64Data = e.target.result.split(',')[1];
         
-        const payload = {
+   const payload = {
+            accion: "subir", // <--- Agrega esta línea
             matricula: matricula,
             nombreArchivo: file.name,
             mimeType: file.type,
