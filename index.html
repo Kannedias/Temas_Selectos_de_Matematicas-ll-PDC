@@ -122,30 +122,29 @@
         </div>
       </div>
 
-      <!-- Historial y Ventanilla de Entregas -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-        <div class="card-box" style="margin: 0;">
-          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
-          <div style="overflow-x: auto;">
-            <table class="table-evidencias">
-              <thead><tr><th>Actividad</th><th>Fecha</th><th>Estado</th><th>Nota</th></tr></thead>
-              <tbody>
-                <tr><td>U 1.1: Segmentos</td><td>18/09</td><td><span class="badge-status status-ok">Revisado</span></td><td>100</td></tr>
-                <tr><td>U 1.2: Práctica 7 Pasos</td><td>--</td><td><span class="badge-status status-pend">Pendiente</span></td><td>--</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- Ventanilla de Entrega Digital -->
-        <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
-          <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
-          
-          <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
-          <select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
-            <option>U 1.2: Práctica 7 Pasos (Ejercicios Libreta)</option>
-            <option>U 1.2: Reto Semilla</option>
-          </select>
+<!-- Historial (Punto 5) -->
+<div class="card-box" style="margin-top: 20px;">
+    <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <thead>
+            <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                <th style="padding: 8px;">Actividad</th>
+                <th style="padding: 8px;">Fecha</th>
+                <th style="padding: 8px;">Estado</th>
+                <th style="padding: 8px;">Nota</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-historial">
+            <!-- Se llena con JavaScript desde Entregas_Evidencias -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Ventanilla de Entrega (Punto 6) -->
+<select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
+    <option value="">Cargando tareas activas...</option>
+    <!-- Se llena con JavaScript desde Catalogo_Tareas -->
+</select>
           
           <input type="file" id="input-archivo" accept="image/*,application/pdf" style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
           <button id="btn-enviar" class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);" onclick="subirEvidencia()">📤 Enviar Evidencia a Revisión</button>
