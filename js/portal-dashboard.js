@@ -75,7 +75,6 @@ function consultarAvanceReal(matricula) {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar", matricula: matricula })
     })
-    .then(response => response.json())
     .then(data => {
         // Estatus del Módulo
         const badge1_1 = document.getElementById('status-mod-1.1');
@@ -94,8 +93,39 @@ function consultarAvanceReal(matricula) {
             datosDesgloseParciales = data.parciales;
             dibujarGrafica();
         }
+
+        // Llenar Historial de Evidencias
+        const tablaHistorial = document.getElementById('tabla-historial');
+        if (tablaHistorial && data.historial) {
+            tablaHistorial.innerHTML = ""; // Limpiar mensaje de carga
+            if (data.historial.length === 0) {
+                tablaHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay entregas registradas.</td></tr>`;
+            } else {
+                data.historial.forEach(item => {
+                    let estadoEmoji = item.estado.toLowerCase().includes("revisado") ? "✅" : "⏳";
+                    let row = `<tr>
+                        <td>${item.actividad}</td>
+                        <td>${item.fecha}</td>
+                        <td>${estadoEmoji} ${item.estado}</td>
+                        <td><strong>${item.nota}</strong></td>
+                    </tr>`;
+                    tablaHistorial.innerHTML += row;
+                });
+            }
+        }
+
+        // Llenar Select del Catálogo de Tareas
+        const selectTarea = document.getElementById('select-tarea');
+        if (selectTarea && data.catalogo) {
+            selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
+            data.catalogo.forEach(tarea => {
+                let option = document.createElement('option');
+                option.value = tarea.id + " - " + tarea.titulo; 
+                option.text = tarea.id + " | " + tarea.titulo;
+                selectTarea.appendChild(option);
+            });
+        }
     });
-}
 
 function dibujarGrafica() {
     const canvas = document.getElementById('graficaParciales');
