@@ -234,6 +234,14 @@ function subirEvidencia() {
     const grupo = sessionStorage.getItem('grupoActivo');
     const nombre = sessionStorage.getItem('nombreActivo');
 
+   // ==========================================
+    // 1. NUEVO CANDADO: OBLIGAR A SELECCIONAR TAREA
+    // ==========================================
+    if (!actividadCompleta || actividadCompleta.includes("--") || actividadCompleta === "") {
+        alert("⚠️ Por favor, selecciona la tarea o evidencia a la que corresponden los archivos.");
+        return; // Detiene la subida hasta que elija una opción válida
+    }
+
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
         alert("⚠️ Por favor, selecciona al menos un archivo.");
         return;
