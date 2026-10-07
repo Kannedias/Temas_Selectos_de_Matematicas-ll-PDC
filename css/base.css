@@ -87,9 +87,24 @@ body { background-color: var(--bg-slate); color: var(--text-main); line-height: 
 .status-lock { background: #e2e8f0; color: #475569; }
 .status-pend { background: #fee2e2; color: #991b1b; }
 
-.table-evidencias { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-.table-evidencias th, .table-evidencias td { padding: 10px; border-bottom: 1px solid var(--border-card); text-align: left; }
-.table-evidencias th { background: #f8fafc; color: var(--conalep-dark); }
+.table-evidencias {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.table-evidencias th, .table-evidencias td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border-card, #e2e8f0); /* Aquí está la magia del separador */
+    text-align: left;
+    vertical-align: middle; /* Centra el contenido verticalmente */
+}
+
+.table-evidencias th {
+    background-color: #f1f5f9;
+    color: var(--conalep-dark);
+    font-weight: 600;
+}
 
 /* =======================================================
    FORZADO DE ESTILOS - TARJETAS PEDAGÓGICAS (Rescate Unidad 1)
