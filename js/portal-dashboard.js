@@ -110,14 +110,14 @@ function consultarAvanceReal(matricula) {
                 tablaHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay entregas registradas.</td></tr>`;
             } else {
                 data.historial.forEach(item => {
-                    let estadoEmoji = item.estado.toLowerCase().includes("revisado") ? "✅" : "⏳";
-                    let row = `<tr>
-                        <td>${item.actividad}</td>
-                        <td>${item.fecha}</td>
-                        <td>${estadoEmoji} ${item.estado}</td>
-                        <td><strong>${item.nota}</strong></td>
-                    </tr>`;
-                    tablaHistorial.innerHTML += row;
+                   let estadoEmoji = item.estado.toLowerCase().includes("revisad") ? "✅" : "⏳";
+                   let row = `<tr>
+                      <td style="font-size: 0.9rem; font-weight: 500;">${item.actividad}</td>
+                      <td style="font-size: 0.85rem; color: var(--text-muted);">${item.fecha}</td>
+                      <td><span class="badge-status ${item.estado.toLowerCase().includes("revisad") ? 'status-ok' : 'status-pend'}">${estadoEmoji} ${item.estado}</span></td>
+                      <td style="text-align: center;"><strong>${item.nota}</strong></td>
+                  </tr>`;
+               tbodyHistorial.innerHTML += row;
                 });
             }
         }
