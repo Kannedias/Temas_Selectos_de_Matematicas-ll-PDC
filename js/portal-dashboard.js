@@ -267,3 +267,57 @@ document.addEventListener("DOMContentLoaded", function() {
         iniciarSesion(); 
     }
 });
+// =======================================================
+// FUNCIONES EXCLUSIVAS DEL PANEL DOCENTE
+// =======================================================
+function publicarTareaDocente() {
+    const idTarea = document.getElementById('admin-id').value.trim();
+    const unidad = document.getElementById('admin-mod').value.trim();
+    const titulo = document.getElementById('admin-titulo').value.trim();
+    const desc = document.getElementById('admin-desc').value.trim();
+    const fecha = document.getElementById('admin-fecha').value;
+    const puntos = document.getElementById('admin-puntos').value;
+
+    if (!idTarea || !unidad || !titulo) {
+        alert("⚠️ Por favor, completa al menos el ID, Módulo y Título de la tarea.");
+        return;
+    }
+
+    const btn = document.getElementById('btn-publicar');
+    btn.innerText = "⏳ Publicando en Sheets...";
+    btn.disabled = true;
+
+    const payload = {
+        accion: "nueva_tarea",
+        idTarea: idTarea,
+        unidad: unidad,
+        titulo: titulo,
+        desc: desc,
+        fecha: fecha,
+        puntos: puntos
+    };
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert("✅ ¡Tarea publicada con éxito! Los alumnos ya la pueden ver.");
+            // Limpiar formulario
+            document.querySelectorAll('#form-nueva-tarea input, #form-nueva-tarea textarea').forEach(el => el.value = '');
+            document.getElementById('form-nueva-tarea').classList.add('hidden');
+        } else {
+            alert("❌ Error al publicar: " + data.mensaje);
+        }
+    })
+    .catch(error => {
+        alert("⚠️ Error de conexión con el servidor.");
+        console.error(error);
+    })
+    .finally(() => {
+        btn.innerText = "🚀 Publicar en el Portal";
+        btn.disabled = false;
+    });
+}
