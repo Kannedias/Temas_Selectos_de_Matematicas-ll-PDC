@@ -55,8 +55,9 @@ function iniciarSesion() {
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
             sessionStorage.setItem('grupoActivo', data.grupo);
             sessionStorage.setItem('fotoUrlActiva', data.fotoPerfilUrl || "");
-        } else {
-            alert("❌ Matrícula no encontrada en el sistema.");
+       } else {
+            // Esto obliga a la página a mostrar qué está leyendo Google Sheets realmente
+            alert("❌ " + data.mensaje);
         }
     })
     .catch(error => {
