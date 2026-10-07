@@ -229,37 +229,61 @@ function subirFotoPerfil() {
 
 function subirEvidencia() {
     const fileInput = document.getElementById('input-archivo');
-    const actividad = document.getElementById('select-tarea').value;
+    const actividadCompleta = document.getElementById('select-tarea').value;
     const matricula = sessionStorage.getItem('matriculaActiva');
     const grupo = sessionStorage.getItem('grupoActivo');
     const nombre = sessionStorage.getItem('nombreActivo');
 
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        alert("⚠️ Por favor, selecciona una foto o archivo primero.");
+        alert("⚠️ Por favor, selecciona al menos un archivo.");
         return;
     }
 
-    if (fileInput.files[0].size > 5242880) {
-        alert("⚠️ El archivo es demasiado pesado. Intenta subir una foto de menor calidad (máx 5MB).");
+    // Límite de peso total para evitar que saturen la red (aprox 15MB en total)
+    let pesoTotal = 0;
+    for (let i = 0; i < fileInput.files.length; i++) {
+        pesoTotal += fileInput.files[i].size;
+    }
+    if (pesoTotal > 15728640) {
+        alert("⚠️ El peso total de los archivos es muy alto (Máx 15MB). Intenta usar fotos de menor resolución o enviar en bloques.");
         return;
     }
 
     const btn = document.getElementById('btn-enviar');
-    btn.innerText = "⏳ Subiendo..."; 
+    btn.innerText = "⏳ Procesando archivos..."; 
     btn.disabled = true;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const base64Data = e.target.result.split(',')[1];
+    // Extraemos solo el ID de la tarea (Ej: "EV01" en lugar de "EV01 - Título completo")
+    const idTarea = actividadCompleta.split(" - ")[0];
+
+    // Leer todos los archivos seleccionados de forma simultánea
+    const promesas = Array.from(fileInput.files).map(file => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                resolve({
+                    nombreOriginal: file.name,
+                    mimeType: file.type,
+                    base64: e.target.result.split(',')[1]
+                });
+            };
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Cuando todos los archivos se terminen de leer, los enviamos a Sheets
+    Promise.all(promesas).then(archivosProcesados => {
+        btn.innerText = "⏳ Subiendo a tu Drive...";
+        
         const payload = {
-            accion: "subir", 
+            accion: "subir_multiples", 
             matricula: matricula,
-            nombreArchivo: fileInput.files[0].name,
-            mimeType: fileInput.files[0].type,
-            archivoBase64: base64Data,
             grupo: grupo,
             nombre: nombre,
-            actividad: actividad
+            actividad: actividadCompleta,
+            idTarea: idTarea,
+            archivos: archivosProcesados
         };
 
         fetch(SCRIPT_URL, {
@@ -269,16 +293,22 @@ function subirEvidencia() {
         .then(response => response.json())
         .then(data => {
             if(data.status === "éxito") {
-                alert("✅ ¡Tu evidencia se ha enviado correctamente a revisión!");
+                alert(`✅ ¡Tus ${archivosProcesados.length} archivos se enviaron correctamente a revisión!`);
                 fileInput.value = ""; 
-            } else { alert("❌ Ocurrió un error en el servidor: " + data.mensaje); }
+                consultarAvanceReal(matricula); // Recarga la tabla de historial automáticamente
+            } else { 
+                alert("❌ Ocurrió un error en el servidor: " + data.mensaje); 
+            }
         })
         .finally(() => {
             btn.innerText = "📤 Enviar Evidencia a Revisión";
             btn.disabled = false;
         });
-    };
-    reader.readAsDataURL(fileInput.files[0]);
+    }).catch(error => {
+        alert("⚠️ Ocurrió un error al leer las fotos de tu dispositivo.");
+        btn.innerText = "📤 Enviar Evidencia a Revisión";
+        btn.disabled = false;
+    });
 }
 
 function publicarTareaDocente() {
