@@ -30,7 +30,7 @@
 </head>
 <body>
 
-  <!-- CABECERA INSTITUCIONAL (PUNTO 1: LEYENDA DE AUTORÍA) -->
+  <!-- CABECERA INSTITUCIONAL -->
   <header class="main-header">
     <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       
@@ -59,165 +59,9 @@
 
   <main class="container">
     
-    <!-- VISTA A: LOGIN -->
+    <!-- ==========================================
+         VISTA A: LOGIN
+         ========================================== -->
     <section id="vista-login" class="card-box" style="max-width: 400px; margin: 4rem auto; text-align: center;">
       <h2 style="color: var(--conalep-dark); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
-      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
-      <button id="btn-ingresar" class="btn-conalep" style="width: 100%; font-size: 1.05rem;" onclick="iniciarSesion()">🚀 Ingresar al Portal</button>
-    </section>
-
-    <!-- VISTA B: DASHBOARD DEL ESTUDIANTE -->
-    <section id="vista-dashboard" class="hidden">
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-        
-        <!-- PUNTO 2: FICHA DE IDENTIDAD Y FOTO -->
-        <div class="card-box" style="margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div style="position: relative; margin-bottom: 15px;">
-                <img id="img-perfil" src="assets/placeholder-avatar.png" alt="Foto" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--conalep-accent); cursor: pointer; background: #e2e8f0;" onclick="document.getElementById('input-foto-perfil').click();">
-                <div style="position: absolute; bottom: 0; right: 0; background: var(--conalep-dark); color: white; border-radius: 50%; padding: 6px; cursor: pointer; font-size: 0.9rem;" onclick="document.getElementById('input-foto-perfil').click();">📷</div>
-            </div>
-            <input type="file" id="input-foto-perfil" accept="image/*" style="display: none;" onchange="subirFotoPerfil()">
-            <p id="txt-subiendo-foto" style="font-size: 0.75rem; color: var(--conalep-gold); display: none;">⏳ Subiendo foto...</p>
-            
-            <h3 id="lbl-nombre" style="color: var(--conalep-dark); margin: 0; font-size: 1.1rem; text-transform: uppercase;">--</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 5px 0;">Matrícula: <strong id="lbl-matricula">--</strong></p>
-            <span id="lbl-grupo" style="background: var(--conalep-accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
-        </div>
-
-        </div> <!-- Cierre del Grid (Puntos 5 y 6) -->
-    </section> <!-- ================= CIERRE DE LA VISTA DASHBOARD ESTUDIANTE ================= -->
-
-
-    <!-- =========================================================================
-         VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
-         ========================================================================= -->
-    <section id="vista-admin" class="hidden">
-      <div class="card-box" style="border-left: 4px solid var(--conalep-dark); margin-top: 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="color: var(--conalep-dark); margin: 0;">👨‍🏫 Panel de Control Docente (SICAL)</h2>
-            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-        <p style="color: var(--text-muted); margin-top: 5px; margin-bottom: 1.5rem;">Bienvenido, Prof. Juan Luis. Gestiona tu catálogo de actividades.</p>
-        
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <button class="btn-conalep" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Abrir Base de Datos (Sheets)</button>
-            <button class="btn-conalep" style="background-color: var(--conalep-gold);" onclick="document.getElementById('form-nueva-tarea').classList.toggle('hidden')">📝 + Nueva Tarea</button>
-        </div>
-
-        <!-- FORMULARIO DE PUBLICACIÓN DE TAREAS -->
-        <div id="form-nueva-tarea" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
-            <h3 style="margin-top: 0; color: var(--conalep-dark);">Configurar Nueva Actividad</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">ID Tarea (Ej. T12_04):</label>
-                    <input type="text" id="admin-id" placeholder="T01" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Módulo (Ej. 1.2):</label>
-                    <input type="text" id="admin-mod" placeholder="1.2" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Título de la Actividad:</label>
-                    <input type="text" id="admin-titulo" placeholder="3 ejercicios de coordenadas..." style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Descripción e Instrucciones:</label>
-                    <textarea id="admin-desc" rows="3" placeholder="Desarrollando los 7 pasos y graficando en hoja milimétrica..." style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;"></textarea>
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Fecha Límite:</label>
-                    <input type="date" id="admin-fecha" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Valor (Puntos):</label>
-                    <input type="number" id="admin-puntos" value="100" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-
-            </div>
-            <button id="btn-publicar" class="btn-conalep" style="width: 100%; margin-top: 1.5rem; background-color: var(--conalep-dark);" onclick="publicarTareaDocente()">🚀 Publicar en el Portal</button>
-        </div>
-      </div>
-    </section>
-        
-        <!-- PUNTO 3: GRÁFICA CON DESGLOSE INTERACTIVO -->
-        <div class="card-box" style="margin: 0; display: flex; flex-direction: column;">
-            <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Ponderación de Evaluaciones</h3>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; text-align: center;">Haz clic en una sección de la gráfica para ver el desglose.</p>
-            <div style="flex-grow: 1; position: relative; height: 160px; display: flex; justify-content: center; align-items: center;">
-                <canvas id="graficaParciales"></canvas>
-            </div>
-            
-            <!-- Contenedor del Desglose Oculto -->
-            <div id="desglose-calificacion" style="display: none; margin-top: 15px; background: #f8fafc; padding: 12px; border-radius: 6px; border-left: 4px solid var(--conalep-gold); font-size: 0.85rem;">
-                <h4 style="margin: 0 0 8px 0; color: var(--conalep-dark);" id="titulo-desglose">Desglose</h4>
-                <ul style="list-style: none; padding: 0; margin: 0; color: #475569; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <li>📝 Tareas: <strong id="val-tareas">--</strong></li>
-                    <li>🗣️ Participación: <strong id="val-part">--</strong></li>
-                    <li>✅ Asistencia: <strong id="val-asist">--</strong></li>
-                    <li>📄 Examen: <strong id="val-exam">--</strong></li>
-                </ul>
-            </div>
-        </div>
-
-      </div>
-
-      <!-- PUNTO 4: CATÁLOGO DE UNIDADES DINÁMICO -->
-      <h3 style="margin-top: 2rem; color: var(--conalep-dark);">📚 Unidades Temáticas del Programa</h3>
-      <div class="grid-unidades">
-        <div class="card-modulo">
-          <h4 style="margin:0;">📐 Módulo 1.1: Sistemas y Vectores</h4>
-          <span id="status-mod-1.1" class="badge-status status-lock">🔄 Consultando...</span>
-          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Plano cartesiano, vector desplazamiento y magnitud.</p>
-        </div>
-
-        <div class="card-modulo" style="border-color: #fef08a;">
-          <h4 style="margin:0;">📈 Módulo 1.2: La Línea Recta</h4>
-          <span class="badge-status status-act">🟡 En Curso</span>
-          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Pendiente, inclinación y las 3 formas de la ecuación.</p>
-          <a href="unidad1_recta.html" class="btn-conalep" style="font-size: 0.85rem; padding: 0.5rem; text-align: center;">🚀 Entrar al Laboratorio</a>
-        </div>
-
-        <div class="card-modulo locked">
-          <h4 style="margin:0;">⭕ Módulo 2.1: La Circunferencia</h4>
-          <span class="badge-status status-lock">🔒 Próximamente</span>
-          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Centro (h,k), radio y ecuación canónica.</p>
-        </div>
-      </div>
-
-      <!-- PUNTOS 5 Y 6: HISTORIAL Y VENTANILLA -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-        
-        <div class="card-box" style="margin: 0;">
-          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
-          <div style="overflow-x: auto;">
-            <table class="table-evidencias">
-              <thead><tr><th>Actividad</th><th>Fecha</th><th>Estado</th><th>Nota</th></tr></thead>
-              <tbody id="tabla-historial">
-                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Consultando entregas...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
-          <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
-          
-          <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
-          <select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
-            <option value="">Cargando catálogo...</option>
-          </select>
-          
-          <input type="file" id="input-archivo" accept="image/*,application/pdf" style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
-          <button id="btn-enviar" class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);" onclick="subirEvidencia()">📤 Enviar Evidencia a Revisión</button>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <script src="js/portal-dashboard.js"></script>
-</body>
-</html>
+      <input type="text" id="input-matricula
