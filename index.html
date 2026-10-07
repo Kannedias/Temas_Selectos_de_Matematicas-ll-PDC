@@ -85,6 +85,58 @@
             <span id="lbl-grupo" style="background: var(--conalep-accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
         </div>
 
+        <!-- ==========================================
+         VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
+         ========================================== -->
+    <section id="vista-admin" class="hidden">
+      <div class="card-box" style="border-left: 4px solid var(--conalep-dark); margin-top: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="color: var(--conalep-dark); margin: 0;">👨‍🏫 Panel de Control Docente (SICAL)</h2>
+            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+        <p style="color: var(--text-muted); margin-top: 5px; margin-bottom: 1.5rem;">Bienvenido, Prof. Juan Luis. Gestiona tu catálogo de actividades.</p>
+        
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <button class="btn-conalep" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Abrir Base de Datos (Sheets)</button>
+            <button class="btn-conalep" style="background-color: var(--conalep-gold);" onclick="document.getElementById('form-nueva-tarea').classList.toggle('hidden')">📝 + Nueva Tarea</button>
+        </div>
+
+        <!-- FORMULARIO DE PUBLICACIÓN DE TAREAS -->
+        <div id="form-nueva-tarea" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
+            <h3 style="margin-top: 0; color: var(--conalep-dark);">Configurar Nueva Actividad</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">ID Tarea (Ej. T12_04):</label>
+                    <input type="text" id="admin-id" placeholder="T01" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Módulo (Ej. 1.2):</label>
+                    <input type="text" id="admin-mod" placeholder="1.2" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Título de la Actividad:</label>
+                    <input type="text" id="admin-titulo" placeholder="3 ejercicios de coordenadas..." style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Descripción e Instrucciones:</label>
+                    <textarea id="admin-desc" rows="3" placeholder="Desarrollando los 7 pasos y graficando en hoja milimétrica..." style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Fecha Límite:</label>
+                    <input type="date" id="admin-fecha" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Valor (Puntos):</label>
+                    <input type="number" id="admin-puntos" value="100" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                </div>
+
+            </div>
+            <button id="btn-publicar" class="btn-conalep" style="width: 100%; margin-top: 1.5rem; background-color: var(--conalep-dark);" onclick="publicarTareaDocente()">🚀 Publicar en el Portal</button>
+        </div>
+      </div>
+    </section>
+        
         <!-- PUNTO 3: GRÁFICA CON DESGLOSE INTERACTIVO -->
         <div class="card-box" style="margin: 0; display: flex; flex-direction: column;">
             <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Ponderación de Evaluaciones</h3>
