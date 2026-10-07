@@ -2,19 +2,22 @@
    LÓGICA DE SESIÓN, DASHBOARD, GRÁFICAS Y ENVÍO A SHEETS
    ======================================================= */
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbDD_z-9b7UDfSkSjK20Y5IerQDc8wUMW4IObYmYsniiZPvmLuthIrAonfqWAjbAc_Rw/exec"; // Asegúrate de colocar tu URL real
+// ⚠️ PON AQUÍ TU ENLACE PÚBLICO ACTUAL DE APPS SCRIPT:
+const SCRIPT_URL = "TU_NUEVA_URL_AQUI"; 
+
 let miGrafica = null;
 let datosDesgloseParciales = []; 
 
 function iniciarSesion() {
     const matricula = document.getElementById('input-matricula').value.trim();
-    const btnIngresar = document.querySelector('#vista-login button');
+    const btnIngresar = document.getElementById('btn-ingresar');
 
     if (matricula === "") {
         alert("⚠️ Por favor, ingresa tu matrícula para acceder.");
         return;
     }
 
+    // LOGIN DE ADMINISTRADOR (DOCENTE)
     if (matricula === "ADMIN-JL") {
         document.getElementById('welcome-name').innerText = `👨‍🏫 Prof. Juan Luis`;
         document.getElementById('vista-login').classList.add('hidden');
@@ -23,9 +26,12 @@ function iniciarSesion() {
         return; 
     }
 
-    btnIngresar.innerText = "⏳ Verificando matrícula...";
-    btnIngresar.disabled = true;
+    if (btnIngresar) {
+        btnIngresar.innerText = "⏳ Verificando matrícula...";
+        btnIngresar.disabled = true;
+    }
 
+    // LOGIN REAL CON GOOGLE SHEETS
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "login", matricula: matricula })
@@ -37,7 +43,7 @@ function iniciarSesion() {
             document.getElementById('lbl-nombre').innerText = data.nombreCompleto;
             document.getElementById('lbl-matricula').innerText = matricula;
             document.getElementById('lbl-grupo').innerText = `Grupo ${data.grupo}`;
-            
+
             // Carga la foto si existe en Sheets
             if(data.fotoPerfilUrl) {
                 document.getElementById('img-perfil').src = data.fotoPerfilUrl;
@@ -55,8 +61,7 @@ function iniciarSesion() {
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
             sessionStorage.setItem('grupoActivo', data.grupo);
             sessionStorage.setItem('fotoUrlActiva', data.fotoPerfilUrl || "");
-       } else {
-            // Esto obliga a la página a mostrar qué está leyendo Google Sheets realmente
+        } else {
             alert("❌ " + data.mensaje);
         }
     })
@@ -65,8 +70,10 @@ function iniciarSesion() {
         console.error(error);
     })
     .finally(() => {
-        btnIngresar.innerText = "🚀 Ingresar al Portal";
-        btnIngresar.disabled = false;
+        if (btnIngresar) {
+            btnIngresar.innerText = "🚀 Ingresar al Portal";
+            btnIngresar.disabled = false;
+        }
     });
 }
 
@@ -75,8 +82,9 @@ function consultarAvanceReal(matricula) {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar", matricula: matricula })
     })
+    .then(response => response.json())
     .then(data => {
-        // Estatus del Módulo
+        // Estatus del Módulo 1.1
         const badge1_1 = document.getElementById('status-mod-1.1');
         if (badge1_1) {
             if (data.modulo1_1 === "Concluido") {
@@ -97,7 +105,7 @@ function consultarAvanceReal(matricula) {
         // Llenar Historial de Evidencias
         const tablaHistorial = document.getElementById('tabla-historial');
         if (tablaHistorial && data.historial) {
-            tablaHistorial.innerHTML = ""; // Limpiar mensaje de carga
+            tablaHistorial.innerHTML = "";
             if (data.historial.length === 0) {
                 tablaHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay entregas registradas.</td></tr>`;
             } else {
@@ -126,6 +134,7 @@ function consultarAvanceReal(matricula) {
             });
         }
     });
+}
 
 function dibujarGrafica() {
     const canvas = document.getElementById('graficaParciales');
@@ -164,7 +173,6 @@ function dibujarGrafica() {
     });
 }
 
-// Activa el recuadro de desglose al hacer clic en la rebanada
 function mostrarDesglose(indice) {
     const desglose = datosDesgloseParciales[indice];
     const contenedor = document.getElementById('desglose-calificacion');
@@ -231,14 +239,14 @@ function subirEvidencia() {
         return;
     }
 
-    const file = fileInput.files[0];
-    if (file.size > 5242880) {
+    if (fileInput.files[0].size > 5242880) {
         alert("⚠️ El archivo es demasiado pesado. Intenta subir una foto de menor calidad (máx 5MB).");
         return;
     }
 
     const btn = document.getElementById('btn-enviar');
-    btn.innerText = "⏳ Subiendo..."; btn.disabled = true;
+    btn.innerText = "⏳ Subiendo..."; 
+    btn.disabled = true;
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -246,8 +254,8 @@ function subirEvidencia() {
         const payload = {
             accion: "subir", 
             matricula: matricula,
-            nombreArchivo: file.name,
-            mimeType: file.type,
+            nombreArchivo: fileInput.files[0].name,
+            mimeType: fileInput.files[0].type,
             archivoBase64: base64Data,
             grupo: grupo,
             nombre: nombre,
@@ -270,13 +278,52 @@ function subirEvidencia() {
             btn.disabled = false;
         });
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(fileInput.files[0]);
+}
+
+function publicarTareaDocente() {
+    const idTarea = document.getElementById('admin-id').value.trim();
+    const unidad = document.getElementById('admin-mod').value.trim();
+    const titulo = document.getElementById('admin-titulo').value.trim();
+    const desc = document.getElementById('admin-desc').value.trim();
+    const fecha = document.getElementById('admin-fecha').value;
+    const puntos = document.getElementById('admin-puntos').value;
+
+    if (!idTarea || !unidad || !titulo) {
+        alert("⚠️ Por favor, completa al menos el ID, Módulo y Título de la tarea.");
+        return;
+    }
+
+    const btn = document.getElementById('btn-publicar');
+    btn.innerText = "⏳ Publicando en Sheets...";
+    btn.disabled = true;
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            accion: "nueva_tarea", idTarea: idTarea, unidad: unidad,
+            titulo: titulo, desc: desc, fecha: fecha, puntos: puntos
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert("✅ ¡Tarea publicada con éxito! Los alumnos ya la pueden ver.");
+            document.querySelectorAll('#form-nueva-tarea input, #form-nueva-tarea textarea').forEach(el => el.value = '');
+            document.getElementById('form-nueva-tarea').classList.add('hidden');
+        } else {
+            alert("❌ Error al publicar: " + data.mensaje);
+        }
+    })
+    .finally(() => {
+        btn.innerText = "🚀 Publicar en el Portal";
+        btn.disabled = false;
+    });
 }
 
 function cerrarSesion() {
     sessionStorage.clear();
     document.getElementById('vista-dashboard').classList.add('hidden');
-    
     const vistaAdmin = document.getElementById('vista-admin');
     if(vistaAdmin) vistaAdmin.classList.add('hidden');
     
@@ -297,57 +344,3 @@ document.addEventListener("DOMContentLoaded", function() {
         iniciarSesion(); 
     }
 });
-// =======================================================
-// FUNCIONES EXCLUSIVAS DEL PANEL DOCENTE
-// =======================================================
-function publicarTareaDocente() {
-    const idTarea = document.getElementById('admin-id').value.trim();
-    const unidad = document.getElementById('admin-mod').value.trim();
-    const titulo = document.getElementById('admin-titulo').value.trim();
-    const desc = document.getElementById('admin-desc').value.trim();
-    const fecha = document.getElementById('admin-fecha').value;
-    const puntos = document.getElementById('admin-puntos').value;
-
-    if (!idTarea || !unidad || !titulo) {
-        alert("⚠️ Por favor, completa al menos el ID, Módulo y Título de la tarea.");
-        return;
-    }
-
-    const btn = document.getElementById('btn-publicar');
-    btn.innerText = "⏳ Publicando en Sheets...";
-    btn.disabled = true;
-
-    const payload = {
-        accion: "nueva_tarea",
-        idTarea: idTarea,
-        unidad: unidad,
-        titulo: titulo,
-        desc: desc,
-        fecha: fecha,
-        puntos: puntos
-    };
-
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "éxito") {
-            alert("✅ ¡Tarea publicada con éxito! Los alumnos ya la pueden ver.");
-            // Limpiar formulario
-            document.querySelectorAll('#form-nueva-tarea input, #form-nueva-tarea textarea').forEach(el => el.value = '');
-            document.getElementById('form-nueva-tarea').classList.add('hidden');
-        } else {
-            alert("❌ Error al publicar: " + data.mensaje);
-        }
-    })
-    .catch(error => {
-        alert("⚠️ Error de conexión con el servidor.");
-        console.error(error);
-    })
-    .finally(() => {
-        btn.innerText = "🚀 Publicar en el Portal";
-        btn.disabled = false;
-    });
-}
