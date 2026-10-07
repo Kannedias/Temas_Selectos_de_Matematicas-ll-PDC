@@ -102,22 +102,24 @@ function consultarAvanceReal(matricula) {
             dibujarGrafica();
         }
 
-        // Llenar Historial de Evidencias
-        const tablaHistorial = document.getElementById('tabla-historial');
-        if (tablaHistorial && data.historial) {
-            tablaHistorial.innerHTML = "";
+        // ==========================================
+        // 1. LLENAR HISTORIAL DE EVIDENCIAS (CORREGIDO)
+        // ==========================================
+        const tbodyHistorial = document.getElementById('tbody-historial') || document.getElementById('tabla-historial');
+        if (tbodyHistorial && data.historial) {
+            tbodyHistorial.innerHTML = "";
             if (data.historial.length === 0) {
-                tablaHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay entregas registradas.</td></tr>`;
+                tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">No hay entregas registradas.</td></tr>`;
             } else {
                 data.historial.forEach(item => {
-                   let estadoEmoji = item.estado.toLowerCase().includes("revisad") ? "✅" : "⏳";
+                   let estadoEmoji = item.estado.toLowerCase().includes("revisad") ? "✅" : (item.estado.toLowerCase().includes("cumplid") ? "🌟" : "⏳");
                    let row = `<tr>
-                      <td style="font-size: 0.9rem; font-weight: 500;">${item.actividad}</td>
-                      <td style="font-size: 0.85rem; color: var(--text-muted);">${item.fecha}</td>
-                      <td><span class="badge-status ${item.estado.toLowerCase().includes("revisad") ? 'status-ok' : 'status-pend'}">${estadoEmoji} ${item.estado}</span></td>
-                      <td style="text-align: center;"><strong>${item.nota}</strong></td>
+                      <td style="font-size: 0.9rem; font-weight: 500; padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);">${item.actividad}</td>
+                      <td style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);">${item.fecha}</td>
+                      <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);"><span class="badge-status ${item.estado.toLowerCase().includes("pendient") ? 'status-pend' : 'status-ok'}">${estadoEmoji} ${item.estado}</span></td>
+                      <td style="text-align: center; padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);"><strong>${item.nota}</strong></td>
                   </tr>`;
-               tbodyHistorial.innerHTML += row;
+                   tbodyHistorial.innerHTML += row;
                 });
             }
         }
@@ -239,7 +241,7 @@ function subirEvidencia() {
     // ==========================================
     if (!actividadCompleta || actividadCompleta.includes("--") || actividadCompleta === "") {
         alert("⚠️ Por favor, selecciona la tarea o evidencia a la que corresponden los archivos.");
-        return; // Detiene la subida hasta que elija una opción válida
+        return; 
     }
 
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
@@ -261,7 +263,7 @@ function subirEvidencia() {
     btn.innerText = "⏳ Procesando archivos..."; 
     btn.disabled = true;
 
-    // Extraemos solo el ID de la tarea (Ej: "EV01" en lugar de "EV01 - Título completo")
+    // Extraemos solo el ID de la tarea
     const idTarea = actividadCompleta.split(" - ")[0];
 
     // Leer todos los archivos seleccionados de forma simultánea
@@ -303,7 +305,7 @@ function subirEvidencia() {
             if(data.status === "éxito") {
                 alert(`✅ ¡Tus ${archivosProcesados.length} archivos se enviaron correctamente a revisión!`);
                 fileInput.value = ""; 
-                consultarAvanceReal(matricula); // Recarga la tabla de historial automáticamente
+                consultarAvanceReal(matricula); 
             } else { 
                 alert("❌ Ocurrió un error en el servidor: " + data.mensaje); 
             }
