@@ -138,22 +138,22 @@
       <!-- GRID INFERIOR: PUNTOS 5 Y 6 (Historial y Ventanilla) -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
         
-<div class="card-box" style="overflow-x: auto;">
-  <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
-  <table id="tabla-historial" style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: left;">
-    <thead>
-      <tr style="background-color: #f1f5f9; border-bottom: 2px solid var(--border-card);">
-        <th style="padding: 10px; width: 40%;">Actividad</th>
-        <th style="padding: 10px; width: 20%;">Fecha</th>
-        <th style="padding: 10px; width: 25%;">Estado</th>
-        <th style="padding: 10px; width: 15%; text-align: center;">Nota</th>
-      </tr>
-    </thead>
-    <tbody id="tbody-historial">
-      <!-- Los datos se inyectarán aquí desde JS -->
-    </tbody>
-  </table>
-</div>
+        <div class="card-box" style="overflow-x: auto;">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
+          <table id="tabla-historial" style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: left;">
+            <thead>
+              <tr style="background-color: #f1f5f9; border-bottom: 2px solid var(--border-card);">
+                <th style="padding: 10px; width: 40%;">Actividad</th>
+                <th style="padding: 10px; width: 20%;">Fecha</th>
+                <th style="padding: 10px; width: 25%;">Estado</th>
+                <th style="padding: 10px; width: 15%; text-align: center;">Nota</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-historial">
+              <!-- Los datos se inyectarán aquí desde JS -->
+            </tbody>
+          </table>
+        </div>
 
         <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
           <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
@@ -173,7 +173,7 @@
     </section> <!-- CIERRE CORRECTO DE LA VISTA DASHBOARD ESTUDIANTE -->
 
 
-<!-- =========================================================================
+    <!-- =========================================================================
          VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
          ========================================================================= -->
     <section id="vista-admin" class="hidden">
@@ -201,7 +201,7 @@
         <div id="panel-mis-grupos">
             <h3 style="color: var(--conalep-dark); margin-bottom: 1rem;">📂 Tus Grupos Activos</h3>
             
-            <!-- Grid de Tarjetas de Grupos (Se generarán desde JS o se pueden dejar maquetadas) -->
+            <!-- Grid de Tarjetas de Grupos -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                 
                 <!-- Tarjeta Grupo 505 -->
@@ -227,7 +227,7 @@
             </div>
         </div>
 
-        <!-- CONTENEDOR DINÁMICO: GESTIÓN INTERNA DE UN GRUPO (Oculto por defecto) -->
+        <!-- CONTENEDOR DINÁMICO: GESTIÓN INTERNA DE UN GRUPO (Destino del Clic) -->
         <div id="panel-gestion-interno" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h3 id="titulo-gestion-grupo" style="margin: 0; color: var(--conalep-dark);">Panel de Gestión: Grupo X</h3>
@@ -248,8 +248,10 @@
 
       </div>
     </section>
+
   </main>
 
-  <script src="js/portal-dashboard.js?v=2"></script>
+  <!-- EL ROMPE-CACHÉ (Para forzar a GitHub a descargar la versión con window.abrirGestionGrupo) -->
+  <script src="js/portal-dashboard.js?v=3"></script>
 </body>
 </html>
