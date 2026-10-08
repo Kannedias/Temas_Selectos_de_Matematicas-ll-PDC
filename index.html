@@ -188,12 +188,12 @@
                 </h2>
                 <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 0.9rem;">Bienvenido, Prof. Juan Luis. Gestiona tus grupos y evaluaciones.</p>
             </div>
-            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="cerrarSesion()">Cerrar Sesión</button>
+            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="window.cerrarSesion()">Cerrar Sesión</button>
         </div>
         
         <!-- Botones de Navegación Global -->
         <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
-            <button class="btn-conalep" style="background-color: var(--conalep-primary);" onclick="mostrarPanelGrupos()">👥 Mis Grupos</button>
+            <button class="btn-conalep" style="background-color: var(--conalep-primary);" onclick="window.mostrarPanelGrupos()">👥 Mis Grupos</button>
             <button class="btn-conalep" style="background-color: #f1f5f9; color: var(--conalep-dark); border: 1px solid #cbd5e1;" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Reporte Global (Sheets)</button>
         </div>
 
@@ -205,7 +205,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                 
                 <!-- Tarjeta Grupo 505 -->
-                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="abrirGestionGrupo('505')">
+                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="window.abrirGestionGrupo('505')">
                     <h4 style="margin: 0; font-size: 1.2rem;">📘 Grupo 505</h4>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas II</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -215,7 +215,7 @@
                 </div>
 
                 <!-- Tarjeta Grupo 508 -->
-                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="abrirGestionGrupo('508')">
+                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="window.abrirGestionGrupo('508')">
                     <h4 style="margin: 0; font-size: 1.2rem;">📗 Grupo 508</h4>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas II</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -229,29 +229,4 @@
 
         <!-- CONTENEDOR DINÁMICO: GESTIÓN INTERNA DE UN GRUPO (Destino del Clic) -->
         <div id="panel-gestion-interno" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 id="titulo-gestion-grupo" style="margin: 0; color: var(--conalep-dark);">Panel de Gestión: Grupo X</h3>
-                <button class="btn-conalep" style="background-color: #94a3b8; padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="mostrarPanelGrupos()">⬅ Volver a Grupos</button>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem;">
-                <button class="btn-conalep" style="background-color: var(--conalep-gold);">🙋‍♂️ Pasar Asistencia (Hoy)</button>
-                <button class="btn-conalep" style="background-color: var(--conalep-dark);">📝 Asignar Nueva Tarea a este Grupo</button>
-            </div>
-
-            <h4 style="color: var(--text-main); margin-bottom: 1rem;">📋 Lista de Alumnos y Entregas Pendientes</h4>
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin: 1rem 0;">Cargando lista de alumnos del grupo...</p>
-                <!-- Aquí JavaScript inyectará la lista de alumnos de ese grupo -->
-            </div>
-        </div>
-
-      </div>
-    </section>
-
-  </main>
-
-  <!-- EL ROMPE-CACHÉ (Para forzar a GitHub a descargar la versión con window.abrirGestionGrupo) -->
-  <script src="js/portal-dashboard.js?v=3"></script>
-</body>
-</html>
+            <div style="display: flex; justify-content: space-between;
