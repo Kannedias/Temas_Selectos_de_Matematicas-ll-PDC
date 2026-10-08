@@ -173,55 +173,79 @@
     </section> <!-- CIERRE CORRECTO DE LA VISTA DASHBOARD ESTUDIANTE -->
 
 
-    <!-- =========================================================================
-         VISTA C: PANEL DE ADMINISTRADOR (DOCENTE)
+<!-- =========================================================================
+         VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
          ========================================================================= -->
     <section id="vista-admin" class="hidden">
       <div class="card-box" style="border-left: 4px solid var(--conalep-dark); margin-top: 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="color: var(--conalep-dark); margin: 0;">👨‍🏫 Panel de Control Docente (SICAL)</h2>
-            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-        <p style="color: var(--text-muted); margin-top: 5px; margin-bottom: 1.5rem;">Bienvenido, Prof. Juan Luis. Gestiona tu catálogo de actividades.</p>
         
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <button class="btn-conalep" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Abrir Base de Datos (Sheets)</button>
-            <button class="btn-conalep" style="background-color: var(--conalep-gold);" onclick="document.getElementById('form-nueva-tarea').classList.toggle('hidden')">📝 + Nueva Tarea</button>
+        <!-- Cabecera del Panel -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-card); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="color: var(--conalep-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    👨‍🏫 SICAL - PANEL DOCENTE 
+                    <span style="font-size: 0.8rem; background: var(--conalep-gold); color: white; padding: 2px 8px; border-radius: 12px;">Modo Administrador</span>
+                </h2>
+                <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 0.9rem;">Bienvenido, Prof. Juan Luis. Gestiona tus grupos y evaluaciones.</p>
+            </div>
+            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+        
+        <!-- Botones de Navegación Global -->
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+            <button class="btn-conalep" style="background-color: var(--conalep-primary);" onclick="mostrarPanelGrupos()">👥 Mis Grupos</button>
+            <button class="btn-conalep" style="background-color: #f1f5f9; color: var(--conalep-dark); border: 1px solid #cbd5e1;" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Reporte Global (Sheets)</button>
         </div>
 
-        <!-- FORMULARIO DE PUBLICACIÓN DE TAREAS -->
-        <div id="form-nueva-tarea" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
-            <h3 style="margin-top: 0; color: var(--conalep-dark);">Configurar Nueva Actividad</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <!-- CONTENEDOR DINÁMICO: MIS GRUPOS ACTIVOS -->
+        <div id="panel-mis-grupos">
+            <h3 style="color: var(--conalep-dark); margin-bottom: 1rem;">📂 Tus Grupos Activos</h3>
+            
+            <!-- Grid de Tarjetas de Grupos (Se generarán desde JS o se pueden dejar maquetadas) -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                 
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">ID Tarea (Ej. T12_04):</label>
-                    <input type="text" id="admin-id" placeholder="T01" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <!-- Tarjeta Grupo 505 -->
+                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="abrirGestionGrupo('505')">
+                    <h4 style="margin: 0; font-size: 1.2rem;">📘 Grupo 505</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas II</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 35 Alumnos</span>
+                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
+                    </div>
                 </div>
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Módulo (Ej. 1.2):</label>
-                    <input type="text" id="admin-mod" placeholder="1.2" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Título de la Actividad:</label>
-                    <input type="text" id="admin-titulo" placeholder="3 ejercicios de coordenadas..." style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Descripción e Instrucciones:</label>
-                    <textarea id="admin-desc" rows="3" placeholder="Desarrollando los 7 pasos y graficando en hoja milimétrica..." style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;"></textarea>
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Fecha Límite:</label>
-                    <input type="date" id="admin-fecha" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Valor (Puntos):</label>
-                    <input type="number" id="admin-puntos" value="100" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+
+                <!-- Tarjeta Grupo 508 -->
+                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="abrirGestionGrupo('508')">
+                    <h4 style="margin: 0; font-size: 1.2rem;">📗 Grupo 508</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas II</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 40 Alumnos</span>
+                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
+                    </div>
                 </div>
 
             </div>
-            <button id="btn-publicar" class="btn-conalep" style="width: 100%; margin-top: 1.5rem; background-color: var(--conalep-dark);" onclick="publicarTareaDocente()">🚀 Publicar en el Portal</button>
         </div>
+
+        <!-- CONTENEDOR DINÁMICO: GESTIÓN INTERNA DE UN GRUPO (Oculto por defecto) -->
+        <div id="panel-gestion-interno" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="titulo-gestion-grupo" style="margin: 0; color: var(--conalep-dark);">Panel de Gestión: Grupo X</h3>
+                <button class="btn-conalep" style="background-color: #94a3b8; padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="mostrarPanelGrupos()">⬅ Volver a Grupos</button>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem;">
+                <button class="btn-conalep" style="background-color: var(--conalep-gold);">🙋‍♂️ Pasar Asistencia (Hoy)</button>
+                <button class="btn-conalep" style="background-color: var(--conalep-dark);">📝 Asignar Nueva Tarea a este Grupo</button>
+            </div>
+
+            <h4 style="color: var(--text-main); margin-bottom: 1rem;">📋 Lista de Alumnos y Entregas Pendientes</h4>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
+                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin: 1rem 0;">Cargando lista de alumnos del grupo...</p>
+                <!-- Aquí JavaScript inyectará la lista de alumnos de ese grupo -->
+            </div>
+        </div>
+
       </div>
     </section>
 
