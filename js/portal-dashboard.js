@@ -3,7 +3,7 @@
    ======================================================= */
 
 // ⚠️ PON AQUÍ TU ENLACE PÚBLICO ACTUAL DE APPS SCRIPT:
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzE7AbogzH70kpzX8XSzJpeu5P88ZduoV2z_IGJNUb6Uagy0wECMkAsaMQxxt0Yfaq0Rg/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA7G85jucZJj7dtOsBWgI3Xo07pyhi-QP3cHeALPLzzzy1HFlKXldaY6EP6Y7sFdRGgw/exec"; 
 
 let miGrafica = null;
 let datosDesgloseParciales = []; 
