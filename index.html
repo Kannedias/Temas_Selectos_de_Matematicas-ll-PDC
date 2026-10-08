@@ -251,7 +251,32 @@
 
   </main>
 
-  <!-- EL ROMPE-CACHÉ (Para forzar a GitHub a descargar la versión con window.abrirGestionGrupo) -->
-  <script src="js/portal-dashboard.js?v=4"></script>
+<!-- SCRIPT INCRUSTADO PARA FORZAR LA NAVEGACIÓN (Bypass de Caché) -->
+  <script>
+    window.mostrarPanelGrupos = function() {
+        const panelInterno = document.getElementById('panel-gestion-interno');
+        const panelGrupos = document.getElementById('panel-mis-grupos');
+        if (panelInterno && panelGrupos) {
+            panelInterno.classList.add('hidden');
+            panelGrupos.classList.remove('hidden');
+        }
+    };
+
+    window.abrirGestionGrupo = function(grupoId) {
+        const panelGrupos = document.getElementById('panel-mis-grupos');
+        const panelInterno = document.getElementById('panel-gestion-interno');
+        const tituloGrupo = document.getElementById('titulo-gestion-grupo');
+        if (panelGrupos && panelInterno && tituloGrupo) {
+            panelGrupos.classList.add('hidden');
+            tituloGrupo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
+            panelInterno.classList.remove('hidden');
+        } else {
+            console.error("Faltan los contenedores HTML del panel de gestión.");
+        }
+    };
+  </script>
+
+  <!-- TU LÓGICA PRINCIPAL -->
+  <script src="js/portal-dashboard.js?v=5"></script>
 </body>
 </html>
