@@ -382,5 +382,32 @@ document.addEventListener("DOMContentLoaded", function() {
     if (sessionStorage.getItem('matriculaActiva')) {
         document.getElementById('input-matricula').value = sessionStorage.getItem('matriculaActiva');
         iniciarSesion(); 
+
+// ==========================================
+// NAVEGACIÓN DEL PANEL ADMINISTRATIVO (GLOBAL)
+// ==========================================
+window.mostrarPanelGrupos = function() {
+    const panelInterno = document.getElementById('panel-gestion-interno');
+    const panelGrupos = document.getElementById('panel-mis-grupos');
+    
+    if (panelInterno && panelGrupos) {
+        panelInterno.classList.add('hidden');
+        panelGrupos.classList.remove('hidden');
+    }
+};
+
+window.abrirGestionGrupo = function(grupoId) {
+    const panelGrupos = document.getElementById('panel-mis-grupos');
+    const panelInterno = document.getElementById('panel-gestion-interno');
+    const tituloGrupo = document.getElementById('titulo-gestion-grupo');
+    
+    if (panelGrupos && panelInterno && tituloGrupo) {
+        panelGrupos.classList.add('hidden');
+        tituloGrupo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
+        panelInterno.classList.remove('hidden');
+    } else {
+        console.error("Faltan los contenedores HTML del panel de gestión.");
+    }
+};
     }
 });
