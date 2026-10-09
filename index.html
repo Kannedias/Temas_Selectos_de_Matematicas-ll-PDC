@@ -3,348 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Académico | Conalep Playa del Carmen</title>
+  <title>Portal Académico Matemáticas II | Conalep PDC</title>
   
+  <!-- CSS Base (Colores institucionales y estructura compartida) -->
   <link rel="stylesheet" href="css/base.css">
-  <!-- Carga de Chart.js para la gráfica de avance -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <style>
-    /* Estilos locales para el Dashboard */
-    .hidden { display: none !important; }
-    .grid-unidades { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
-    .card-modulo { background: #fff; padding: 1.2rem; border-radius: 6px; border: 1px solid var(--border-card); border-left: 4px solid var(--conalep-accent); display: flex; flex-direction: column; }
-    .card-modulo.locked { border-left-color: #94a3b8; background: #f1f5f9; opacity: 0.85; }
-    .badge-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; align-self: flex-start; margin: 8px 0; }
-    .status-ok { background: #dcfce7; color: #166534; }
-    .status-act { background: #fef08a; color: #854d0e; }
-    .status-lock { background: #e2e8f0; color: #475569; }
-    .status-pend { background: #fee2e2; color: #991b1b; }
-    .table-evidencias { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-    .table-evidencias th, .table-evidencias td { padding: 10px; border-bottom: 1px solid var(--border-card); text-align: left; }
-    .table-evidencias th { background: #f8fafc; color: var(--conalep-dark); }
-    
-    /* Responsive para la leyenda de cabecera */
-    @media (min-width: 768px) { .header-credits { display: block !important; } }
-  </style>
-</head>
-<body>
+  <!-- Librería para la Gráfica de Avance -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- CABECERA INSTITUCIONAL -->
+  <!-- KaTeX para renderizado de fórmulas matemáticas en las descripciones -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
+
+  <!-- CABECERA DINÁMICA -->
   <header class="main-header">
-    <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="image_4bef00.png" alt="Logo CONALEP" style="height: 50px; width: auto;" onerror="this.style.display='none'">
+    <div class="header-container">
+      <div class="header-brand" style="display: flex; align-items: center; gap: 15px;">
+        <img src="assets/logo-conalep.png" alt="Logo CONALEP" style="height: 50px; width: auto;" onerror="this.style.display='none'">
         <div>
-          <div class="brand-title" style="font-weight: 700; font-size: 1.15rem;">CONALEP PLAYA DEL CARMEN</div>
-          <div class="brand-sub" style="font-size: 0.8rem; color: #a7f3d0;">Temas Selectos de Matemáticas II</div>
+          <div class="brand-title" style="font-weight: 700; font-size: 1.15rem; letter-spacing: 0.5px;">CONALEP PLAYA DEL CARMEN</div>
+          <div class="brand-sub" style="font-size: 0.8rem; color: #a7f3d0;">Módulo: Temas Selectos de Matemáticas II</div>
         </div>
       </div>
-
-      <!-- Leyenda de Autoría Oculta en Móviles -->
-      <div class="header-credits" style="text-align: center; display: none;">
-          <span style="color: #a7f3d0; font-size: 0.8rem; font-weight: bold;">● Sistema Activo SICAL</span><br>
-          <span style="font-size: 0.75rem; color: #cbd5e1;">Desarrollado por: Prof. Juan Luis | © 2026 Todos los derechos reservados.</span>
-      </div>
-
       <div id="user-menu" class="hidden" style="background: rgba(0,0,0,0.15); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; gap: 10px; align-items: center;">
         <span id="welcome-name">👤 Bienvenido</span>
         <span style="color: #cbd5e1;">|</span>
         <button onclick="cerrarSesion()" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer;">Salir</button>
       </div>
-
     </div>
   </header>
 
-  <main class="container">
-    
+  <main class="container" style="flex-grow: 1;">
     <!-- ==========================================
-         VISTA A: LOGIN
+         VISTA A - LOGIN RÁPIDO
          ========================================== -->
     <section id="vista-login" class="card-box" style="max-width: 400px; margin: 4rem auto; text-align: center;">
-      <h2 style="color: var(--conalep-dark); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
-      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
+      <h2 style="color: var(--conalep-dark, #004d40); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
+      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card, #e2e8f0); border-radius: 4px; font-size: 1rem;">
       <button id="btn-ingresar" class="btn-conalep" style="width: 100%; font-size: 1.05rem;" onclick="iniciarSesion()">🚀 Ingresar al Portal</button>
     </section>
 
     <!-- ==========================================
-         VISTA B: DASHBOARD DEL ESTUDIANTE
+         VISTA B - DASHBOARD DEL ALUMNO
          ========================================== -->
     <section id="vista-dashboard" class="hidden">
       
-      <!-- GRID SUPERIOR: Perfil y Gráfica -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+      <!-- PERFIL DEL ALUMNO Y GRÁFICA DE PARCIALES -->
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2rem;">
         
-        <!-- PUNTO 2: FICHA DE IDENTIDAD Y FOTO -->
+        <!-- Ficha de Identidad y Foto -->
         <div class="card-box" style="margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <div style="position: relative; margin-bottom: 15px;">
-                <img id="img-perfil" src="assets/placeholder-avatar.png" alt="Foto" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--conalep-accent); cursor: pointer; background: #e2e8f0;" onclick="document.getElementById('input-foto-perfil').click();">
-                <div style="position: absolute; bottom: 0; right: 0; background: var(--conalep-dark); color: white; border-radius: 50%; padding: 6px; cursor: pointer; font-size: 0.9rem;" onclick="document.getElementById('input-foto-perfil').click();">📷</div>
+                <img id="img-perfil" src="assets/placeholder-avatar.png" alt="Perfil" style="width: 110px; height: 110px; background: #e2e8f0; border-radius: 50%; object-fit: cover; border: 4px solid var(--conalep-accent, #00806A); cursor: pointer;" onclick="document.getElementById('input-foto-perfil').click();" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23cbd5e1\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>'">
+                <div style="position: absolute; bottom: 0; right: 0; background: var(--conalep-dark, #004d40); color: white; border-radius: 50%; padding: 6px; cursor: pointer; font-size: 0.9rem;" onclick="document.getElementById('input-foto-perfil').click();">📷</div>
             </div>
-            <input type="file" id="input-foto-perfil" accept="image/*" style="display: none;" onchange="subirFotoPerfil()">
-            <p id="txt-subiendo-foto" style="font-size: 0.75rem; color: var(--conalep-gold); display: none;">⏳ Subiendo foto...</p>
-            
-            <h3 id="lbl-nombre" style="color: var(--conalep-dark); margin: 0; font-size: 1.1rem; text-transform: uppercase;">--</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 5px 0;">Matrícula: <strong id="lbl-matricula">--</strong></p>
-            <span id="lbl-grupo" style="background: var(--conalep-accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
+            <input type="file" id="input-foto-perfil" accept="image/*" style="display: none;">
+            <h3 id="lbl-nombre" style="color: var(--conalep-dark, #004d40); margin: 0; font-size: 1.1rem; text-transform: uppercase;">Nombre del Alumno</h3>
+            <p style="color: var(--text-muted, #64748b); font-size: 0.85rem; margin: 5px 0;">Matrícula: <strong id="lbl-matricula">--</strong></p>
+            <span id="lbl-grupo" style="background: var(--conalep-accent, #00806A); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
         </div>
 
-        <!-- PUNTO 3: GRÁFICA CON DESGLOSE INTERACTIVO -->
+        <!-- Gráfica de Avance -->
         <div class="card-box" style="margin: 0; display: flex; flex-direction: column;">
-            <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Ponderación de Evaluaciones</h3>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; text-align: center;">Haz clic en una sección de la gráfica para ver el desglose.</p>
-            <div style="flex-grow: 1; position: relative; height: 160px; display: flex; justify-content: center; align-items: center;">
+            <h3 style="color: var(--conalep-dark, #004d40); margin-top: 0;">📊 Ponderación de Evaluaciones</h3>
+            <div style="flex-grow: 1; position: relative; height: 180px; display: flex; justify-content: center; align-items: center;">
                 <canvas id="graficaParciales"></canvas>
             </div>
-            
-            <!-- Contenedor del Desglose Oculto -->
-            <div id="desglose-calificacion" style="display: none; margin-top: 15px; background: #f8fafc; padding: 12px; border-radius: 6px; border-left: 4px solid var(--conalep-gold); font-size: 0.85rem;">
-                <h4 style="margin: 0 0 8px 0; color: var(--conalep-dark);" id="titulo-desglose">Desglose</h4>
-                <ul style="list-style: none; padding: 0; margin: 0; color: #475569; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <li>📝 Tareas: <strong id="val-tareas">--</strong></li>
-                    <li>🗣️ Participación: <strong id="val-part">--</strong></li>
-                    <li>✅ Asistencia: <strong id="val-asist">--</strong></li>
-                    <li>📄 Examen: <strong id="val-exam">--</strong></li>
-                </ul>
-            </div>
-        </div>
-
-      </div> <!-- Cierre del Grid Superior -->
-
-      <!-- PUNTO 4: CATÁLOGO DE UNIDADES DINÁMICO -->
-      <h3 style="margin-top: 2rem; color: var(--conalep-dark);">📚 Unidades Temáticas del Programa</h3>
-      <div class="grid-unidades">
-        <div class="card-modulo">
-          <h4 style="margin:0;">📐 Módulo 1.1: Sistemas y Vectores</h4>
-          <span id="status-mod-1.1" class="badge-status status-lock">🔄 Consultando...</span>
-          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Plano cartesiano, vector desplazamiento y magnitud.</p>
-        </div>
-
-<!-- CATÁLOGO DE UNIDADES Y MÓDULOS -->
-<div class="unidades-container" style="max-width: 1100px; margin: 2rem auto; padding: 0 20px;">
-
-    <!-- ==========================================
-         UNIDAD 1: GEOMETRÍA ANALÍTICA VECTORIAL
-         ========================================== -->
-    <div class="unidad-group" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; margin-bottom: 2.5rem; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        
-        <!-- Encabezado de la Unidad (Estilo Conalep) -->
-        <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 15px 25px; border-bottom: 4px solid var(--accent);">
-            <h2 style="margin: 0; font-size: 1.4rem;">📘 Unidad 1: Geometría Analítica Vectorial</h2>
-            <p style="margin: 5px 0 0 0; font-size: 0.95rem; color: #cbd5e1;">Fundamentos del plano cartesiano, vectores y ecuaciones de la recta en 2D.</p>
-        </div>
-
-        <!-- Grid de Sub-módulos -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 25px; background: var(--bg-main);">
-            
-            <!-- Módulo 1.1 (Concluido) -->
-            <div class="card-modulo" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem;">📐 Módulo 1.1: Sistemas y Vectores</h3>
-                <span style="display: inline-flex; align-items: center; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
-                    🟢 Concluido
-                </span>
-                <p style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0;">Plano cartesiano, vector desplazamiento y magnitud.</p>
-                <button style="width: 100%; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">
-                    📘 Repasar Módulo
-                </button>
-            </div>
-
-            <!-- Módulo 1.2 (En Curso) -->
-            <div class="card-modulo" style="background: #ffffff; border: 1px solid #fde047; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #f59e0b; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.1);">
-                <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem;">📈 Módulo 1.2: La Línea Recta</h3>
-                <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
-                    🟡 En Curso
-                </span>
-                <p style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0;">Pendiente, inclinación y las 3 formas de la ecuación.</p>
-                <button style="width: 100%; background: var(--accent); color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 128, 106, 0.3); transition: 0.2s;">
-                    🚀 Entrar al Laboratorio
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ==========================================
-         UNIDAD 2: SECCIONES CÓNICAS (PRÓXIMAMENTE)
-         ========================================== -->
-    <div class="unidad-group" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; opacity: 0.85;">
-        
-        <!-- Encabezado de la Unidad (Inactiva) -->
-        <div style="background: #e2e8f0; color: #334155; padding: 15px 25px; border-bottom: 4px solid #94a3b8;">
-            <h2 style="margin: 0; font-size: 1.4rem;">⭕ Unidad 2: Secciones Cónicas</h2>
-            <p style="margin: 5px 0 0 0; font-size: 0.95rem; color: #64748b;">Lugares geométricos, circunferencias y parábolas.</p>
-        </div>
-
-        <!-- Grid de Sub-módulos -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 25px; background: #f8fafc;">
-            
-            <!-- Módulo 2.1 (Bloqueado) -->
-            <div class="card-modulo" style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8;">
-                <h3 style="margin: 0 0 10px 0; color: #94a3b8; font-size: 1.1rem;">🎯 Módulo 2.1: La Circunferencia</h3>
-                <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
-                    🔒 Próximamente
-                </span>
-                <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 15px 0;">Centro (h,k), radio y ecuación canónica.</p>
-                <button disabled style="width: 100%; background: #f1f5f9; color: #cbd5e1; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; cursor: not-allowed; font-weight: bold;">
-                    Bloqueado
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-</div>
-
-        <div class="card-modulo locked">
-          <h4 style="margin:0;">⭕ Módulo 2.1: La Circunferencia</h4>
-          <span class="badge-status status-lock">🔒 Próximamente</span>
-          <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">Centro (h,k), radio y ecuación canónica.</p>
         </div>
       </div>
 
-      <!-- GRID INFERIOR: PUNTOS 5 Y 6 (Historial y Ventanilla) -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-        
-        <div class="card-box" style="overflow-x: auto;">
-          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
-          <table id="tabla-historial" style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: left;">
-            <thead>
-              <tr style="background-color: #f1f5f9; border-bottom: 2px solid var(--border-card);">
-                <th style="padding: 10px; width: 40%;">Actividad</th>
-                <th style="padding: 10px; width: 20%;">Fecha</th>
-                <th style="padding: 10px; width: 25%;">Estado</th>
-                <th style="padding: 10px; width: 15%; text-align: center;">Nota</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-historial">
-              <!-- Los datos se inyectarán aquí desde JS -->
-            </tbody>
-          </table>
-        </div>
+      <!-- ==========================================
+           CATÁLOGO DE UNIDADES Y MÓDULOS (NUEVA ESTRUCTURA)
+           ========================================== -->
+      <div class="unidades-container" style="margin-bottom: 2rem;">
 
-        <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
-          <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
-          
-          <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
-          <select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
-            <option value="">Cargando catálogo...</option>
-          </select>
-          
-          <input type="file" id="input-archivo" accept="image/*,application/pdf" multiple style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
-          <button id="btn-enviar" class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);" onclick="subirEvidencia()">📤 Enviar Evidencia a Revisión</button>
-        </div>
+          <!-- UNIDAD 1: GEOMETRÍA ANALÍTICA VECTORIAL -->
+          <div class="unidad-group" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; margin-bottom: 2.5rem; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+              
+              <div style="background: linear-gradient(135deg, var(--conalep-primary, #00594C) 0%, var(--conalep-dark, #003B32) 100%); color: white; padding: 15px 25px; border-bottom: 4px solid var(--conalep-accent, #00806A);">
+                  <h2 style="margin: 0; font-size: 1.4rem;">📘 UNIDAD 1: Geometría Analítica Vectorial (Lo que ya tenemos)</h2>
+                  <p style="margin: 5px 0 0 0; font-size: 0.95rem; color: #cbd5e1; font-style: italic;">El alumno aprende a analizar un solo movimiento lineal.</p>
+              </div>
 
-      </div> <!-- Cierre del Grid Inferior -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 25px; background: var(--bg-slate, #f8fafc);">
+                  
+                  <!-- Módulo 1.1 -->
+                  <div class="card-modulo" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
+                      <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem;">📐 Módulo 1.1: Sistemas y Vectores</h3>
+                      <div>
+                        <span id="status-mod-1.1" style="display: inline-flex; align-items: center; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                            🟢 Concluido
+                        </span>
+                      </div>
+                      <p style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; flex-grow: 1;">Plano cartesiano, vector desplazamiento $\Delta r$ y magnitud $|\Delta r|$.</p>
+                      <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">
+                          📘 Repasar Módulo
+                      </button>
+                  </div>
 
-    </section> <!-- CIERRE CORRECTO DE LA VISTA DASHBOARD ESTUDIANTE -->
+                  <!-- Módulo 1.2 -->
+                  <div class="card-modulo" style="background: #ffffff; border: 1px solid #fde047; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #f59e0b; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.1); display: flex; flex-direction: column;">
+                      <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem;">📈 Módulo 1.2: La Línea Recta</h3>
+                      <div>
+                        <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                            🟡 En Curso
+                        </span>
+                      </div>
+                      <p style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; flex-grow: 1;">Dirección $\theta$, pendiente $m$ y las 3 formas de la ecuación. <em>(Aquí se mantiene el motor interactivo con los 7 pasos).</em></p>
+                      <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent, #00806A); color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 128, 106, 0.3); transition: 0.2s;">
+                          🚀 Entrar al Laboratorio
+                      </button>
+                  </div>
+              </div>
+          </div>
 
+          <!-- UNIDAD 2: INTERACCIONES, CURVAS Y CINEMÁTICA -->
+          <div class="unidad-group" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; opacity: 0.9;">
+              
+              <div style="background: #e2e8f0; color: #334155; padding: 15px 25px; border-bottom: 4px solid #94a3b8;">
+                  <h2 style="margin: 0; font-size: 1.4rem;">🚀 UNIDAD 2: Interacciones, Curvas y Cinemática (Versión Compacta)</h2>
+                  <p style="margin: 5px 0 0 0; font-size: 0.95rem; color: #64748b; font-style: italic;">El alumno evoluciona: analiza trayectorias múltiples y movimientos acelerados.</p>
+              </div>
 
-    <!-- =========================================================================
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 25px; background: #f8fafc;">
+                  
+                  <!-- Módulo 2.1 -->
+                  <div class="card-modulo" style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; display: flex; flex-direction: column;">
+                      <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem;">🎯 Módulo 2.1: Interacciones Lineales y Tendencias</h3>
+                      <div>
+                        <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                            🔒 Próximamente
+                        </span>
+                      </div>
+                      <ul style="font-size: 0.85rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
+                          <li style="margin-bottom: 8px;"><strong>Intersección y Colisiones (Sistemas 2x2):</strong> Calcular el punto exacto $(x, y)$ donde dos trayectorias chocan, y comparar pendientes para definir paralelismo o perpendicularidad.</li>
+                          <li><strong>Trayectorias por Múltiples Puntos (Regresión):</strong> Si hay 5 o 6 puntos dispersos, trazar la línea "promedio" que mejor modela ese comportamiento.</li>
+                      </ul>
+                      <button disabled style="width: 100%; background: #f1f5f9; color: #cbd5e1; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; cursor: not-allowed; font-weight: bold;">
+                          Bloqueado
+                      </button>
+                  </div>
+
+                  <!-- Módulo 2.2 -->
+                  <div class="card-modulo" style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; display: flex; flex-direction: column;">
+                      <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem;">☄️ Módulo 2.2: Tiro Parabólico y Simetría</h3>
+                      <div>
+                        <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                            🔒 Próximamente
+                        </span>
+                      </div>
+                      <ul style="font-size: 0.85rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
+                          <li style="margin-bottom: 8px;"><strong>La Parábola en Movimiento:</strong> Modelar el lanzamiento de un proyectil o salto de un vehículo usando la gravedad para encontrar el alcance y la altura máxima.</li>
+                          <li><strong>Simetría de la Curva:</strong> Comprender cómo la trayectoria de vuelo funciona como un espejo, donde la subida refleja exactamente a la bajada.</li>
+                      </ul>
+                      <button disabled style="width: 100%; background: #f1f5f9; color: #cbd5e1; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; cursor: not-allowed; font-weight: bold;">
+                          Bloqueado
+                      </button>
+                  </div>
+
+              </div>
+          </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
          VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
-         ========================================================================= -->
+         ========================================== -->
     <section id="vista-admin" class="hidden">
-      <div class="card-box" style="border-left: 4px solid var(--conalep-dark); margin-top: 2rem;">
+      <div class="card-box" style="border-left: 4px solid var(--conalep-dark, #004d40); margin-top: 2rem;">
+        <h2 style="color: var(--conalep-dark, #004d40);">👨‍🏫 Panel de Control Docente (SICAL)</h2>
+        <p style="color: var(--text-muted, #64748b); margin-bottom: 1.5rem;">Bienvenido, Prof. Juan Luis. Aquí tienes los accesos rápidos a tu base de datos.</p>
         
-        <!-- Cabecera del Panel -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-card); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-            <div>
-                <h2 style="color: var(--conalep-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-                    👨‍🏫 SICAL - PANEL DOCENTE 
-                    <span style="font-size: 0.8rem; background: var(--conalep-gold); color: white; padding: 2px 8px; border-radius: 12px;">Modo Administrador</span>
-                </h2>
-                <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 0.9rem;">Bienvenido, Prof. Juan Luis. Gestiona tus grupos y evaluaciones.</p>
-            </div>
-            <button class="btn-conalep" style="background-color: #ef4444; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="window.cerrarSesion()">Cerrar Sesión</button>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button class="btn-conalep" onclick="window.open('#', '_blank')">📊 Abrir Google Sheets Master</button>
+            <button class="btn-conalep" style="background-color: var(--conalep-gold, #d97706);" onclick="alert('Función de Nueva Tarea en desarrollo')">📝 Publicar Nueva Tarea</button>
         </div>
-        
-        <!-- Botones de Navegación Global -->
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
-            <button class="btn-conalep" style="background-color: var(--conalep-primary);" onclick="window.mostrarPanelGrupos()">👥 Mis Grupos</button>
-            <button class="btn-conalep" style="background-color: #f1f5f9; color: var(--conalep-dark); border: 1px solid #cbd5e1;" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Reporte Global (Sheets)</button>
-        </div>
-
-        <!-- CONTENEDOR DINÁMICO: MIS GRUPOS ACTIVOS -->
-        <div id="panel-mis-grupos">
-            <h3 style="color: var(--conalep-dark); margin-bottom: 1rem;">📂 Tus Grupos Activos</h3>
-            
-            <!-- Grid de Tarjetas de Grupos -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                
-                <!-- Tarjeta Grupo 505 -->
-                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="window.abrirGestionGrupo('505')">
-                    <h4 style="margin: 0; font-size: 1.2rem;">📘 Grupo 505</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas II</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 35 Alumnos</span>
-                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
-                    </div>
-                </div>
-
-                <!-- Tarjeta Grupo 508 -->
-                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="window.abrirGestionGrupo('508')">
-                    <h4 style="margin: 0; font-size: 1.2rem;">📗 Grupo 508</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas II</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 40 Alumnos</span>
-                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- CONTENEDOR DINÁMICO: GESTIÓN INTERNA DE UN GRUPO (Destino del Clic) -->
-        <div id="panel-gestion-interno" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 id="titulo-gestion-grupo" style="margin: 0; color: var(--conalep-dark);">Panel de Gestión: Grupo X</h3>
-                <button class="btn-conalep" style="background-color: #94a3b8; padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="window.mostrarPanelGrupos()">⬅ Volver a Grupos</button>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem;">
-                <button class="btn-conalep" style="background-color: var(--conalep-gold);">🙋‍♂️ Pasar Asistencia (Hoy)</button>
-                <button class="btn-conalep" style="background-color: var(--conalep-dark);">📝 Asignar Nueva Tarea a este Grupo</button>
-            </div>
-
-            <h4 style="color: var(--text-main); margin-bottom: 1rem;">📋 Lista de Alumnos y Entregas Pendientes</h4>
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin: 1rem 0;">Cargando lista de alumnos del grupo...</p>
-                <!-- Aquí JavaScript inyectará la lista de alumnos de ese grupo -->
-            </div>
-        </div>
-
       </div>
     </section>
 
   </main>
 
-<!-- SCRIPT INCRUSTADO PARA FORZAR LA NAVEGACIÓN (Bypass de Caché) -->
-  <script>
-    window.mostrarPanelGrupos = function() {
-        const panelInterno = document.getElementById('panel-gestion-interno');
-        const panelGrupos = document.getElementById('panel-mis-grupos');
-        if (panelInterno && panelGrupos) {
-            panelInterno.classList.add('hidden');
-            panelGrupos.classList.remove('hidden');
-        }
-    };
+  <!-- ==========================================
+       FOOTER SICAL (CENTRALIZADO)
+       ========================================== -->
+  <footer style="background-color: var(--conalep-dark, #004d40); color: #ffffff; text-align: center; padding: 1.5rem; border-top: 4px solid var(--conalep-accent, #00806A); margin-top: auto;">
+      <div style="display: inline-flex; align-items: center; gap: 6px; color: #a7f3d0; font-size: 0.95rem; font-weight: bold; margin-bottom: 6px;">
+          <span style="height: 10px; width: 10px; background-color: #34d399; border-radius: 50%; display: inline-block;"></span> Sistema Activo SICAL
+      </div>
+      <div style="font-size: 0.85rem; color: #cbd5e1; letter-spacing: 0.5px;">
+          Desarrollado por: Prof. Juan Luis | © 2026 Todos los derechos reservados.
+      </div>
+  </footer>
 
-    window.abrirGestionGrupo = function(grupoId) {
-        const panelGrupos = document.getElementById('panel-mis-grupos');
-        const panelInterno = document.getElementById('panel-gestion-interno');
-        const tituloGrupo = document.getElementById('titulo-gestion-grupo');
-        if (panelGrupos && panelInterno && tituloGrupo) {
-            panelGrupos.classList.add('hidden');
-            tituloGrupo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
-            panelInterno.classList.remove('hidden');
-        } else {
-            console.error("Faltan los contenedores HTML del panel de gestión.");
-        }
-    };
-  </script>
-
-  <!-- TU LÓGICA PRINCIPAL -->
-  <script src="js/portal-dashboard.js?v=5"></script>
+  <!-- SCRIPT MAESTRO DEL PORTAL -->
+  <script src="js/portal-dashboard.js"></script>
 </body>
 </html>
