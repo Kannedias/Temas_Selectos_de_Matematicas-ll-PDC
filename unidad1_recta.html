@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 1: Geometría Analítica Vectorial | Conalep PDC</title>
+    
+    <!-- CSS Base -->
+    <link rel="stylesheet" href="css/base.css">
+    
+    <!-- KaTeX para renderizado de fórmulas matemáticas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0; background-color: var(--bg-slate, #f8fafc);">
+
+    <!-- CABECERA DE LA UNIDAD -->
+    <header class="main-header" style="background: linear-gradient(135deg, var(--conalep-primary, #00594C) 0%, var(--conalep-dark, #003B32) 100%); color: white; padding: 20px 30px; border-bottom: 4px solid var(--conalep-accent, #00806A);">
+        <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <a href="index.html" style="color: #a7f3d0; text-decoration: none; font-size: 0.9rem; font-weight: bold;">← Volver al Dashboard</a>
+                <h1 style="margin: 5px 0 0 0; font-size: 1.5rem;">📘 Unidad 1: Geometría Analítica Vectorial</h1>
+                <p style="margin: 2px 0 0 0; font-size: 0.9rem; color: #cbd5e1;">Módulo 1.1 y 1.2 • Laboratorio Interactivo</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN DE LA UNIDAD -->
+    <nav style="background-color: var(--conalep-dark, #003B32); padding: 10px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 15px; justify-content: center;">
+            <button class="nav-tab active" onclick="cambiarPestana('contexto')" style="background: transparent; border: none; color: #cbd5e1; padding: 8px 16px; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent;">📖 El Lenguaje del Espacio</button>
+            <button class="nav-tab" onclick="cambiarPestana('laboratorio')" style="background: transparent; border: none; color: #cbd5e1; padding: 8px 16px; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent;">🔬 Laboratorio de los 7 Pasos</button>
+            <button class="nav-tab" onclick="cambiarPestana('retos')" style="background: transparent; border: none; color: #cbd5e1; padding: 8px 16px; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent;">🎯 Retos de Evaluación</button>
+        </div>
+    </nav>
+
+    <main class="container" style="max-width: 1200px; margin: 2rem auto; padding: 0 20px; flex-grow: 1;">
+
+        <!-- ==========================================
+             PESTAÑA 1: CONTEXTO Y FUNDAMENTOS LITERARIOS
+             ========================================== -->
+        <section id="sec-contexto" class="tab-content active">
+            <div class="card-box" style="background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: var(--conalep-dark, #004d40); margin-top: 0;">Capítulo 1: Geometría Analítica y el Lenguaje del Espacio</h2>
+                
+                <p style="font-size: 1.05rem; line-height: 1.7; color: #334155; margin-bottom: 1.5rem;">
+                    Las fórmulas matemáticas no son números abstractos inventados para complicar exámenes; son el código fuente, la física de estructuras y los algoritmos médicos que transforman el mundo real[cite: 12]. Cuando un motor gráfico de videojuegos como Unity o Unreal calcula un disparo o una colisión, no ve la pantalla, sino que ejecuta en tiempo real la forma general de la ecuación ($Ax + By + C = 0$) y vectores de desplazamiento mediante técnicas de <em>raycasting</em>[cite: 12]. En la ingeniería, el diseño de puentes o rampas requiere interpretar una línea como un vector de fuerza, donde un cálculo incorrecto de la pendiente o la dirección ($\theta$) es la diferencia entre una estructura segura y un colapso por fuerzas de corte[cite: 12]. Y en medicina, la curva farmacocinética se modela con la forma explícita de la recta ($y = mx + b$), donde la pendiente dicta la velocidad de infusión para evitar que un paciente sufra una sobredosis o un fallo orgánico[cite: 12].
+                </p>
+
+                <h3 style="color: var(--conalep-primary, #00594C); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">La Secuencia de Siete Pasos</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #2563eb;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #1e3a8a;">1. Vector Desplazamiento ($\Delta \vec{r}$)</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Indica cuánto te moviste horizontalmente ($\Delta x$) y verticalmente ($\Delta y$) entre un punto de origen y uno de destino[cite: 17]. Se modela restando las coordenadas[cite: 17]:</p>
+                        <div style="text-align: center; font-weight: bold;">$$\Delta \vec{r} = (\Delta x, \Delta y) = (x_2 - x_1, y_2 - y_1)$$</div>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #9333ea;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #581c87;">2. Magnitud del Desplazamiento ($\vert{}\Delta \vec{r}\vert{}$)</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Es la distancia real en línea recta calculada mediante el Teorema de Pitágoras[cite: 17].</p>
+                        <div style="text-align: center; font-weight: bold;">$$|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$$</div>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">Una regla de oro geométrica es que todo número negativo elevado al cuadrado da un resultado positivo, por lo que nunca procesarás valores negativos dentro de esta raíz[cite: 17].</p>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #059669;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #064e3b;">3. Dirección del Vector ($\theta$)</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Representa la inclinación en grados, medida en sentido antihorario[cite: 17].</p>
+                        <div style="text-align: center; font-weight: bold;">$$\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right) + C$$</div>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">Las calculadoras estándar ($\tan^{-1}$) ignoran los signos negativos y solo entregan el ángulo de referencia del primer cuadrante[cite: 17]. Siempre debes analizar los signos de $\Delta x$ y $\Delta y$ para sumar el ajuste de grados correcto según el cuadrante en el que te encuentres (por ejemplo, sumar $180^\circ$ si tu trayectoria va hacia la izquierda)[cite: 17].</p>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #d97706;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #78350f;">4. Pendiente de la Recta ($m$)</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Es la razón de cambio que indica matemáticamente si la trayectoria sube ($m > 0$), baja ($m < 0$) o es completamente horizontal ($m = 0$)[cite: 17].</p>
+                        <div style="text-align: center; font-weight: bold;">$$m = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$$</div>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #0284c7;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #0c4a6e;">5. Forma Punto-Pendiente</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Funciona como la plantilla inicial de construcción para formar tu modelo algebraico cuando conoces la pendiente y un punto por donde pasa la línea[cite: 17, 18].</p>
+                        <div style="text-align: center; font-weight: bold;">$$y - y_1 = m(x - x_1)$$</div>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">Es crucial usar siempre paréntesis al sustituir las coordenadas para evitar que los signos de los puntos se traslapen accidentalmente con los signos negativos de la fórmula[cite: 18].</p>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #16a34a;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #14532d;">6. Forma Explícita ($y = mx + b$)</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Muestra directamente el comportamiento del sistema, revelando el ritmo de cambio ($m$) y la ordenada al origen ($b$), que es el punto exacto de corte en el eje vertical[cite: 17, 18].</p>
+                        <div style="text-align: center; font-weight: bold;">$$y = mx + b$$</div>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid #dc2626; grid-column: 1 / -1;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">7. Forma General ($Ax + By + C = 0$)</h4>
+                        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 0.5rem;">Es la representación canónica estandarizada en la que todos los términos numéricos se agrupan a la izquierda e igualan a cero, utilizada en algoritmos formales y lenguajes de programación[cite: 17, 18].</p>
+                        <div style="text-align: center; font-weight: bold;">$$Ax + By + C = 0$$</div>
+                    </div>
+                </div>
+
+                <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+                    <h3 style="margin-top: 0; color: #92400e;">🛡️ Escudos Algebraicos para la Resolución</h3>
+                    <p style="font-size: 0.95rem; color: #78350f; margin-bottom: 0;">
+                        El fracaso al modelar estas ecuaciones rara vez ocurre por no entender el concepto espacial, sino por descuidos en el álgebra básica. Las reglas de los signos dictan que la multiplicación de signos iguales da positivo y diferentes da negativo[cite: 17]. En las sustituciones de restas, una estructura como $x_2 - (-5)$ siempre debe convertirse directamente en una suma: $x_2 + 5$[cite: 17, 18]. Finalmente, cuando necesites despejar un denominador, basta con multiplicar ambos lados de la ecuación por ese mismo número para neutralizarlo mediante operaciones inversas, logrando un despeje limpio[cite: 17, 18].
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PESTAÑA 2: LABORATORIO INTERACTIVO 
+             ========================================== -->
+        <section id="sec-laboratorio" class="tab-content" style="display: none;">
+            <div class="pedagogico-header" style="margin-bottom: 1.25rem;">
+                <h2 style="color: #004d40; font-size: 1.4rem; margin-bottom: 0.25rem;">🔬 Simulador Gráfico y Cálculo Automático</h2>
+                <p style="color: #475569; margin: 0; font-size: 0.9rem;">Ingresa las coordenadas de los puntos $A$ y $B$ para visualizar la gráfica e interpretar la solución paso a paso.</p>
+            </div>
+
+            <!-- GRID SUPERIOR: ENTRADAS + PLANO CARTESIANO -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; align-items: start;">
+                
+                <!-- COLUMNA IZQUIERDA: PUNTOS Y CONTROLES -->
+                <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
+                    <h3 style="margin: 0 0 0.75rem 0; color: #004d40; font-size: 1.1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem;">📍 Puntos de Entrada</h3>
+                    
+                    <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
+                        <div style="background-color: #f0f7ff; border: 1px solid #b6d4fe; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.6rem;">
+                            <strong style="color: #084298; font-size: 0.85rem;">Punto A $(x_1, y_1)$</strong>
+                            <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$x_1$:</span><input type="number" step="any" id="lab-x1" value="-2" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$y_1$:</span><input type="number" step="any" id="lab-y1" value="-3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #fff0f0; border: 1px solid #f5c2c7; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                            <strong style="color: #842029; font-size: 0.85rem;">Punto B $(x_2, y_2)$</strong>
+                            <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$x_2$:</span><input type="number" step="any" id="lab-x2" value="4" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$y_2$:</span><input type="number" step="any" id="lab-y2" value="3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.6rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">🚀 Calcular y Graficar</button>
+                    </form>
+                </div>
+
+                <!-- COLUMNA DERECHA: PLANO CARTESIANO -->
+                <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="margin: 0; color: #333; font-size: 1.1rem;">📊 Plano Cartesiano Interactivo</h3>
+                    </div>
+                    <div style="position: relative; width: 100%; height: 340px; background: #fafafa; border-radius: 6px; overflow: hidden; border: 1px solid #f1f5f9;">
+                        <canvas id="planoCartesianoCanvas"></canvas>
+                    </div>
+                    <div id="resumen-grafica-bar" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.82rem;"></div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN INFERIOR: PASO A PASO DETALLADO -->
+            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0;">
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem; color: #004d40; font-size: 1.2rem;">📝 Explicación Detallada Paso a Paso (7 Pasos)</h3>
+                <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;"></div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PESTAÑA 3: RETOS Y DESAFÍOS (NIVELES 1 Y 2)
+             ========================================== -->
+        <section id="sec-retos" class="tab-content" style="display: none;">
+            <div class="pedagogico-header" style="margin-bottom: 1.5rem;">
+                <h2 style="color: #004d40; font-size: 1.5rem; margin-bottom: 0.5rem;">🎯 Módulo de Retos y Examen</h2>
+                <p style="color: #475569;">Demuestra tu dominio resolviendo casos directos o interpretando escenarios reales.</p>
+            </div>
+
+            <!-- Panel de Configuración Inicial -->
+            <div class="card-aplicacion" id="panel-configuracion-reto" style="background: #ffffff; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #004d40;">Configuración del Examen</h3>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; align-items: center; flex-wrap: wrap;">
+                    <select id="nivel-reto" style="padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px; flex-grow: 1; max-width: 400px; font-weight: bold; color: #1e293b;">
+                        <option value="1">Nivel 1: Destreza Numérica Directa</option>
+                        <option value="2">Nivel 2: Contextualización (Incógnitas Ocultas)</option>
+                    </select>
+                    <button onclick="iniciarRetoSeguro()" style="background-color: #00806A; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                        🚀 Iniciar Reto Seguro
+                    </button>
+                </div>
+                <p style="color: #dc2626; font-size: 0.85rem; margin-top: 15px; font-weight: 600;">
+                    ⚠️ Atención: Al iniciar el reto se bloqueará la navegación y el sistema generará valores aleatorios.
+                </p>
+            </div>
+
+            <!-- Zona Activa del Reto -->
+            <div id="zona-activa-reto" class="anti-cheat" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 id="titulo-nivel" style="margin: 0; color: #004d40; font-size: 1.25rem;">Nivel Activo</h3>
+                    <span style="background: #dc2626; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">Modo Seguro Activado 🔒</span>
+                </div>
+
+                <div id="planteamiento-problema" style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 1.25rem; border-radius: 4px; margin-bottom: 1.5rem; font-size: 1.05rem; color: #166534;"></div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">1. Vector ($\Delta x, \Delta y$):</label><input type="text" id="ans-vector" placeholder="Ej: 5, -2" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">2. Magnitud ($\vert{}\Delta r\vert{}$):</label><input type="number" id="ans-magnitud" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">3. Dirección ($\theta^\circ$):</label><input type="number" id="ans-direccion" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">4. Pendiente ($m$):</label><input type="number" id="ans-pendiente" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">5. Punto-Pendiente:</label><input type="text" id="ans-pp" placeholder="Ej: y - 3 = 2(x + 1)" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">6. Forma Explícita:</label><input type="text" id="ans-exp" placeholder="Ej: y = 2x + 5" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                    <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">7. Forma General:</label><input type="text" id="ans-gen" placeholder="Ej: 2x - y + 5 = 0" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid #cbd5e1; padding-top: 15px;">
+                    <button onclick="comprobarReto()" style="background: #2563eb; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer;">✔️ Comprobar Respuestas</button>
+                    <button onclick="desglosarReto()" style="background: #d97706; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer;">🔍 Ver Proceso a Detalle</button>
+                    <button onclick="anularReto()" style="background: #dc2626; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto;">❌ Cancelar Examen</button>
+                </div>
+
+                <div id="feedback-reto-msg" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;"></div>
+                <div id="desglose-reto-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 20px;"></div>
+            </div>
+        </section>
+
+    </main>
