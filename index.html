@@ -163,7 +163,44 @@
                           Bloqueado
                       </button>
                   </div>
+                <!-- ==========================================
+           GRID INFERIOR: HISTORIAL Y VENTANILLA
+           ========================================== -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        
+        <!-- Historial de Evidencias -->
+        <div class="card-box" style="overflow-x: auto; margin: 0;">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
+          <table id="tabla-historial" style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: left;">
+            <thead>
+              <tr style="background-color: #f1f5f9; border-bottom: 2px solid var(--border-card);">
+                <th style="padding: 10px; width: 40%;">Actividad</th>
+                <th style="padding: 10px; width: 20%;">Fecha</th>
+                <th style="padding: 10px; width: 25%;">Estado</th>
+                <th style="padding: 10px; width: 15%; text-align: center;">Nota</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-historial">
+              <!-- Los datos se inyectarán aquí desde JS -->
+            </tbody>
+          </table>
+        </div>
 
+        <!-- Ventanilla de Entrega -->
+        <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
+          
+          <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
+          <select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
+            <option value="">Cargando catálogo...</option>
+          </select>
+          
+          <input type="file" id="input-archivo" accept="image/*,application/pdf" multiple style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
+          <button id="btn-enviar" class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);" onclick="subirEvidencia()">📤 Enviar Evidencia a Revisión</button>
+        </div>
+
+      </div> <!-- Cierre del Grid Inferior -->
               </div>
           </div>
 
