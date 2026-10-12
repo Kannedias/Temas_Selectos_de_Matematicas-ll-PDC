@@ -3,121 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratorio Interactivo: La Recta en 2D | Conalep PDC</title>
+    <title>Laboratorio: La Recta en 2D | Conalep PDC</title>
     
+    <!-- VINCULACIÓN AL CSS PRINCIPAL -->
     <link rel="stylesheet" href="css/base.css">
     
-    <!-- KaTeX CSS -->
+    <!-- KaTeX para fórmulas -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <style>
+        /* Estilos básicos de rescate en caso de que base.css falle */
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block !important; }
+        .main-nav { background: #003B32; padding: 10px; text-align: center; }
+        .nav-tab { background: transparent; color: #cbd5e1; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; }
+        .nav-tab.active { color: white; border-bottom: 2px solid #00806A; }
     </style>
 </head>
-<body style="background-color: #f8fafc; margin: 0; font-family: sans-serif;">
+<body style="background-color: #f1f5f9; margin: 0; font-family: sans-serif;">
 
-    <!-- CABECERA -->
-    <header style="background: linear-gradient(135deg, #00594C 0%, #003B32 100%); color: white; padding: 20px;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <h1>📘 Unidad 1: Geometría Analítica Vectorial</h1>
-            <p>Laboratorio Interactivo de la Línea Recta y Vectores 2D</p>
+    <!-- CABECERA INSTITUCIONAL + BOTÓN DE REGRESO -->
+    <header style="background: linear-gradient(135deg, #00594C 0%, #003B32 100%); color: white; padding: 15px 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column;">
+            <!-- BOTÓN PARA VOLVER AL DASHBOARD -->
+            <div style="margin-bottom: 10px;">
+                <a href="index.html" style="color: #a7f3d0; text-decoration: none; font-size: 0.9rem; font-weight: bold; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 4px;">
+                    ← Volver al Dashboard
+                </a>
+            </div>
+            
+            <div>
+                <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem;">Unidad 1 • Geometría Analítica</span>
+                <h1 style="margin: 5px 0 0 0; font-size: 1.6rem;">Laboratorio Interactivo: La Recta en 2D</h1>
+                <p style="margin: 2px 0 0 0; color: #cbd5e1; font-size: 0.9rem;">Temas Selectos de Matemáticas II — Conalep Playa del Carmen</p>
+            </div>
         </div>
     </header>
 
-    <!-- NAVEGACIÓN -->
-    <nav style="background-color: #003B32; padding: 10px; text-align: center;">
-        <button class="nav-tab active" onclick="cambiarPestana('fundamentos')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">💡 1. Fundamentos</button>
-        <button class="nav-tab" onclick="cambiarPestana('formulas')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">📚 2. Prontuario</button>
-        <button class="nav-tab" onclick="cambiarPestana('laboratorio')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">🔬 3. Laboratorio Gráfico</button>
-        <button class="nav-tab" onclick="cambiarPestana('retos')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">🏆 4. Retos (Examen)</button>
+    <!-- NAVEGACIÓN PRINCIPAL -->
+    <nav class="main-nav">
+        <button class="nav-tab active" onclick="cambiarPestana('fundamentos')">💡 1. Fundamentos</button>
+        <button class="nav-tab" onclick="cambiarPestana('formulas')">📚 2. Prontuario (7 Pasos)</button>
+        <button class="nav-tab" onclick="cambiarPestana('laboratorio')">🔬 3. Laboratorio Interactivo</button>
+        <button class="nav-tab" onclick="cambiarPestana('retos')">🎯 4. Retos</button>
     </nav>
 
-    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 20px;">
+    <!-- CONTENEDOR DE PESTAÑAS -->
+    <main style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
 
         <!-- PESTAÑA 1: FUNDAMENTOS -->
         <section id="sec-fundamentos" class="tab-content active">
-            <h2>💡 Conceptos Base de Geometría Analítica</h2>
-            <p>Introducción al espacio bidimensional, vectores y modelado de rectas.</p>
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h2 style="color: #00594C;">💡 ¿Para qué sirven las Matemáticas en el Mundo Real?</h2>
+                <p style="color: #64748b;">La física de estructuras, la animación digital y los algoritmos médicos.</p>
+            </div>
+
+            <!-- TARJETAS CON IMÁGENES -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                
+                <article style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="height: 180px; position: relative; background: #1e293b;">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span style="position: absolute; top: 10px; right: 10px; background: #2563eb; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">SISTEMAS & TI</span>
+                    </div>
+                    <div style="padding: 15px;">
+                        <h3 style="color: #00594C; margin-top: 0; font-size: 1.1rem;">🎮 Renderizado y Colisiones</h3>
+                        <p style="color: #475569; font-size: 0.9rem;">El motor de físicas traza rectas mediante Raycasting entre puntos 2D.</p>
+                    </div>
+                </article>
+
+                <article style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="height: 180px; position: relative; background: #1e293b;">
+                        <img src="https://images.unsplash.com/photo-1516176966905-58371240ba28?auto=format&fit=crop&w=600&q=80" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span style="position: absolute; top: 10px; right: 10px; background: #d97706; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">INGENIERÍA</span>
+                    </div>
+                    <div style="padding: 15px;">
+                        <h3 style="color: #00594C; margin-top: 0; font-size: 1.1rem;">🏗️ Resistencia y Cargas</h3>
+                        <p style="color: #475569; font-size: 0.9rem;">Una línea representa un Vector de Fuerza que soporta cargas mecánicas.</p>
+                    </div>
+                </article>
+
+                <article style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="height: 180px; position: relative; background: #1e293b;">
+                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span style="position: absolute; top: 10px; right: 10px; background: #00806A; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">MEDICINA & SALUD</span>
+                    </div>
+                    <div style="padding: 15px;">
+                        <h3 style="color: #00594C; margin-top: 0; font-size: 1.1rem;">💊 Dosificación Médica</h3>
+                        <p style="color: #475569; font-size: 0.9rem;">La velocidad de infusión es la pendiente (m) en la recta de concentración.</p>
+                    </div>
+                </article>
+            </div>
         </section>
 
         <!-- PESTAÑA 2: FÓRMULAS -->
         <section id="sec-formulas" class="tab-content">
-            <h2>📚 Prontuario Técnico</h2>
-            <p>Guía de fórmulas para el vector desplazamiento y ecuaciones de la recta.</p>
+            <h2 style="color: #00594C;">📚 Prontuario Técnico</h2>
+            <p>Guía de 7 pasos cargada en el sistema.</p>
+            <!-- Aquí irá el prontuario -->
         </section>
 
-        <!-- PESTAÑA 3: LABORATORIO INTERACTIVO -->
+        <!-- PESTAÑA 3: LABORATORIO -->
         <section id="sec-laboratorio" class="tab-content">
-            <h2>🔬 Simulador Gráfico y Cálculo Automático</h2>
-            
+            <h2 style="color: #00594C;">🔬 Simulador Gráfico</h2>
             <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                <!-- PANEL IZQUIERDO: INPUTS -->
-                <div style="flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <h3>📍 Puntos de Entrada</h3>
+                
+                <!-- INPUTS -->
+                <div style="flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <h3>📍 Coordenadas</h3>
                     <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
                         <div style="margin-bottom: 15px;">
-                            <strong>Punto A (x1, y1)</strong>
-                            <input type="number" step="any" id="lab-x1" value="-2" style="width: 45%; padding: 5px;" required>
-                            <input type="number" step="any" id="lab-y1" value="-3" style="width: 45%; padding: 5px;" required>
+                            <strong>A(x1, y1)</strong>
+                            <input type="number" id="lab-x1" value="-2" style="width: 40%;">
+                            <input type="number" id="lab-y1" value="-3" style="width: 40%;">
                         </div>
                         <div style="margin-bottom: 15px;">
-                            <strong>Punto B (x2, y2)</strong>
-                            <input type="number" step="any" id="lab-x2" value="4" style="width: 45%; padding: 5px;" required>
-                            <input type="number" step="any" id="lab-y2" value="3" style="width: 45%; padding: 5px;" required>
+                            <strong>B(x2, y2)</strong>
+                            <input type="number" id="lab-x2" value="4" style="width: 40%;">
+                            <input type="number" id="lab-y2" value="3" style="width: 40%;">
                         </div>
-                        
-                        <!-- CONTROLES DE CAPAS -->
-                        <div style="margin-bottom: 15px; font-size: 0.85rem;">
-                            <strong>Capas del Gráfico:</strong><br>
-                            <label><input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()"> Puntos A y B</label>
-                            <label><input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()"> Triángulo</label>
-                            <label><input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()"> Magnitud</label>
-                            <label><input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()"> Ángulo</label>
-                            <label><input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()"> Pendiente</label>
-                            <label><input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()"> Ordenada</label>
-                        </div>
-
-                        <button type="submit" style="width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer;">🚀 Calcular y Graficar</button>
+                        <button type="submit" style="width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">🚀 Calcular</button>
                     </form>
                 </div>
 
-                <!-- PANEL DERECHO: CANVAS -->
-                <div style="flex: 2; min-width: 300px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <h3>📊 Plano Cartesiano Interactivo</h3>
-                    <div style="width: 100%; height: 380px; border: 1px solid #e2e8f0; border-radius: 4px;">
-                        <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%;"></canvas>
-                    </div>
-                    <div id="resumen-grafica-bar" style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 0.9rem; background: #f8fafc; padding: 10px; border-radius: 4px;"></div>
+                <!-- CANVAS -->
+                <div style="flex: 2; min-width: 300px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <canvas id="planoCartesianoCanvas" style="width: 100%; height: 380px; background: #f8fafc; border: 1px solid #e2e8f0;"></canvas>
+                    <div id="resumen-grafica-bar" style="margin-top: 15px; background: #f1f5f9; padding: 10px; font-size: 0.9rem;"></div>
                 </div>
             </div>
 
-            <!-- PASO A PASO -->
-            <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3>📝 Procedimiento Razonado y Solución Paso a Paso</h3>
-                <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
+            <!-- RESULTADOS -->
+            <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <h3 style="color: #00594C; margin-top: 0;">📝 Solución Paso a Paso</h3>
+                <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;"></div>
             </div>
         </section>
 
         <!-- PESTAÑA 4: RETOS -->
         <section id="sec-retos" class="tab-content">
-            <h2>🎯 Módulo de Retos y Examen</h2>
-            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <select id="nivel-reto" style="padding: 10px; margin-right: 10px;">
-                    <option value="1">Nivel 1: Destreza Numérica Directa</option>
-                    <option value="2">Nivel 2: Contextualización</option>
-                </select>
-                <button style="padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 5px; cursor: pointer;">Iniciar Reto</button>
+            <h2 style="color: #00594C;">🎯 Módulo de Retos</h2>
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <p>Configura tu nivel y pon a prueba tus conocimientos.</p>
             </div>
         </section>
     </main>
 
-    <!-- KaTeX JS -->
+    <!-- SCRIPTS EN ORDEN OBLIGATORIO -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-
-    <!-- SCRIPTS EN ORDEN -->
+    
     <script src="js/math-engine.js"></script>
     <script src="js/generator.js"></script>
     <script src="js/app.js"></script>
+
 </body>
 </html>
