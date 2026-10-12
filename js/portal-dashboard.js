@@ -2,7 +2,7 @@
 // URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
 // ¡NO OLVIDES PEGAR TU URL REAL AQUÍ!
 // =======================================================
-const SCRIPT_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA7G85jucZJj7dtOsBWgI3Xo07pyhi-QP3cHeALPLzzzy1HFlKXldaY6EP6Y7sFdRGgw/exec"; 
 
 // ==========================================
 // 1. LÓGICA DE INICIO DE SESIÓN
