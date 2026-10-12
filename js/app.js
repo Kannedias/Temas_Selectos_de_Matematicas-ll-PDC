@@ -167,7 +167,9 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
         </div>
         `,
-        // PASO 2 
+        // ==============================================
+        // PASO 2: MAGNITUD DEL DESPLAZAMIENTO 
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
@@ -180,7 +182,14 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
 
             <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #faf5ff; border-radius: 6px; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                <!-- Origen de los datos -->
+                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
+                    <p style="font-size: 0.82rem; color: #6b21a8; margin: 0 0 0.25rem 0; font-style: italic;">Valores obtenidos en el Paso 1:</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #581c87;">$$\\Delta x = ${dxFmt} \\quad \\text{y} \\quad \\Delta y = ${dyFmt}$$</p>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 0.25rem 0;">
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
                     <span style="font-size: 0.75rem; color: #6b21a8; background-color: #e9d5ff; padding: 2px 6px; border-radius: 4px; font-weight: 600;">1. Sustituir:</span>
                     <span style="font-size: 0.9rem; margin: 0;">$$|\\Delta \\vec{r}| = \\sqrt{(${dxFmt})^2 + (${dyFmt})^2}$$</span>
                 </div>
@@ -195,7 +204,10 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
         </div>
         `,
-        // PASO 3
+
+        // ==============================================
+        // PASO 3: DIRECCIÓN Y CUADRANTE
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
@@ -207,11 +219,20 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.9rem; color: #475569; margin: 0;">$$\\theta = \\arctan\\left(\\frac{\\Delta y}{\\Delta x}\\right)$$</p>
             </div>
 
-            <div style="padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; background: #ecfdf5; border-radius: 6px; margin-bottom: 0.75rem; font-size: 0.85rem;">
-                <p style="margin: 0; color: #064e3b; text-align: center;"><strong>Análisis:</strong> ${analisisCuadrante}</p>
-                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; color: #065f46;">
-                    ${calculoFormula}
-                </ul>
+            <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #ecfdf5; border-radius: 6px; margin-bottom: 0.75rem; font-size: 0.85rem;">
+                <!-- Origen de los datos -->
+                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
+                    <p style="font-size: 0.82rem; color: #064e3b; margin: 0 0 0.25rem 0; font-style: italic;">Valores obtenidos en el Paso 1:</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #065f46;">$$\\Delta y = ${dyFmt} \\quad \\text{y} \\quad \\Delta x = ${dxFmt}$$</p>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed #a7f3d0; margin: 0.25rem 0;">
+                
+                <div style="text-align: center; margin-top: 0.25rem;">
+                    <p style="margin: 0 0 0.5rem 0; color: #064e3b;"><strong>Análisis:</strong> ${analisisCuadrante}</p>
+                    <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; color: #065f46; text-align: left;">
+                        ${calculoFormula}
+                    </ul>
+                </div>
             </div>
 
             <div style="background-color: #ecfdf5; border-left: 5px solid #059669; color: #064e3b; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
@@ -219,7 +240,10 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
         </div>
         `,
-        // PASO 4
+
+        // ==============================================
+        // PASO 4: CÁLCULO DE LA PENDIENTE
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
@@ -232,7 +256,14 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
 
             <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #fffbeb; border-radius: 6px; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                <!-- Origen de los datos -->
+                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
+                    <p style="font-size: 0.82rem; color: #92400e; margin: 0 0 0.25rem 0; font-style: italic;">Valores obtenidos en el Paso 1:</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #78350f;">$$\\Delta y = ${dyFmt} \\quad \\text{y} \\quad \\Delta x = ${dxFmt}$$</p>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed #fde68a; margin: 0.25rem 0;">
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
                     <span style="font-size: 0.75rem; color: #92400e; background-color: #fde68a; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sustituir:</span>
                     <span style="font-size: 0.9rem; margin: 0;">$$m = \\frac{${dyFmt}}{${dxFmt}}$$</span>
                 </div>
@@ -243,7 +274,10 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
         </div>
         `,
-        // PASO 5
+
+        // ==============================================
+        // PASO 5: ECUACIÓN PUNTO-PENDIENTE
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
@@ -256,9 +290,16 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
 
             <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #eef2ff; border-radius: 6px; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
-                    <span style="font-size: 0.75rem; color: #3730a3; background-color: #c7d2fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sustituir $A$ y $m$:</span>
-                    <span style="font-size: 0.9rem; margin: 0;">$$y - ${y1Fmt} = ${mVal}(x - ${x1Fmt})$$</span>
+                <!-- Origen de los datos -->
+                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
+                    <p style="font-size: 0.82rem; color: #3730a3; margin: 0 0 0.25rem 0; font-style: italic;">Datos base (Punto A inicial y Pendiente del Paso 4):</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #312e81;">$$A(\\textcolor{#2563eb}{${fmt(x1)}}, \\textcolor{#2563eb}{${fmt(y1)}}) \\quad \\text{y} \\quad m = ${mVal}$$</p>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed #c7d2fe; margin: 0.25rem 0;">
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
+                    <span style="font-size: 0.75rem; color: #3730a3; background-color: #c7d2fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sustituir:</span>
+                    <span style="font-size: 0.9rem; margin: 0;">$$y - \\textcolor{#2563eb}{${y1Fmt}} = ${mVal}(x - \\textcolor{#2563eb}{${x1Fmt}})$$</span>
                 </div>
             </div>
 
@@ -267,7 +308,10 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
         </div>
         `,
-        // PASO 6
+
+        // ==============================================
+        // PASO 6: FORMA EXPLÍCITA
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
@@ -280,18 +324,28 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
 
             <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #f0fdfa; border-radius: 6px; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                <!-- Origen de los datos -->
+                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
+                    <p style="font-size: 0.82rem; color: #115e59; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 5:</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #134e4a;">$$${res.ecuaciones.puntoPendiente}$$</p>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed #99f6e4; margin: 0.25rem 0;">
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
                     <span style="font-size: 0.75rem; color: #115e59; background-color: #ccfbf1; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Despejar $y$:</span>
                     <span style="font-size: 0.9rem; margin: 0;">$$y = ${res.ecuaciones.explicita}$$</span>
                 </div>
             </div>
 
             <div style="background-color: #f0fdfa; border-left: 5px solid #0d9488; color: #134e4a; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Ordenada al Origen ($b$):</strong> ${bVal}
+                <strong>Ordenada ($b$):</strong> ${bVal}
             </div>
         </div>
         `,
-        // PASO 7
+
+        // ==============================================
+        // PASO 7: FORMA GENERAL
+        // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
@@ -304,14 +358,21 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             </div>
 
             <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #fff1f2; border-radius: 6px; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                <!-- Origen de los datos -->
+                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
+                    <p style="font-size: 0.82rem; color: #9f1239; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 6:</p>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #881337;">$$y = ${res.ecuaciones.explicita}$$</p>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed #fecdd3; margin: 0.25rem 0;">
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
                     <span style="font-size: 0.75rem; color: #9f1239; background-color: #ffe4e6; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Igualar a 0:</span>
                     <span style="font-size: 0.9rem; margin: 0;">$$${res.ecuaciones.general}$$</span>
                 </div>
             </div>
 
             <div style="background-color: #fff1f2; border-left: 5px solid #e11d48; color: #881337; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Ecuación Estándar Alcanzada</strong>
+                <strong>Resultado:</strong> Ecuación Estándar
             </div>
         </div>
         `
