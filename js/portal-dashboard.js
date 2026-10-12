@@ -138,42 +138,52 @@ function consultarAvanceReal(matricula) {
     });
 }
 
-function dibujarGrafica() {
-    const canvas = document.getElementById('graficaParciales');
-    if (!canvas) return; 
-
-    const ctx = canvas.getContext('2d');
-    if(miGrafica !== null) { miGrafica.destroy(); }
-
-    const puntajes = datosDesgloseParciales.map(p => p.total || 0);
-
-    miGrafica = new Chart(ctx, {
-        type: 'doughnut',
+miGrafica = new Chart(ctx, {
+        type: 'radar', // Cambiado de 'doughnut' a 'radar'
         data: {
-            labels: ['Parcial 1', 'Parcial 2', 'Parcial 3'],
+            labels: ['Tareas', 'Participación', 'Asistencia', 'Examen'], // Los 4 rubros que deseas medir
             datasets: [{
-                data: puntajes, 
-                backgroundColor: ['#00806A', '#d97706', '#e2e8f0'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
+                label: 'Desempeño del Alumno (%)',
+                data: [ptjeP1, ptjeP2, ptjeP3, 0], // Reemplaza esto con los valores reales por rubro, ej. [25, 20, 15, 35] si sacó el máximo
+                backgroundColor: 'rgba(0, 128, 106, 0.2)', // Verde Conalep transparente para el relleno
+                borderColor: '#00806A', // Verde Conalep para el borde
+                pointBackgroundColor: '#d97706', // Ámbar para los puntos
+                pointBorderColor: '#ffffff',
+                pointHoverBackgroundColor: '#ffffff',
+                pointHoverBorderColor: '#d97706',
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: {
-                legend: { position: 'right' }
-            },
-            onClick: (e, activeElements) => {
-                if (activeElements.length > 0) {
-                    const idx = activeElements[0].index;
-                    mostrarDesglose(idx);
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(0,0,0,0.1)' // Líneas de la telaraña
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    },
+                    pointLabels: {
+                        color: '#475569',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        beginAtZero: true,
+                        max: 100 // O el valor máximo si lo escalas a 100
+                    }
                 }
+            },
+            plugins: {
+                legend: { position: 'bottom' }
             }
         }
     });
-}
 
 function mostrarDesglose(indice) {
     const desglose = datosDesgloseParciales[indice];
