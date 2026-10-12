@@ -1,24 +1,28 @@
 // =======================================================
-// BLOQUE 1: CONTROL DE NAVEGACIÓN POR PESTAÑAS
+// BLOQUE 1: CONTROL DE NAVEGACIÓN Y PESTAÑAS (BLINDADO)
 // =======================================================
 function cambiarPestana(idPestana) {
+    // 1. Ocultar todos los paneles
     const contenidos = document.querySelectorAll('.tab-content');
     contenidos.forEach(content => content.classList.remove('active'));
 
+    // 2. Desactivar todos los botones del menú
     const botones = document.querySelectorAll('.nav-tab');
     botones.forEach(btn => btn.classList.remove('active'));
 
+    // 3. Activar el panel seleccionado
     const pestanaSeleccionada = document.getElementById('sec-' + idPestana);
     if (pestanaSeleccionada) {
         pestanaSeleccionada.classList.add('active');
     }
 
-    const botonActivo = document.querySelector(`button[onclick="cambiarPestana('${idPestana}')"]`);
-    if (botonActivo) {
-        botonActivo.classList.add('active');
+    // 4. Activar el botón (usando captura segura)
+    const e = window.event;
+    if (e && e.currentTarget) {
+        e.currentTarget.classList.add('active');
     }
 
-    // Volver a renderizar fórmulas matemáticas cuando se muestra una pestaña nueva
+    // 5. Renderizar KaTeX
     if (window.renderMathInElement) {
         renderMathInElement(pestanaSeleccionada || document.body, {
             delimiters: [
