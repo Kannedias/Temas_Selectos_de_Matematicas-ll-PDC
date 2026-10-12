@@ -13,9 +13,10 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
 
+    <!-- CSS BLINDADO PARA PESTAÑAS -->
     <style>
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content { display: none !important; }
+        .tab-content.active { display: block !important; }
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0; background-color: var(--bg-slate, #f8fafc);">
@@ -50,8 +51,8 @@
                 <p style="color: var(--text-muted);">Las fórmulas no son números abstractos inventados para complicar exámenes: son el código fuente, la física de estructuras y los algoritmos médicos que transforman el mundo real.</p>
             </div>
 
-            <!-- Metafóras -->
             <div class="metaforas-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <!-- TI -->
                 <article class="card-aplicacion" style="background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                     <div style="background: #2563eb; color: white; padding: 0.5rem 1rem; font-weight: bold; font-size: 0.85rem;">SISTEMAS & TI</div>
                     <div class="card-body" style="padding: 1.25rem;">
@@ -60,7 +61,7 @@
                         <p style="font-size: 0.9rem; color: #475569;">¿Cómo sabe un videojuego en 3D que un disparo impactó a un objetivo? El motor (Unity/Unreal) calcula el <strong>Raycasting</strong> trazando una recta entre dos puntos.</p>
                     </div>
                 </article>
-
+                <!-- INGENIERÍA -->
                 <article class="card-aplicacion" style="background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                     <div style="background: #d97706; color: white; padding: 0.5rem 1rem; font-weight: bold; font-size: 0.85rem;">INGENIERÍA</div>
                     <div class="card-body" style="padding: 1.25rem;">
@@ -69,7 +70,7 @@
                         <p style="font-size: 0.9rem; color: #475569;">En el diseño de puentes o vigas, una línea representa un <strong>Vector de Fuerza</strong> que soporta toneladas de peso sobre un ángulo preciso.</p>
                     </div>
                 </article>
-
+                <!-- MEDICINA -->
                 <article class="card-aplicacion" style="background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                     <div style="background: #059669; color: white; padding: 0.5rem 1rem; font-weight: bold; font-size: 0.85rem;">MEDICINA & SALUD</div>
                     <div class="card-body" style="padding: 1.25rem;">
@@ -84,7 +85,6 @@
             <div style="margin-top: 2.5rem; background: #ffffff; padding: 2rem; border-radius: 12px; border-top: 4px solid var(--conalep-accent, #00806A); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                 <h3 style="color: #004d40; margin-top: 0; font-size: 1.35rem;">🧠 Conceptos Base: El ADN de la Geometría Analítica</h3>
                 <p style="color: #475569; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">Antes de pasar a los números y a las fórmulas, necesitas conocer las 4 piezas fundamentales con las que vamos a construir, medir y predecir cualquier trayectoria lineal en nuestro simulador:</p>
-                
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
                     <div style="background: #f8fafc; padding: 1.25rem; border-radius: 8px; border-left: 4px solid #e11d48; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
                         <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.05rem;">📍 1. El Punto $P(x,y)$</h4>
@@ -107,9 +107,9 @@
         </section>
 
         <!-- ===================================================
-             APARTADO 2: PRONTUARIO (7 PASOS)
+             APARTADO 2: PRONTUARIO (LIMPIO, SIN DISPLAY: NONE)
              =================================================== -->
-        <section id="sec-formulas" class="tab-content" style="display: none;">
+        <section id="sec-formulas" class="tab-content">
             <div class="pedagogico-header" style="margin-bottom: 2rem;">
                 <h2 style="color: #004d40; font-size: 1.5rem; margin-bottom: 0.5rem;">📚 Prontuario Técnico y Guía de Consulta Rápida</h2>
                 <p style="color: #475569;">Las 7 fórmulas esenciales para el análisis de la recta y el vector desplazamiento en 2D, con ejemplos prácticos y reglas algebraicas fundamentales.</p>
@@ -237,7 +237,7 @@
                 </div>
             </article>
 
-            <!-- SECCIÓN DE REFUERZO ALGEBRAICO Y TIPS (NIVELADA) -->
+            <!-- SECCIÓN DE REFUERZO ALGEBRAICO Y TIPS -->
             <div style="background: #ffffff; padding: 1.5rem; border-radius: 8px; border-left: 5px solid #00806A; margin-top: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="color: #004d40; margin: 0 0 1.25rem 0; font-size: 1.2rem;">🛡️ Refuerzo Algebraico y Tips Antierrores</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; align-items: stretch;">
@@ -267,9 +267,9 @@
         </section>
 
         <!-- ==========================================
-             PESTAÑA 3: LABORATORIO INTERACTIVO 
+             PESTAÑA 3: LABORATORIO INTERACTIVO (LIMPIO)
              ========================================== -->
-        <section id="sec-laboratorio" class="tab-content" style="display: none;">
+        <section id="sec-laboratorio" class="tab-content">
             <div class="pedagogico-header" style="margin-bottom: 1.25rem;">
                 <h2 style="color: #004d40; font-size: 1.4rem; margin-bottom: 0.25rem;">🔬 Simulador Gráfico y Cálculo Automático</h2>
                 <p style="color: #475569; margin: 0; font-size: 0.9rem;">Ingresa las coordenadas de los puntos $A$ y $B$ para visualizar la gráfica e interpretar la solución paso a paso.</p>
@@ -336,9 +336,9 @@
         </section>
 
         <!-- ==========================================
-             PESTAÑA 4: RETOS Y DESAFÍOS (NIVELES 1 Y 2)
+             PESTAÑA 4: RETOS Y DESAFÍOS (LIMPIO)
              ========================================== -->
-        <section id="sec-retos" class="tab-content" style="display: none;">
+        <section id="sec-retos" class="tab-content">
             <div class="pedagogico-header" style="margin-bottom: 1.5rem;">
                 <h2 style="color: #004d40; font-size: 1.5rem; margin-bottom: 0.5rem;">🎯 Módulo de Retos y Examen</h2>
                 <p style="color: #475569;">Demuestra tu dominio resolviendo casos directos o interpretando escenarios reales.</p>
