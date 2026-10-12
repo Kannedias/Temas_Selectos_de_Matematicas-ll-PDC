@@ -14,7 +14,7 @@
   <!-- KaTeX para renderizado de fórmulas matemáticas en las descripciones -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <!-- AQUÍ ESTÁ LA MAGIA QUE ARREGLA LOS SÍMBOLOS $\Delta r$ y $\theta$ -->
+  <!-- SCRIPT ACTUALIZADO PARA LEER VARIABLES CON $ SIMPLES ($m$, $\theta$, $\Delta r$) -->
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
@@ -87,7 +87,7 @@
       </div>
 
       <!-- ==========================================
-           CATÁLOGO DE UNIDADES Y MÓDULOS 
+           CATÁLOGO DE UNIDADES Y MÓDULOS
            ========================================== -->
       <div class="unidades-container" style="margin-bottom: 2rem;">
           
@@ -111,6 +111,7 @@
                         </span>
                       </div>
                       
+                      <!-- TEXTO CON SÍMBOLOS KATEX CORRECTOS -->
                       <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
                           <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
                           <li><strong>Física y Geometría:</strong> Vector desplazamiento $\Delta r$ y cálculo de magnitud $|\Delta r|$.</li>
@@ -129,6 +130,7 @@
                         </span>
                       </div>
                       
+                      <!-- TEXTO CON SÍMBOLOS KATEX CORRECTOS -->
                       <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
                           <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección $\theta$ y pendiente $m$.</li>
                           <li><strong>Modelado Algebraico:</strong> Las 3 formas de la ecuación (Punto-Pendiente, Explícita y General).</li>
