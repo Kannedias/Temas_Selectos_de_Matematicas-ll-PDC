@@ -2,7 +2,7 @@
 // URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
 // ¡NO OLVIDES PEGAR TU URL REAL AQUÍ!
 // =======================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA7G85jucZJj7dtOsBWgI3Xo07pyhi-QP3cHeALPLzzzy1HFlKXldaY6EP6Y7sFdRGgw/exec"; 
+const SCRIPT_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI"; 
 
 // ==========================================
 // 1. LÓGICA DE INICIO DE SESIÓN
@@ -143,13 +143,11 @@ function dibujarGrafica(parcialesData) {
         window.miGrafica.destroy(); 
     }
 
-    // Extraemos las calificaciones brutas (ej. 90/100)
     const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
     const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
     const calificacionesReales = [p1, p2, p3];
 
-    // Calculamos el global ponderado para dibujar el tamaño de las rebanadas
     const ptjeP1 = (p1 * 0.25);
     const ptjeP2 = (p2 * 0.30);
     const ptjeP3 = (p3 * 0.45);
@@ -175,24 +173,20 @@ function dibujarGrafica(parcialesData) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            // EN LUGAR DE MOSTRAR EL PORCENTAJE PONDERADO, MOSTRAMOS LA CALIFICACIÓN
                             const rawScore = calificacionesReales[context.dataIndex];
                             return ` ${context.label}: Calificación ${rawScore}/100`;
                         }
                     }
                 }
             },
-            // EVENTO CLICK: CAMBIA EL TEXTO DEL CENTRO Y MUESTRA EL DESGLOSE
             onClick: (event, elements) => {
                 if (elements.length > 0) {
                     const index = elements[0].index;
                     mostrarDesglose(index);
                     
-                    // Inyectar calificación real en el centro (ej. 90/100)
                     window.miGrafica.centerTextActual = calificacionesReales[index] + "/100";
                     window.miGrafica.update();
                 } else {
-                    // Si da clic en lo blanco, regresa al porcentaje global
                     window.miGrafica.centerTextActual = califFinal + "%";
                     window.miGrafica.update();
                 }
@@ -203,12 +197,11 @@ function dibujarGrafica(parcialesData) {
             beforeDraw: function(chart) {
                 var width = chart.width, height = chart.height, ctx = chart.ctx;
                 ctx.restore();
-                var fontSize = (height / 120).toFixed(2); // Ligeramente más pequeño para que quepa bien
+                var fontSize = (height / 120).toFixed(2); 
                 ctx.font = "bold " + fontSize + "em sans-serif";
                 ctx.textBaseline = "middle";
                 ctx.fillStyle = "#004d40";
                 
-                // Leemos la propiedad dinámica o mostramos el global por defecto
                 var text = chart.centerTextActual || califFinal + "%",
                     textX = Math.round((width - ctx.measureText(text).width) / 2) - 40,
                     textY = height / 2;
@@ -219,7 +212,6 @@ function dibujarGrafica(parcialesData) {
         }]
     });
 
-    // Iniciar con el texto global
     window.miGrafica.centerTextActual = califFinal + "%";
 }
 
@@ -246,4 +238,129 @@ function mostrarDesglose(indexParcial) {
 // ==========================================
 function subirEvidencia() {
     const fileInput = document.getElementById('input-archivo');
-    const selectTarea = document.getElementById
+    const selectTarea = document.getElementById('select-tarea');
+    const matricula = sessionStorage.getItem('matriculaActiva');
+    const nombre = sessionStorage.getItem('nombreActivo');
+    const grupo = sessionStorage.getItem('grupoActivo');
+
+    if (!matricula) {
+        alert("⚠️ Sesión no válida. Inicia sesión nuevamente.");
+        return;
+    }
+    
+    if (!selectTarea.value) {
+        alert("❌ Por favor, selecciona una actividad del catálogo antes de subir tu evidencia.");
+        return;
+    }
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert("⚠️ Selecciona al menos un archivo.");
+        return;
+    }
+
+    const btnEnviar = document.getElementById('btn-enviar');
+    btnEnviar.innerText = "⏳ Subiendo archivos...";
+    btnEnviar.disabled = true;
+
+    const idTarea = selectTarea.value.split(" - ")[0];
+    const actividadCompleta = selectTarea.value;
+
+    let archivosBase64 = [];
+    let procesados = 0;
+
+    Array.from(fileInput.files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let base64 = e.target.result.split(',')[1];
+            archivosBase64.push({
+                nombreOriginal: file.name,
+                mimeType: file.type,
+                base64: base64
+            });
+            procesados++;
+
+            if (procesados === fileInput.files.length) {
+                enviarArchivosBackend(matricula, nombre, grupo, actividadCompleta, idTarea, archivosBase64, btnEnviar);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function enviarArchivosBackend(matricula, nombre, grupo, actividadCompleta, idTarea, archivosBase64, btnEnviar) {
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            accion: "subir_multiples",
+            matricula: matricula,
+            nombre: nombre,
+            grupo: grupo,
+            actividad: actividadCompleta,
+            idTarea: idTarea,
+            archivos: archivosBase64
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert("✅ Evidencia enviada correctamente a revisión.");
+            document.getElementById('input-archivo').value = "";
+            document.getElementById('select-tarea').value = "";
+            consultarAvanceReal(matricula); 
+        } else {
+            alert("❌ Error en el servidor: " + data.mensaje);
+        }
+    })
+    .catch(error => {
+        alert("⚠️ Error de conexión. Intenta de nuevo.");
+        console.error(error);
+    })
+    .finally(() => {
+        btnEnviar.innerText = "📤 Enviar Evidencia a Revisión";
+        btnEnviar.disabled = false;
+    });
+}
+
+// ==========================================
+// 5. CARGA DE FOTOGRAFÍA DE PERFIL
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const inputFoto = document.getElementById('input-foto-perfil');
+    if (inputFoto) {
+        inputFoto.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const matricula = sessionStorage.getItem('matriculaActiva');
+            const nombre = sessionStorage.getItem('nombreActivo');
+            const grupo = sessionStorage.getItem('grupoActivo');
+            
+            if (!matricula) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64 = evt.target.result.split(',')[1];
+                document.getElementById('img-perfil').src = evt.target.result; 
+                
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        accion: "subir_foto_perfil",
+                        matricula: matricula,
+                        nombre: nombre,
+                        grupo: grupo,
+                        nombreArchivo: file.name,
+                        mimeType: file.type,
+                        archivoBase64: base64
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status !== "éxito") alert("⚠️ Hubo un error guardando la foto en el servidor.");
+                })
+                .catch(err => console.error("Error subiendo foto:", err));
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+});
