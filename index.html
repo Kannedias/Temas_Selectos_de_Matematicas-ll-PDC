@@ -97,42 +97,47 @@
               </div>
 
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 25px; background: var(--bg-slate, #f8fafc);">
-                  <!-- Módulo 1.1 -->
+<!-- Módulo 1.1 -->
                   <div class="card-modulo" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
-                      <!-- AJUSTE: Titulo centrado con icono -->
                       <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">📐 Módulo 1.1: Sistemas y Vectores</h3>
-                      <div>
-                        <!-- Este span es controlado por JS para mostrar el estatus real -->
-                        <span id="status-mod-1.1" style="display: inline-flex; align-items: center; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                      <div style="margin-bottom: 12px;">
+                        <span id="status-mod-1.1" style="display: inline-flex; align-items: center; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
                             ⏳ Consultando...
                         </span>
                       </div>
-                      <p style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; flex-grow: 1;">Plano cartesiano, vector desplazamiento $\Delta r$ y magnitud $|\Delta r|$.</p>
                       
-                      <!-- BOTÓN CENTRAL -->
-                      <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent, #00806A); color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 128, 106, 0.3); transition: 0.2s;">
+                      <!-- Distribución en viñetas igual a la captura 2 -->
+                      <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
+                          <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
+                          <li><strong>Física y Geometría:</strong> Vector desplazamiento $\Delta r$ y cálculo de magnitud $|\Delta r|$.</li>
+                      </ul>
+                      
+                      <!-- BOTÓN ÚNICO Y CENTRALIZADO -->
+                      <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent, #00806A); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 128, 106, 0.3); transition: 0.2s; margin-top: auto;">
                           🚀 Entrar al Laboratorio
                       </button>
                   </div>
 
                   <!-- Módulo 1.2 -->
                   <div class="card-modulo" style="background: #ffffff; border: 1px solid #fde047; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #f59e0b; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.1); display: flex; flex-direction: column;">
-                      <!-- AJUSTE: Titulo centrado con icono -->
                       <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">📈 Módulo 1.2: La Línea Recta</h3>
-                      <div>
-                        <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                      <div style="margin-bottom: 12px;">
+                        <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
                             🟡 En Curso
                         </span>
                       </div>
-                      <p style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; flex-grow: 1;">Dirección $\theta$, pendiente $m$ y las 3 formas de la ecuación. <em>(Aquí se mantiene el motor interactivo con los 7 pasos).</em></p>
                       
-                      <!-- BOTÓN CENTRAL -->
-                      <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent, #00806A); color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 128, 106, 0.3); transition: 0.2s;">
+                      <!-- Distribución en viñetas igual a la captura 2 -->
+                      <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
+                          <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección $\theta$ y pendiente $m$.</li>
+                          <li><strong>Modelado Algebraico:</strong> Las 3 formas de la ecuación (Punto-Pendiente, Explícita y General).</li>
+                      </ul>
+                      
+                      <!-- BOTÓN ÚNICO Y CENTRALIZADO -->
+                      <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent, #00806A); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 128, 106, 0.3); transition: 0.2s; margin-top: auto;">
                           🚀 Entrar al Laboratorio
                       </button>
                   </div>
-              </div>
-          </div>
 
           <!-- UNIDAD 2: INTERACCIONES, CURVAS Y CINEMÁTICA -->
           <div class="unidad-group" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; opacity: 0.9;">
