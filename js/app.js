@@ -85,8 +85,8 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
 
     // --- INYECCIÓN HTML DE LAS TARJETAS ---
     const tarjetasHTML = [
-// ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (Desglose Pedagógico)
+        // ==============================================
+        // PASO 1: VECTOR DESPLAZAMIENTO 
         // ==============================================
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -98,48 +98,85 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
                 <p style="font-size: 0.85rem; color: #1e293b; margin: 0 0 0.4rem 0; font-weight: 700;">Sustitución en:</p>
                 <p style="font-size: 0.95rem; color: #475569; margin: 0 0 0.5rem 0;">$$\\Delta \\vec{r} = (\\Delta x, \\Delta y)$$</p>
-                <!-- Uso de variables de color de KaTeX para que los números hereden el color -->
-                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (\\textcolor{#dc2626}{x_2} - \\textcolor{#2563eb}{x_1}, \\, \\textcolor{#dc2626}{y_2} - \\textcolor{#2563eb}{y_1})$$</p>
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1}, \\, ${cB}{y_2} - ${cA}{y_1})$$</p>
             </div>
 
-            <!-- Cajas Responsivas (Píldoras) de Identificación -->
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 1.25rem;">
-                <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.85rem; color: #1e40af; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
-                    <span style="background: #3b82f6; width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 4px rgba(59,130,246,0.4);"></span>
-                    <strong>Punto A ($x_1, y_1$):</strong> $$\\textcolor{#2563eb}{${x1}},\\textcolor{#2563eb}{${y1}}$$
+            <!-- Cajas Responsivas (Píldoras) -->
+            <div class="contenedor-puntos">
+                <div class="pill-punto-a">
+                    <span class="dot-a"></span>
+                    <strong>Punto A ($x_1, y_1$):</strong> $$${strCoordA}$$
                 </div>
-                <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.85rem; color: #9f1239; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
-                    <span style="background: #ef4444; width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 4px rgba(239,68,68,0.4);"></span>
-                    <strong>Punto B ($x_2, y_2$):</strong> $$\\textcolor{#dc2626}{${x2}},\\textcolor{#dc2626}{${y2}}$$
+                <div class="pill-punto-b">
+                    <span class="dot-b"></span>
+                    <strong>Punto B ($x_2, y_2$):</strong> $$${strCoordB}$$
                 </div>
             </div>
 
-            <!-- Contenedor de Operaciones (Andamiaje) -->
-            <div style="background: #f8fafc; padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; overflow-x: auto; white-space: nowrap; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+            <!-- Contenedor Compacto de Operaciones -->
+            <div class="math-scrollable" style="text-align: center; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="width: 100%; max-width: 320px; text-align: left;">
+                    <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
+                </div>
+                <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt}, \\, ${y2Fmt} - ${y1Fmt}) $$</p>
                 
                 <div style="width: 100%; max-width: 320px; text-align: left;">
-                    <p style="font-size: 0.82rem; color: #475569; font-style: italic; margin: 0 0 0.5rem 0; background-color: #f1f5f9; padding: 6px 10px; border-radius: 4px; border-left: 3px solid #94a3b8;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
+                    <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0;"><strong>2. Cálculo de incrementos:</strong> Obtenemos la distancia recorrida en cada eje.</p>
                 </div>
-                <!-- Formateo de signos para que no queden dobles feos (ej: 4 - -2 -> 4 - (-2)) -->
-                <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">$$ \\Delta \\vec{r} = (\\textcolor{#dc2626}{${x2}} - (\\textcolor{#2563eb}{${x1}}), \\, \\textcolor{#dc2626}{${y2}} - (\\textcolor{#2563eb}{${y1}})) $$</p>
-                
-                <div style="width: 100%; max-width: 320px; text-align: left;">
-                    <p style="font-size: 0.82rem; color: #475569; font-style: italic; margin: 0 0 0.5rem 0; background-color: #f1f5f9; padding: 6px 10px; border-radius: 4px; border-left: 3px solid #94a3b8;"><strong>2. Cálculo de incrementos:</strong> Distancia recorrida en cada eje (sin decimales).</p>
-                </div>
-                <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">$$ \\Delta x = \\textcolor{#dc2626}{${x2}} - (\\textcolor{#2563eb}{${x1}}) = ${dx} $$</p>
-                <p style="margin: 0; font-size: 0.95rem;">$$ \\Delta y = \\textcolor{#dc2626}{${y2}} - (\\textcolor{#2563eb}{${y1}}) = ${dy} $$</p>
+                <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
+                <p style="margin: 0; font-size: 0.95rem;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
             </div>
 
-            <!-- Resultado Destacado -->
-            <div style="background-color: #eff6ff; border-left: 5px solid #2563eb; color: #1e3a8a; padding: 1rem 1.25rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center;">
-                <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dx}, \\, ${dy})$</span>
+            <!-- Resultado Destacado con Nuevo Color -->
+            <div class="resultado-exito-destacado">
+                <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt}, \\, ${dyFmt})$</span>
             </div>
         </div>
         `,
-        `<div style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-            <h4>2. Magnitud del Desplazamiento ($|\\Delta \\vec{r}|$)</h4>
-            <p>$$|\\Delta \\vec{r}| = \\sqrt{(${dx})^2 + (${dy})^2} = ${res.magnitud}$$</p>
-        </div>`,
+        // ==============================================
+        // PASO 2: MAGNITUD DEL DESPLAZAMIENTO 
+        // ==============================================
+        `
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">2</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Magnitud del Desplazamiento ($|\\Delta \\vec{r}|$)</h4>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0;">
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0 0 0.4rem 0;">$$|\\Delta \\vec{r}| = \\sqrt{(\\Delta x)^2 + (\\Delta y)^2}$$</p>
+                <p style="font-size: 0.85rem; color: #64748b; margin: 0; font-style: italic;">Aplicando Teorema de Pitágoras</p>
+            </div>
+
+            <!-- Texto explicativo -->
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0;">Se sustituyen los valores obtenidos:</p>
+            </div>
+
+            <!-- Cajas Responsivas de Delta X y Delta Y (Píldoras) -->
+            <div class="contenedor-puntos" style="gap: 1.5rem;">
+                <div class="pill-delta">
+                    <span class="dot-dx"></span>
+                    <span>$\\Delta x = ${dxFmt}$</span>
+                </div>
+                <div class="pill-delta">
+                    <span class="dot-dy"></span>
+                    <span>$\\Delta y = ${dyFmt}$</span>
+                </div>
+            </div>
+
+            <!-- Contenedor Compacto de Operaciones -->
+            <div class="math-scrollable" style="text-align: center; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">$$|\\Delta \\vec{r}| = \\sqrt{(${dxFmt})^2 + (${dyFmt})^2}$$</p>
+                <p style="margin: 0; font-size: 0.95rem;">$$|\\Delta \\vec{r}| = \\sqrt{${fmt(dx * dx)} + ${fmt(dy * dy)}} = \\sqrt{${fmt(dx * dx + dy * dy)}}$$</p>
+            </div>
+
+            <!-- Resultado Destacado con Nuevo Color -->
+            <div class="resultado-exito-destacado">
+                <span><strong>Resultado:</strong> $|\\Delta \\vec{r}| = ${res.magnitud} \\text{ unidades}$</span>
+            </div>
+        </div>
+        `,
         `<div style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <h4>3. Dirección del Vector ($\\theta$)</h4>
             <p>$$\\theta = ${res.direccion.grados}^\\circ \\text{ (${res.direccion.cuadrante})}$$</p>
