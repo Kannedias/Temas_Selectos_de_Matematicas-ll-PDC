@@ -80,16 +80,19 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const container = document.getElementById('pasos-container');
     if (!container) return;
 
-    // --- VARIABLES DE FORMATO Y CÁLCULO LIMPIO ---
+    // --- VARIABLES DE FORMATO Y CÁLCULO LIMPIO (Disponibles para todos los pasos) ---
     const fmt = (num) => Number.isInteger(Number(num)) ? Number(num).toString() : Number(num).toFixed(2);
     const dx = x2 - x1;
     const dy = y2 - y1;
     const dxFmt = fmt(dx);
     const dyFmt = fmt(dy);
+    
+    // Formato de signos y colores para las coordenadas
     const x1Fmt = x1 < 0 ? `(${fmt(x1)})` : fmt(x1);
     const y1Fmt = y1 < 0 ? `(${fmt(y1)})` : fmt(y1);
     const x2Fmt = x2 < 0 ? `(${fmt(x2)})` : fmt(x2);
     const y2Fmt = y2 < 0 ? `(${fmt(y2)})` : fmt(y2);
+    
     const mVal = res.esVertical ? "\\text{Indefinida}" : fmt(res.pendiente);
     const bVal = res.esVertical ? "N/A" : fmt(res.ordenadaOrigen);
 
