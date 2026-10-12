@@ -132,7 +132,7 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA DE DONA (ESCALA A 10.0 Y TEXTO ADAPTATIVO)
+// 3. GRÁFICA DE DONA (SIN TEXTO EN EL CENTRO)
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
@@ -143,7 +143,7 @@ function dibujarGrafica(parcialesData) {
         window.miGrafica.destroy(); 
     }
 
-    // Extraemos las calificaciones brutas de 0 a 100 y las convertimos a escala de 10
+    // Extraemos de 0 a 100 y dividimos para escala de 10
     const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
     const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
@@ -153,14 +153,7 @@ function dibujarGrafica(parcialesData) {
     const escala10P3 = (p3 / 10).toFixed(1);
     const calificacionesReales10 = [escala10P1, escala10P2, escala10P3];
 
-    // Calculamos el global ponderado (Base 10) para el centro default
-    // P1 vale 2.5 pts, P2 vale 3.0 pts, P3 vale 4.5 pts
-    const ptjeP1 = (p1 / 10) * 0.25;
-    const ptjeP2 = (p2 / 10) * 0.30;
-    const ptjeP3 = (p3 / 10) * 0.45;
-    const califFinal10 = (ptjeP1 + ptjeP2 + ptjeP3).toFixed(1);
-
-    // Los datos para dibujar el tamaño de las rebanadas siguen siendo los porcentajes reales
+    // Los datos para dibujar la dona basándonos en los porcentajes reales
     const rawP1 = p1 * 0.25;
     const rawP2 = p2 * 0.30;
     const rawP3 = p3 * 0.45;
@@ -179,12 +172,13 @@ function dibujarGrafica(parcialesData) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
+            cutout: '75%', // Hacemos la dona ligeramente más delgada para un look más moderno
             plugins: {
                 legend: { position: 'right' },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
+                            // En el tooltip al pasar el ratón se muestra la calificación en base 10
                             const calif10 = calificacionesReales10[context.dataIndex];
                             return ` ${context.label}: Calif. ${calif10} / 10.0`;
                         }
@@ -195,41 +189,10 @@ function dibujarGrafica(parcialesData) {
                 if (elements.length > 0) {
                     const index = elements[0].index;
                     mostrarDesglose(index);
-                    window.miGrafica.centerTextActual = calificacionesReales10[index] + " / 10";
-                    window.miGrafica.update();
-                } else {
-                    window.miGrafica.centerTextActual = califFinal10 + " / 10";
-                    window.miGrafica.update();
                 }
             }
-        },
-        plugins: [{
-            id: 'textCenter',
-            beforeDraw: function(chart) {
-                var width = chart.width, height = chart.height, ctx = chart.ctx;
-                ctx.restore();
-                
-                // AJUSTE: El texto se hace dinámicamente más pequeño para que no se corte
-                // Si el área del canvas es pequeña (como en móviles), el divisor aumenta.
-                var divisorFuente = width < 300 ? 180 : 130; 
-                var fontSize = (height / divisorFuente).toFixed(2); 
-                
-                ctx.font = "bold " + fontSize + "em sans-serif";
-                ctx.textBaseline = "middle";
-                ctx.fillStyle = "#004d40";
-                
-                var text = chart.centerTextActual || califFinal10 + " / 10",
-                    textX = Math.round((width - ctx.measureText(text).width) / 2) - 40,
-                    textY = height / 2;
-                
-                ctx.fillText(text, textX, textY);
-                ctx.save();
-            }
-        }]
+        }
     });
-
-    // Iniciar con el texto global en escala a 10
-    window.miGrafica.centerTextActual = califFinal10 + " / 10";
 }
 
 function mostrarDesglose(indexParcial) {
@@ -243,7 +206,7 @@ function mostrarDesglose(indexParcial) {
         contenedorDesglose.style.display = 'block';
     }
 
-    // El desglose inferior también en escala de 1 a 10
+    // El desglose inferior en escala de 1 a 10
     const califTotal10 = ((parseFloat(datos.total) || 0) / 10).toFixed(1);
     const califTareas10 = ((parseFloat(datos.tareas) || 0) / 10).toFixed(1);
     const califPart10 = ((parseFloat(datos.part) || 0) / 10).toFixed(1);
