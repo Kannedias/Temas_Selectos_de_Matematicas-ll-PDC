@@ -3,214 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratorio: La Recta en 2D | Conalep PDC</title>
+    <title>Laboratorio Interactivo: La Recta en 2D | Conalep PDC</title>
     
-    <!-- Vinculación a tu CSS principal según tu estructura -->
     <link rel="stylesheet" href="css/base.css">
     
-    <!-- KaTeX para renderizado de fórmulas matemáticas -->
+    <!-- KaTeX CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
-<body>
+<body style="background-color: #f8fafc; margin: 0; font-family: sans-serif;">
 
-    <!-- CABECERA INSTITUCIONAL -->
-    <header class="laboratorio-header">
-        <div class="header-container">
-            <div class="header-info">
-                <div class="badge-version">Unidad 1 • Geometría Analítica</div>
-                <h1 class="app-title">Laboratorio Interactivo: La Recta en 2D</h1>
-                <p class="app-subtitle">Temas Selectos de Matemáticas II — Conalep Playa del Carmen</p>
-            </div>
+    <!-- CABECERA -->
+    <header style="background: linear-gradient(135deg, #00594C 0%, #003B32 100%); color: white; padding: 20px;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h1>📘 Unidad 1: Geometría Analítica Vectorial</h1>
+            <p>Laboratorio Interactivo de la Línea Recta y Vectores 2D</p>
         </div>
     </header>
 
-    <!-- NAVEGACIÓN PRINCIPAL -->
-    <nav class="main-nav">
-        <button class="nav-tab active" onclick="cambiarPestana('fundamentos')">💡 1. Fundamentos</button>
-        <button class="nav-tab" onclick="cambiarPestana('formulas')">📚 2. Prontuario (7 Pasos)</button>
-        <button class="nav-tab" onclick="cambiarPestana('laboratorio')">🔬 3. Laboratorio Interactivo</button>
-        <button class="nav-tab" onclick="cambiarPestana('retos')">🎯 4. Retos</button>
+    <!-- NAVEGACIÓN -->
+    <nav style="background-color: #003B32; padding: 10px; text-align: center;">
+        <button class="nav-tab active" onclick="cambiarPestana('fundamentos')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">💡 1. Fundamentos</button>
+        <button class="nav-tab" onclick="cambiarPestana('formulas')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">📚 2. Prontuario</button>
+        <button class="nav-tab" onclick="cambiarPestana('laboratorio')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">🔬 3. Laboratorio Gráfico</button>
+        <button class="nav-tab" onclick="cambiarPestana('retos')" style="background: transparent; color: #cbd5e1; border: none; padding: 10px; cursor: pointer;">🏆 4. Retos (Examen)</button>
     </nav>
 
-    <!-- CONTENEDOR PRINCIPAL DE PESTAÑAS -->
-    <main class="content-container">
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 20px;">
 
-        <!-- ==========================================
-             PESTAÑA 1: FUNDAMENTOS
-             ========================================== -->
+        <!-- PESTAÑA 1: FUNDAMENTOS -->
         <section id="sec-fundamentos" class="tab-content active">
-            <div class="pedagogico-header">
-                <h2>💡 ¿Para qué sirven las Matemáticas en el Mundo Real?</h2>
-                <p>Las fórmulas no son números abstractos: son la física de estructuras, la animación digital y los algoritmos médicos que transforman el mundo.</p>
-            </div>
-
-            <div class="metaforas-grid">
-                <!-- TARJETA 1 -->
-                <article class="card-aplicacion">
-                    <div class="card-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Videojuegos y Gráficos TI">
-                        <span class="badge-area badge-ti">Sistemas & TI</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>🎮 El Algoritmo de Renderizado y Colisiones</h3>
-                        <p>En cada fotograma, el motor de físicas traza una recta mediante <strong>Raycasting</strong> entre dos puntos en 2D.</p>
-                    </div>
-                </article>
-
-                <!-- TARJETA 2 -->
-                <article class="card-aplicacion">
-                    <div class="card-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1516176966905-58371240ba28?auto=format&fit=crop&w=600&q=80" alt="Ingeniería y Puentes">
-                        <span class="badge-area badge-ing">Ingeniería</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>🏗️ Resistencia de Materiales y Cargas</h3>
-                        <p>En el diseño de puentes, una línea representa un <strong>Vector de Fuerza</strong> que soporta cargas mecánicas sobre una inclinación precisa.</p>
-                    </div>
-                </article>
-
-                <!-- TARJETA 3 -->
-                <article class="card-aplicacion">
-                    <div class="card-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Farmacocinética y Medicina">
-                        <span class="badge-area badge-med">Medicina & Salud</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>💊 Curva Farmacocinética y Dosificación</h3>
-                        <p>Al administrar un medicamento, la velocidad de infusión en sangre es la <strong>pendiente (m)</strong> y la concentración inicial es el punto <strong>(b)</strong>.</p>
-                    </div>
-                </article>
-            </div>
+            <h2>💡 Conceptos Base de Geometría Analítica</h2>
+            <p>Introducción al espacio bidimensional, vectores y modelado de rectas.</p>
         </section>
 
-        <!-- ==========================================
-             PESTAÑA 2: PRONTUARIO Y FÓRMULAS
-             ========================================== -->
-        <section id="sec-formulas" class="tab-content" style="display: none;">
-            <div class="pedagogico-header" style="margin-bottom: 1.5rem;">
-                <h2 style="color: #004d40;">📚 Prontuario Técnico y Guía de Consulta Rápida</h2>
-                <p>Las 7 fórmulas esenciales para el análisis de la recta y el vector desplazamiento en 2D.</p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
-                <!-- 1. VECTOR DESPLAZAMIENTO -->
-                <article class="card-aplicacion" style="border-top: 4px solid #2563eb; padding: 1.25rem;">
-                    <h3 style="color: #004d40;">1. Vector Desplazamiento ($\Delta \vec{r}$)</h3>
-                    <div class="formula-highlight">$$\Delta \vec{r} = (x_2 - x_1, y_2 - y_1)$$</div>
-                    <p><strong>📐 ¿Cómo entenderla?</strong> Indica cuánto te moviste horizontalmente ($\Delta x$) y verticalmente ($\Delta y$).</p>
-                </article>
-
-                <!-- 2. MAGNITUD -->
-                <article class="card-aplicacion" style="border-top: 4px solid #9333ea; padding: 1.25rem;">
-                    <h3 style="color: #004d40;">2. Magnitud ($|\Delta \vec{r}|$)</h3>
-                    <div class="formula-highlight">$$|\Delta \vec{r}| = \sqrt{(\Delta x)^2 + (\Delta y)^2}$$</div>
-                    <p><strong>📐 ¿Cómo entenderla?</strong> Es la distancia real en línea recta entre los dos puntos.</p>
-                </article>
-
-                <!-- 3. DIRECCIÓN -->
-                <article class="card-aplicacion" style="border-top: 4px solid #059669; padding: 1.25rem;">
-                    <h3 style="color: #004d40;">3. Dirección del Vector ($\theta$)</h3>
-                    <div class="formula-highlight">$$\theta = \arctan\left(\frac{\Delta y}{\Delta x}\right) + C$$</div>
-                    <p><strong>📐 ¿Cómo entenderla?</strong> Es la inclinación en grados ($^\circ$) respecto a la horizontal.</p>
-                </article>
-
-                <!-- 4. PENDIENTE -->
-                <article class="card-aplicacion" style="border-top: 4px solid #d97706; padding: 1.25rem;">
-                    <h3 style="color: #004d40;">4. Pendiente de la Recta ($m$)</h3>
-                    <div class="formula-highlight">$$m = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$$</div>
-                    <p><strong>📐 ¿Cómo entenderla?</strong> Razón de cambio. Si $m > 0$ sube, si $m < 0$ baja.</p>
-                </article>
-
-                <!-- 5. PUNTO PENDIENTE -->
-                <article class="card-aplicacion" style="border-top: 4px solid #4f46e5; padding: 1.25rem;">
-                    <h3 style="color: #004d40;">5. Forma Punto-Pendiente</h3>
-                    <div class="formula-highlight">$$y - y_1 = m(x - x_1)$$</div>
-                    <p><strong>📐 ¿Cómo entenderla?</strong> Plantilla inicial para construir la ecuación de cualquier recta.</p>
-                </article>
-
-                <!-- 6. EXPLÍCITA -->
-                <article class="card-aplicacion" style="border-top: 4px solid #0d9488; padding: 1.25rem;">
-                    <h3 style="color: #004d40;">6. Forma Explícita</h3>
-                    <div class="formula-highlight">$$y = mx + b$$</div>
-                    <p><strong>📐 ¿Cómo entenderla?</strong> Muestra directamente el ritmo de cambio ($m$) y el corte en $Y$ ($b$).</p>
-                </article>
-            </div>
-
-            <!-- 7. GENERAL -->
-            <article class="card-aplicacion" style="border-top: 4px solid #e11d48; padding: 1.25rem; margin-top: 1.5rem;">
-                <h3 style="color: #004d40;">7. Forma General</h3>
-                <div class="formula-highlight">$$Ax + By + C = 0$$</div>
-                <p><strong>📐 ¿Cómo entenderla?</strong> Expresión estandarizada e igualada a cero utilizada en programación.</p>
-            </article>
-            
-            <div class="card-aplicacion" style="margin-top: 2rem; border-left: 5px solid #00806A; padding: 1.5rem;">
-                <h3 style="color: #004d40;">🛡️ Refuerzo Algebraico</h3>
-                <p>Recuerda las leyes de los signos: signos iguales dan positivo, signos diferentes dan negativo.</p>
-            </div>
+        <!-- PESTAÑA 2: FÓRMULAS -->
+        <section id="sec-formulas" class="tab-content">
+            <h2>📚 Prontuario Técnico</h2>
+            <p>Guía de fórmulas para el vector desplazamiento y ecuaciones de la recta.</p>
         </section>
 
-        <!-- ==========================================
-             PESTAÑA 3: LABORATORIO INTERACTIVO
-             ========================================== -->
-        <section id="sec-laboratorio" class="tab-content" style="display: none;">
-          <div class="pedagogico-header" style="margin-bottom: 1rem;">
+        <!-- PESTAÑA 3: LABORATORIO INTERACTIVO -->
+        <section id="sec-laboratorio" class="tab-content">
             <h2>🔬 Simulador Gráfico y Cálculo Automático</h2>
-            <p>Ingresa las coordenadas de los puntos $A$ y $B$ para visualizar la gráfica e interpretar la solución paso a paso.</p>
-          </div>
+            
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <!-- PANEL IZQUIERDO: INPUTS -->
+                <div style="flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3>📍 Puntos de Entrada</h3>
+                    <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
+                        <div style="margin-bottom: 15px;">
+                            <strong>Punto A (x1, y1)</strong>
+                            <input type="number" step="any" id="lab-x1" value="-2" style="width: 45%; padding: 5px;" required>
+                            <input type="number" step="any" id="lab-y1" value="-3" style="width: 45%; padding: 5px;" required>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong>Punto B (x2, y2)</strong>
+                            <input type="number" step="any" id="lab-x2" value="4" style="width: 45%; padding: 5px;" required>
+                            <input type="number" step="any" id="lab-y2" value="3" style="width: 45%; padding: 5px;" required>
+                        </div>
+                        
+                        <!-- CONTROLES DE CAPAS -->
+                        <div style="margin-bottom: 15px; font-size: 0.85rem;">
+                            <strong>Capas del Gráfico:</strong><br>
+                            <label><input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()"> Puntos A y B</label>
+                            <label><input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()"> Triángulo</label>
+                            <label><input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()"> Magnitud</label>
+                            <label><input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()"> Ángulo</label>
+                            <label><input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()"> Pendiente</label>
+                            <label><input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()"> Ordenada</label>
+                        </div>
 
-          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem;">
-            <!-- PUNTOS DE ENTRADA -->
-            <div class="card-aplicacion" style="flex: 0 0 260px; padding: 1rem;">
-              <h3>📍 Puntos de Entrada</h3>
-              <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
-                <div style="background-color: #f0f7ff; padding: 0.6rem; border-radius: 6px; margin-bottom: 0.6rem;">
-                  <strong>Punto A $(x_1, y_1)$</strong>
-                  <div style="display: flex; gap: 0.4rem;">
-                    <input type="number" step="any" id="lab-x1" value="-2" required style="width: 100%; padding: 0.35rem;">
-                    <input type="number" step="any" id="lab-y1" value="-3" required style="width: 100%; padding: 0.35rem;">
-                  </div>
+                        <button type="submit" style="width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer;">🚀 Calcular y Graficar</button>
+                    </form>
                 </div>
-                <div style="background-color: #fff0f0; padding: 0.6rem; border-radius: 6px; margin-bottom: 0.75rem;">
-                  <strong>Punto B $(x_2, y_2)$</strong>
-                  <div style="display: flex; gap: 0.4rem;">
-                    <input type="number" step="any" id="lab-x2" value="4" required style="width: 100%; padding: 0.35rem;">
-                    <input type="number" step="any" id="lab-y2" value="3" required style="width: 100%; padding: 0.35rem;">
-                  </div>
+
+                <!-- PANEL DERECHO: CANVAS -->
+                <div style="flex: 2; min-width: 300px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3>📊 Plano Cartesiano Interactivo</h3>
+                    <div style="width: 100%; height: 380px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                    <div id="resumen-grafica-bar" style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 0.9rem; background: #f8fafc; padding: 10px; border-radius: 4px;"></div>
                 </div>
-                <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.6rem; border-radius: 6px; font-weight: bold; cursor: pointer;">
-                  🚀 Calcular y Graficar
-                </button>
-              </form>
             </div>
 
-            <!-- CANVAS -->
-            <div class="card-aplicacion" style="flex: 1; min-width: 320px; padding: 1.25rem;">
-              <h3>📊 Plano Cartesiano Interactivo</h3>
-              <div class="canvas-wrapper" style="position: relative; width: 100%; height: 420px; background: #f8fafc; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
-                <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
-              </div>
-              <div id="resumen-grafica-bar" style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 0.9rem; background: #f8fafc; padding: 10px; border-radius: 4px;"></div>
+            <!-- PASO A PASO -->
+            <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>📝 Procedimiento Razonado y Solución Paso a Paso</h3>
+                <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
             </div>
-          </div>
-
-          <!-- DESGLOSE PASO A PASO -->
-          <div class="card-aplicacion" style="padding: 1.5rem;">
-            <h3>📝 Procedimiento Razonado y Solución Paso a Paso</h3>
-            <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
-                <!-- Aquí el JS (app.js) inyectará dinámicamente las tarjetas resueltas -->
-            </div>
-          </div>
         </section>
 
-        <!-- ==========================================
-             PESTAÑA 4: RETOS
-             ========================================== -->
-        <section id="sec-retos" class="tab-content" style="display: none;">
+        <!-- PESTAÑA 4: RETOS -->
+        <section id="sec-retos" class="tab-content">
             <h2>🎯 Módulo de Retos y Examen</h2>
-            <div class="card-aplicacion" style="padding: 20px;">
-                <p>Configura tu nivel de reto y pon a prueba tus conocimientos.</p>
+            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                 <select id="nivel-reto" style="padding: 10px; margin-right: 10px;">
                     <option value="1">Nivel 1: Destreza Numérica Directa</option>
                     <option value="2">Nivel 2: Contextualización</option>
@@ -218,10 +109,13 @@
                 <button style="padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 5px; cursor: pointer;">Iniciar Reto</button>
             </div>
         </section>
-
     </main>
 
-    <!-- SCRIPTS (Revisando tu estructura en image_608d96.png) -->
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <!-- SCRIPTS EN ORDEN -->
     <script src="js/math-engine.js"></script>
     <script src="js/generator.js"></script>
     <script src="js/app.js"></script>
