@@ -1,37 +1,24 @@
-/* =======================================================
-   LÓGICA DE SESIÓN, DASHBOARD, GRÁFICAS Y ENVÍO A SHEETS
-   ======================================================= */
-
-// ⚠️ PON AQUÍ TU ENLACE PÚBLICO ACTUAL DE APPS SCRIPT:
+// =======================================================
+// URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
+// ¡NO OLVIDES PEGAR TU URL REAL AQUÍ!
+// =======================================================
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA7G85jucZJj7dtOsBWgI3Xo07pyhi-QP3cHeALPLzzzy1HFlKXldaY6EP6Y7sFdRGgw/exec"; 
 
-let miGrafica = null;
-let datosDesgloseParciales = []; 
-
+// ==========================================
+// 1. LÓGICA DE INICIO DE SESIÓN
+// ==========================================
 function iniciarSesion() {
     const matricula = document.getElementById('input-matricula').value.trim();
     const btnIngresar = document.getElementById('btn-ingresar');
 
-    if (matricula === "") {
-        alert("⚠️ Por favor, ingresa tu matrícula para acceder.");
+    if (!matricula) {
+        alert("Por favor, ingresa tu matrícula.");
         return;
     }
 
-    // LOGIN DE ADMINISTRADOR (DOCENTE)
-    if (matricula === "ADMIN-JL") {
-        document.getElementById('welcome-name').innerText = `👨‍🏫 Prof. Juan Luis`;
-        document.getElementById('vista-login').classList.add('hidden');
-        document.getElementById('vista-admin').classList.remove('hidden');
-        document.getElementById('user-menu').classList.remove('hidden');
-        return; 
-    }
+    btnIngresar.innerText = "⏳ Conectando...";
+    btnIngresar.disabled = true;
 
-    if (btnIngresar) {
-        btnIngresar.innerText = "⏳ Verificando matrícula...";
-        btnIngresar.disabled = true;
-    }
-
-    // LOGIN REAL CON GOOGLE SHEETS
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "login", matricula: matricula })
@@ -39,30 +26,30 @@ function iniciarSesion() {
     .then(response => response.json())
     .then(data => {
         if (data.status === "éxito") {
+            // Cargar datos en el perfil
             document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${data.primerNombre}`;
             document.getElementById('lbl-nombre').innerText = data.nombreCompleto;
             document.getElementById('lbl-matricula').innerText = matricula;
             document.getElementById('lbl-grupo').innerText = `Grupo ${data.grupo}`;
-
-            // Carga la foto si existe en Sheets
+            
             if(data.fotoPerfilUrl) {
                 document.getElementById('img-perfil').src = data.fotoPerfilUrl;
-            } else {
-                document.getElementById('img-perfil').src = "assets/placeholder-avatar.png";
             }
 
+            // Cambiar vistas
             document.getElementById('vista-login').classList.add('hidden');
             document.getElementById('vista-dashboard').classList.remove('hidden');
             document.getElementById('user-menu').classList.remove('hidden');
             
-            consultarAvanceReal(matricula); 
-
+            // Persistencia de sesión
             sessionStorage.setItem('matriculaActiva', matricula);
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
             sessionStorage.setItem('grupoActivo', data.grupo);
-            sessionStorage.setItem('fotoUrlActiva', data.fotoPerfilUrl || "");
+
+            // Llamar los datos del Dashboard (Gráfica, Historial y Catálogo)
+            consultarAvanceReal(matricula);
         } else {
-            alert("❌ " + data.mensaje);
+            alert("❌ " + (data.mensaje || "Matrícula no encontrada"));
         }
     })
     .catch(error => {
@@ -70,13 +57,23 @@ function iniciarSesion() {
         console.error(error);
     })
     .finally(() => {
-        if (btnIngresar) {
-            btnIngresar.innerText = "🚀 Ingresar al Portal";
-            btnIngresar.disabled = false;
-        }
+        btnIngresar.innerText = "🚀 Ingresar al Portal";
+        btnIngresar.disabled = false;
     });
 }
 
+function cerrarSesion() {
+    sessionStorage.clear();
+    document.getElementById('vista-dashboard').classList.add('hidden');
+    document.getElementById('vista-admin').classList.add('hidden');
+    document.getElementById('user-menu').classList.add('hidden');
+    document.getElementById('vista-login').classList.remove('hidden');
+    document.getElementById('input-matricula').value = "";
+}
+
+// ==========================================
+// 2. SINCRONIZACIÓN DE DATOS CON GOOGLE SHEETS
+// ==========================================
 function consultarAvanceReal(matricula) {
     fetch(SCRIPT_URL, {
         method: 'POST',
@@ -84,70 +81,90 @@ function consultarAvanceReal(matricula) {
     })
     .then(response => response.json())
     .then(data => {
-        // Estatus del Módulo 1.1
+        // A. Actualizar estado del Módulo 1.1
         const badge1_1 = document.getElementById('status-mod-1.1');
         if (badge1_1) {
             if (data.modulo1_1 === "Concluido") {
                 badge1_1.className = "badge-status status-ok";
+                badge1_1.style.background = "#dcfce7";
+                badge1_1.style.color = "#166534";
                 badge1_1.innerHTML = "🟢 Concluido";
             } else {
                 badge1_1.className = "badge-status status-pend";
+                badge1_1.style.background = "#fef2f2";
+                badge1_1.style.color = "#991b1b";
                 badge1_1.innerHTML = "🔴 Pendiente de Entrega";
             }
         }
-        
-        // Cargar Parciales Reales y Dibujar Gráfica
-        if(data.parciales) {
-            datosDesgloseParciales = data.parciales;
-            dibujarGrafica();
+
+        // B. Cargar la Gráfica de Estrella/Radar
+        if (data.parciales) {
+            window.datosDesgloseParciales = data.parciales;
+            dibujarGraficaRadar(data.parciales);
         }
 
-        // ==========================================
-        // 1. LLENAR HISTORIAL DE EVIDENCIAS (CORREGIDO)
-        // ==========================================
-        const tbodyHistorial = document.getElementById('tbody-historial') || document.getElementById('tabla-historial');
+        // C. Llenar la Tabla de Historial de Evidencias[cite: 16]
+        const tbodyHistorial = document.getElementById('tbody-historial');
         if (tbodyHistorial && data.historial) {
             tbodyHistorial.innerHTML = "";
             if (data.historial.length === 0) {
                 tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">No hay entregas registradas.</td></tr>`;
             } else {
                 data.historial.forEach(item => {
-                   let estadoEmoji = item.estado.toLowerCase().includes("revisad") ? "✅" : (item.estado.toLowerCase().includes("cumplid") ? "🌟" : "⏳");
-                   let row = `<tr>
-                      <td style="font-size: 0.9rem; font-weight: 500; padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);">${item.actividad}</td>
-                      <td style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);">${item.fecha}</td>
-                      <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);"><span class="badge-status ${item.estado.toLowerCase().includes("pendient") ? 'status-pend' : 'status-ok'}">${estadoEmoji} ${item.estado}</span></td>
-                      <td style="text-align: center; padding: 12px 10px; border-bottom: 1px solid var(--border-card, #e2e8f0);"><strong>${item.nota}</strong></td>
-                  </tr>`;
-                   tbodyHistorial.innerHTML += row;
+                    let estadoEmoji = item.estado.toLowerCase().includes("revisad") ? "✅" : (item.estado.toLowerCase().includes("cumplid") ? "🌟" : "⏳");
+                    let colorClase = item.estado.toLowerCase().includes("pendient") ? 'status-pend' : 'status-ok';
+                    let row = `<tr>
+                        <td style="font-size: 0.9rem; font-weight: 500; padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.actividad}</td>
+                        <td style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.fecha}</td>
+                        <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><span class="badge-status ${colorClase}">${estadoEmoji} ${item.estado}</span></td>
+                        <td style="text-align: center; padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><strong>${item.nota}</strong></td>
+                    </tr>`;
+                    tbodyHistorial.innerHTML += row; // Inyección de la fila[cite: 16]
                 });
             }
         }
 
-        // Llenar Select del Catálogo de Tareas
+        // D. Cargar Catálogo de Tareas en la Ventanilla[cite: 16]
         const selectTarea = document.getElementById('select-tarea');
         if (selectTarea && data.catalogo) {
             selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
             data.catalogo.forEach(tarea => {
                 let option = document.createElement('option');
-                option.value = tarea.id + " - " + tarea.titulo; 
+                option.value = tarea.id + " - " + tarea.titulo;
                 option.text = tarea.id + " | " + tarea.titulo;
                 selectTarea.appendChild(option);
             });
         }
-    });
+    })
+    .catch(error => console.error("Error consultando avance:", error));
 }
 
-miGrafica = new Chart(ctx, {
-        type: 'radar', // Cambiado de 'doughnut' a 'radar'
+// ==========================================
+// 3. GRÁFICA TIPO ESTRELLA (RADAR) Y DESGLOSE
+// ==========================================
+function dibujarGraficaRadar(parcialesData) {
+    const canvas = document.getElementById('graficaParciales');
+    if (!canvas) return; 
+    const ctx = canvas.getContext('2d');
+    
+    if (window.miGrafica) { 
+        window.miGrafica.destroy(); 
+    }
+
+    const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
+    const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
+    const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
+
+    window.miGrafica = new Chart(ctx, {
+        type: 'radar',
         data: {
-            labels: ['Tareas', 'Participación', 'Asistencia', 'Examen'], // Los 4 rubros que deseas medir
+            labels: ['Parcial 1', 'Parcial 2', 'Parcial 3'], 
             datasets: [{
-                label: 'Desempeño del Alumno (%)',
-                data: [ptjeP1, ptjeP2, ptjeP3, 0], // Reemplaza esto con los valores reales por rubro, ej. [25, 20, 15, 35] si sacó el máximo
-                backgroundColor: 'rgba(0, 128, 106, 0.2)', // Verde Conalep transparente para el relleno
-                borderColor: '#00806A', // Verde Conalep para el borde
-                pointBackgroundColor: '#d97706', // Ámbar para los puntos
+                label: 'Desempeño del Alumno (Puntos)',
+                data: [p1, p2, p3], 
+                backgroundColor: 'rgba(0, 128, 106, 0.2)', 
+                borderColor: '#00806A', 
+                pointBackgroundColor: '#d97706', 
                 pointBorderColor: '#ffffff',
                 pointHoverBackgroundColor: '#ffffff',
                 pointHoverBorderColor: '#d97706',
@@ -159,265 +176,170 @@ miGrafica = new Chart(ctx, {
             maintainAspectRatio: false,
             scales: {
                 r: {
-                    angleLines: {
-                        color: 'rgba(0,0,0,0.1)' // Líneas de la telaraña
-                    },
-                    grid: {
-                        color: 'rgba(0,0,0,0.1)'
-                    },
+                    angleLines: { color: 'rgba(0,0,0,0.1)' },
+                    grid: { color: 'rgba(0,0,0,0.1)' },
                     pointLabels: {
                         color: '#475569',
-                        font: {
-                            size: 12,
-                            weight: 'bold'
-                        }
+                        font: { size: 12, weight: 'bold' }
                     },
-                    ticks: {
-                        backdropColor: 'transparent',
-                        beginAtZero: true,
-                        max: 100 // O el valor máximo si lo escalas a 100
-                    }
+                    ticks: { backdropColor: 'transparent', beginAtZero: true, max: 100 }
                 }
             },
-            plugins: {
-                legend: { position: 'bottom' }
+            plugins: { legend: { position: 'bottom' } },
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    if(index < 3) mostrarDesglose(index);
+                }
             }
         }
     });
+}
 
-function mostrarDesglose(indice) {
-    const desglose = datosDesgloseParciales[indice];
+function mostrarDesglose(indexParcial) {
+    if(!window.datosDesgloseParciales) return;
+    const datos = window.datosDesgloseParciales[indexParcial];
+    if(!datos) return;
+
     const contenedor = document.getElementById('desglose-calificacion');
-    
-    if(!contenedor) return;
+    if(contenedor) contenedor.style.display = 'block';
 
-    document.getElementById('titulo-desglose').innerText = `Desglose ${desglose.titulo} (${desglose.total}/100)`;
-    document.getElementById('val-tareas').innerText = desglose.tareas;
-    document.getElementById('val-part').innerText = desglose.part;
-    document.getElementById('val-asist').innerText = desglose.asist;
-    document.getElementById('val-exam').innerText = desglose.exam;
-    
-    contenedor.style.display = 'block';
+    document.getElementById('titulo-desglose').innerText = `Desglose ${datos.titulo} (Total: ${datos.total}/100)`;
+    document.getElementById('val-tareas').innerText = datos.tareas || 0;
+    document.getElementById('val-part').innerText = datos.part || 0;
+    document.getElementById('val-asist').innerText = datos.asist || 0;
+    document.getElementById('val-exam').innerText = datos.exam || 0;
 }
 
-function subirFotoPerfil() {
-    const fileInput = document.getElementById('input-foto-perfil');
-    if (!fileInput.files.length) return;
-    
-    const file = fileInput.files[0];
-    const matricula = sessionStorage.getItem('matriculaActiva');
-    const grupo = sessionStorage.getItem('grupoActivo');
-    const txtEstado = document.getElementById('txt-subiendo-foto');
-    
-    txtEstado.style.display = 'block';
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const base64Data = e.target.result.split(',')[1];
-        const payload = { 
-            accion: "subir_foto_perfil", 
-            matricula: matricula, 
-            grupo: grupo,
-            nombreArchivo: "Perfil_" + matricula + "_" + file.name, 
-            mimeType: file.type, 
-            archivoBase64: base64Data 
-        };
-
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-        .then(response => response.json())
-        .then(data => {
-            if(data.status === "éxito") { 
-                document.getElementById('img-perfil').src = data.url; 
-                sessionStorage.setItem('fotoUrlActiva', data.url);
-                alert("✅ Foto de perfil guardada exitosamente.");
-            } else {
-                alert("❌ Error: " + data.mensaje);
-            }
-        })
-        .finally(() => { txtEstado.style.display = 'none'; });
-    };
-    reader.readAsDataURL(file);
-}
-
+// ==========================================
+// 4. LÓGICA DE VENTANILLA DE ENTREGAS
+// ==========================================
 function subirEvidencia() {
     const fileInput = document.getElementById('input-archivo');
-    const actividadCompleta = document.getElementById('select-tarea').value;
+    const selectTarea = document.getElementById('select-tarea');
     const matricula = sessionStorage.getItem('matriculaActiva');
-    const grupo = sessionStorage.getItem('grupoActivo');
     const nombre = sessionStorage.getItem('nombreActivo');
+    const grupo = sessionStorage.getItem('grupoActivo');
 
-   // ==========================================
-    // 1. NUEVO CANDADO: OBLIGAR A SELECCIONAR TAREA
-    // ==========================================
-    if (!actividadCompleta || actividadCompleta.includes("--") || actividadCompleta === "") {
-        alert("⚠️ Por favor, selecciona la tarea o evidencia a la que corresponden los archivos.");
-        return; 
+    if (!matricula) {
+        alert("⚠️ Sesión no válida. Inicia sesión nuevamente.");
+        return;
     }
-
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        alert("⚠️ Por favor, selecciona al menos un archivo.");
+    
+    // Candado para evitar envíos sin actividad seleccionada[cite: 16]
+    if (!selectTarea.value) {
+        alert("❌ Por favor, selecciona una actividad del catálogo antes de subir tu evidencia.");
         return;
     }
 
-    // Límite de peso total para evitar que saturen la red (aprox 15MB en total)
-    let pesoTotal = 0;
-    for (let i = 0; i < fileInput.files.length; i++) {
-        pesoTotal += fileInput.files[i].size;
-    }
-    if (pesoTotal > 15728640) {
-        alert("⚠️ El peso total de los archivos es muy alto (Máx 15MB). Intenta usar fotos de menor resolución o enviar en bloques.");
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert("⚠️ Selecciona al menos un archivo.");
         return;
     }
 
-    const btn = document.getElementById('btn-enviar');
-    btn.innerText = "⏳ Procesando archivos..."; 
-    btn.disabled = true;
+    const btnEnviar = document.getElementById('btn-enviar');
+    btnEnviar.innerText = "⏳ Subiendo archivos...";
+    btnEnviar.disabled = true;
 
-    // Extraemos solo el ID de la tarea
-    const idTarea = actividadCompleta.split(" - ")[0];
+    const idTarea = selectTarea.value.split(" - ")[0];
+    const actividadCompleta = selectTarea.value;
 
-    // Leer todos los archivos seleccionados de forma simultánea
-    const promesas = Array.from(fileInput.files).map(file => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = e => {
-                resolve({
-                    nombreOriginal: file.name,
-                    mimeType: file.type,
-                    base64: e.target.result.split(',')[1]
-                });
-            };
-            reader.onerror = error => reject(error);
-            reader.readAsDataURL(file);
-        });
-    });
+    let archivosBase64 = [];
+    let procesados = 0;
 
-    // Cuando todos los archivos se terminen de leer, los enviamos a Sheets
-    Promise.all(promesas).then(archivosProcesados => {
-        btn.innerText = "⏳ Subiendo a tu Drive...";
-        
-        const payload = {
-            accion: "subir_multiples", 
-            matricula: matricula,
-            grupo: grupo,
-            nombre: nombre,
-            actividad: actividadCompleta,
-            idTarea: idTarea,
-            archivos: archivosProcesados
-        };
+    Array.from(fileInput.files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let base64 = e.target.result.split(',')[1];
+            archivosBase64.push({
+                nombreOriginal: file.name,
+                mimeType: file.type,
+                base64: base64
+            });
+            procesados++;
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.status === "éxito") {
-                alert(`✅ ¡Tus ${archivosProcesados.length} archivos se enviaron correctamente a revisión!`);
-                fileInput.value = ""; 
-                consultarAvanceReal(matricula); 
-            } else { 
-                alert("❌ Ocurrió un error en el servidor: " + data.mensaje); 
+            if (procesados === fileInput.files.length) {
+                enviarArchivosBackend(matricula, nombre, grupo, actividadCompleta, idTarea, archivosBase64, btnEnviar);
             }
-        })
-        .finally(() => {
-            btn.innerText = "📤 Enviar Evidencia a Revisión";
-            btn.disabled = false;
-        });
-    }).catch(error => {
-        alert("⚠️ Ocurrió un error al leer las fotos de tu dispositivo.");
-        btn.innerText = "📤 Enviar Evidencia a Revisión";
-        btn.disabled = false;
+        };
+        reader.readAsDataURL(file);
     });
 }
 
-function publicarTareaDocente() {
-    const idTarea = document.getElementById('admin-id').value.trim();
-    const unidad = document.getElementById('admin-mod').value.trim();
-    const titulo = document.getElementById('admin-titulo').value.trim();
-    const desc = document.getElementById('admin-desc').value.trim();
-    const fecha = document.getElementById('admin-fecha').value;
-    const puntos = document.getElementById('admin-puntos').value;
-
-    if (!idTarea || !unidad || !titulo) {
-        alert("⚠️ Por favor, completa al menos el ID, Módulo y Título de la tarea.");
-        return;
-    }
-
-    const btn = document.getElementById('btn-publicar');
-    btn.innerText = "⏳ Publicando en Sheets...";
-    btn.disabled = true;
-
+function enviarArchivosBackend(matricula, nombre, grupo, actividadCompleta, idTarea, archivosBase64, btnEnviar) {
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
-            accion: "nueva_tarea", idTarea: idTarea, unidad: unidad,
-            titulo: titulo, desc: desc, fecha: fecha, puntos: puntos
+            accion: "subir_multiples",
+            matricula: matricula,
+            nombre: nombre,
+            grupo: grupo,
+            actividad: actividadCompleta,
+            idTarea: idTarea,
+            archivos: archivosBase64
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert("✅ ¡Tarea publicada con éxito! Los alumnos ya la pueden ver.");
-            document.querySelectorAll('#form-nueva-tarea input, #form-nueva-tarea textarea').forEach(el => el.value = '');
-            document.getElementById('form-nueva-tarea').classList.add('hidden');
+            alert("✅ Evidencia enviada correctamente a revisión.");
+            document.getElementById('input-archivo').value = "";
+            document.getElementById('select-tarea').value = "";
+            consultarAvanceReal(matricula); 
         } else {
-            alert("❌ Error al publicar: " + data.mensaje);
+            alert("❌ Error en el servidor: " + data.mensaje);
         }
     })
+    .catch(error => {
+        alert("⚠️ Error de conexión. Intenta de nuevo.");
+        console.error(error);
+    })
     .finally(() => {
-        btn.innerText = "🚀 Publicar en el Portal";
-        btn.disabled = false;
+        btnEnviar.innerText = "📤 Enviar Evidencia a Revisión";
+        btnEnviar.disabled = false;
     });
 }
 
-function cerrarSesion() {
-    sessionStorage.clear();
-    document.getElementById('vista-dashboard').classList.add('hidden');
-    const vistaAdmin = document.getElementById('vista-admin');
-    if(vistaAdmin) vistaAdmin.classList.add('hidden');
-    
-    document.getElementById('user-menu').classList.add('hidden');
-    document.getElementById('vista-login').classList.remove('hidden');
-    document.getElementById('input-matricula').value = "";
-    document.getElementById('desglose-calificacion').style.display = 'none';
-    
-    if(miGrafica !== null) { 
-        miGrafica.destroy(); 
-        miGrafica = null;
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    if (sessionStorage.getItem('matriculaActiva')) {
-        document.getElementById('input-matricula').value = sessionStorage.getItem('matriculaActiva');
-        iniciarSesion(); 
-
 // ==========================================
-// NAVEGACIÓN DEL PANEL ADMINISTRATIVO (GLOBAL)
+// 5. CARGA DE FOTOGRAFÍA DE PERFIL
 // ==========================================
-window.mostrarPanelGrupos = function() {
-    const panelInterno = document.getElementById('panel-gestion-interno');
-    const panelGrupos = document.getElementById('panel-mis-grupos');
-    
-    if (panelInterno && panelGrupos) {
-        panelInterno.classList.add('hidden');
-        panelGrupos.classList.remove('hidden');
-    }
-};
+document.addEventListener("DOMContentLoaded", () => {
+    const inputFoto = document.getElementById('input-foto-perfil');
+    if (inputFoto) {
+        inputFoto.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const matricula = sessionStorage.getItem('matriculaActiva');
+            const nombre = sessionStorage.getItem('nombreActivo');
+            const grupo = sessionStorage.getItem('grupoActivo');
+            
+            if (!matricula) return;
 
-window.abrirGestionGrupo = function(grupoId) {
-    const panelGrupos = document.getElementById('panel-mis-grupos');
-    const panelInterno = document.getElementById('panel-gestion-interno');
-    const tituloGrupo = document.getElementById('titulo-gestion-grupo');
-    
-    if (panelGrupos && panelInterno && tituloGrupo) {
-        panelGrupos.classList.add('hidden');
-        tituloGrupo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
-        panelInterno.classList.remove('hidden');
-    } else {
-        console.error("Faltan los contenedores HTML del panel de gestión.");
-    }
-};
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64 = evt.target.result.split(',')[1];
+                document.getElementById('img-perfil').src = evt.target.result; // Previsualización inmediata
+                
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        accion: "subir_foto_perfil",
+                        matricula: matricula,
+                        nombre: nombre,
+                        grupo: grupo,
+                        nombreArchivo: file.name,
+                        mimeType: file.type,
+                        archivoBase64: base64
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status !== "éxito") alert("⚠️ Hubo un error guardando la foto en el servidor.");
+                })
+                .catch(err => console.error("Error subiendo foto:", err));
+            };
+            reader.readAsDataURL(file);
+        });
     }
 });
