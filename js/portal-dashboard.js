@@ -132,7 +132,7 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA DE DONA CLÁSICA Y DESGLOSE DINÁMICO
+// 3. GRÁFICA DE DONA (ESCALA A 10.0 Y TEXTO ADAPTATIVO)
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
@@ -143,22 +143,34 @@ function dibujarGrafica(parcialesData) {
         window.miGrafica.destroy(); 
     }
 
+    // Extraemos las calificaciones brutas de 0 a 100 y las convertimos a escala de 10
     const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
     const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
-    const calificacionesReales = [p1, p2, p3];
+    
+    const escala10P1 = (p1 / 10).toFixed(1);
+    const escala10P2 = (p2 / 10).toFixed(1);
+    const escala10P3 = (p3 / 10).toFixed(1);
+    const calificacionesReales10 = [escala10P1, escala10P2, escala10P3];
 
-    const ptjeP1 = (p1 * 0.25);
-    const ptjeP2 = (p2 * 0.30);
-    const ptjeP3 = (p3 * 0.45);
-    const califFinal = (ptjeP1 + ptjeP2 + ptjeP3).toFixed(1);
+    // Calculamos el global ponderado (Base 10) para el centro default
+    // P1 vale 2.5 pts, P2 vale 3.0 pts, P3 vale 4.5 pts
+    const ptjeP1 = (p1 / 10) * 0.25;
+    const ptjeP2 = (p2 / 10) * 0.30;
+    const ptjeP3 = (p3 / 10) * 0.45;
+    const califFinal10 = (ptjeP1 + ptjeP2 + ptjeP3).toFixed(1);
+
+    // Los datos para dibujar el tamaño de las rebanadas siguen siendo los porcentajes reales
+    const rawP1 = p1 * 0.25;
+    const rawP2 = p2 * 0.30;
+    const rawP3 = p3 * 0.45;
 
     window.miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: ['Parcial 1 (25%)', 'Parcial 2 (30%)', 'Parcial 3 (45%)'],
             datasets: [{
-                data: [ptjeP1, ptjeP2, ptjeP3], 
+                data: [rawP1, rawP2, rawP3], 
                 backgroundColor: ['#00806A', '#d97706', '#94a3b8'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
@@ -173,8 +185,8 @@ function dibujarGrafica(parcialesData) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            const rawScore = calificacionesReales[context.dataIndex];
-                            return ` ${context.label}: Calificación ${rawScore}/100`;
+                            const calif10 = calificacionesReales10[context.dataIndex];
+                            return ` ${context.label}: Calif. ${calif10} / 10.0`;
                         }
                     }
                 }
@@ -183,11 +195,10 @@ function dibujarGrafica(parcialesData) {
                 if (elements.length > 0) {
                     const index = elements[0].index;
                     mostrarDesglose(index);
-                    
-                    window.miGrafica.centerTextActual = calificacionesReales[index] + "/100";
+                    window.miGrafica.centerTextActual = calificacionesReales10[index] + " / 10";
                     window.miGrafica.update();
                 } else {
-                    window.miGrafica.centerTextActual = califFinal + "%";
+                    window.miGrafica.centerTextActual = califFinal10 + " / 10";
                     window.miGrafica.update();
                 }
             }
@@ -197,12 +208,17 @@ function dibujarGrafica(parcialesData) {
             beforeDraw: function(chart) {
                 var width = chart.width, height = chart.height, ctx = chart.ctx;
                 ctx.restore();
-                var fontSize = (height / 120).toFixed(2); 
+                
+                // AJUSTE: El texto se hace dinámicamente más pequeño para que no se corte
+                // Si el área del canvas es pequeña (como en móviles), el divisor aumenta.
+                var divisorFuente = width < 300 ? 180 : 130; 
+                var fontSize = (height / divisorFuente).toFixed(2); 
+                
                 ctx.font = "bold " + fontSize + "em sans-serif";
                 ctx.textBaseline = "middle";
                 ctx.fillStyle = "#004d40";
                 
-                var text = chart.centerTextActual || califFinal + "%",
+                var text = chart.centerTextActual || califFinal10 + " / 10",
                     textX = Math.round((width - ctx.measureText(text).width) / 2) - 40,
                     textY = height / 2;
                 
@@ -212,7 +228,8 @@ function dibujarGrafica(parcialesData) {
         }]
     });
 
-    window.miGrafica.centerTextActual = califFinal + "%";
+    // Iniciar con el texto global en escala a 10
+    window.miGrafica.centerTextActual = califFinal10 + " / 10";
 }
 
 function mostrarDesglose(indexParcial) {
@@ -226,11 +243,18 @@ function mostrarDesglose(indexParcial) {
         contenedorDesglose.style.display = 'block';
     }
 
-    document.getElementById('titulo-desglose').innerText = `Desglose ${datos.titulo} (Total: ${datos.total}/100)`;
-    document.getElementById('val-tareas').innerText = datos.tareas || 0;
-    document.getElementById('val-part').innerText = datos.part || 0;
-    document.getElementById('val-asist').innerText = datos.asist || 0;
-    document.getElementById('val-exam').innerText = datos.exam || 0;
+    // El desglose inferior también en escala de 1 a 10
+    const califTotal10 = ((parseFloat(datos.total) || 0) / 10).toFixed(1);
+    const califTareas10 = ((parseFloat(datos.tareas) || 0) / 10).toFixed(1);
+    const califPart10 = ((parseFloat(datos.part) || 0) / 10).toFixed(1);
+    const califAsist10 = ((parseFloat(datos.asist) || 0) / 10).toFixed(1);
+    const califExam10 = ((parseFloat(datos.exam) || 0) / 10).toFixed(1);
+
+    document.getElementById('titulo-desglose').innerText = `Desglose ${datos.titulo} (Calificación: ${califTotal10})`;
+    document.getElementById('val-tareas').innerText = califTareas10 + " pts";
+    document.getElementById('val-part').innerText = califPart10 + " pts";
+    document.getElementById('val-asist').innerText = califAsist10 + " pts";
+    document.getElementById('val-exam').innerText = califExam10 + " pts";
 }
 
 // ==========================================
