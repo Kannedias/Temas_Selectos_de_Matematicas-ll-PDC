@@ -97,13 +97,13 @@ function consultarAvanceReal(matricula) {
             }
         }
 
-        // B. Cargar la Gráfica de Estrella/Radar
+        // B. Cargar la Gráfica de Dona Clásica
         if (data.parciales) {
             window.datosDesgloseParciales = data.parciales;
-            dibujarGraficaRadar(data.parciales);
+            dibujarGrafica(data.parciales);
         }
 
-        // C. Llenar la Tabla de Historial de Evidencias[cite: 16]
+        // C. Llenar la Tabla de Historial de Evidencias
         const tbodyHistorial = document.getElementById('tbody-historial');
         if (tbodyHistorial && data.historial) {
             tbodyHistorial.innerHTML = "";
@@ -119,12 +119,12 @@ function consultarAvanceReal(matricula) {
                         <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><span class="badge-status ${colorClase}">${estadoEmoji} ${item.estado}</span></td>
                         <td style="text-align: center; padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><strong>${item.nota}</strong></td>
                     </tr>`;
-                    tbodyHistorial.innerHTML += row; // Inyección de la fila[cite: 16]
+                    tbodyHistorial.innerHTML += row; 
                 });
             }
         }
 
-        // D. Cargar Catálogo de Tareas en la Ventanilla[cite: 16]
+        // D. Cargar Catálogo de Tareas en la Ventanilla
         const selectTarea = document.getElementById('select-tarea');
         if (selectTarea && data.catalogo) {
             selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
@@ -140,14 +140,15 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA TIPO ESTRELLA (RADAR) Y DESGLOSE
+// 3. GRÁFICA DE DONA CLÁSICA Y DESGLOSE
 // ==========================================
-function dibujarGraficaRadar(parcialesData) {
+function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
     if (!canvas) return; 
     const ctx = canvas.getContext('2d');
     
-    if (window.miGrafica) { 
+    // Evitar sobreposiciones
+    if(window.miGrafica !== undefined && window.miGrafica !== null) { 
         window.miGrafica.destroy(); 
     }
 
@@ -155,54 +156,77 @@ function dibujarGraficaRadar(parcialesData) {
     const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
 
+    // Calcular el porcentaje ponderado
+    const ptjeP1 = (p1 * 0.25);
+    const ptjeP2 = (p2 * 0.30);
+    const ptjeP3 = (p3 * 0.45);
+    const califFinal = (ptjeP1 + ptjeP2 + ptjeP3).toFixed(1);
+
     window.miGrafica = new Chart(ctx, {
-        type: 'radar',
+        type: 'doughnut',
         data: {
-            labels: ['Parcial 1', 'Parcial 2', 'Parcial 3'], 
+            labels: ['Parcial 1 (25%)', 'Parcial 2 (30%)', 'Parcial 3 (45%)'],
             datasets: [{
-                label: 'Desempeño del Alumno (Puntos)',
-                data: [p1, p2, p3], 
-                backgroundColor: 'rgba(0, 128, 106, 0.2)', 
-                borderColor: '#00806A', 
-                pointBackgroundColor: '#d97706', 
-                pointBorderColor: '#ffffff',
-                pointHoverBackgroundColor: '#ffffff',
-                pointHoverBorderColor: '#d97706',
-                borderWidth: 2
+                data: [ptjeP1, ptjeP2, ptjeP3], 
+                backgroundColor: ['#00806A', '#d97706', '#94a3b8'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                r: {
-                    angleLines: { color: 'rgba(0,0,0,0.1)' },
-                    grid: { color: 'rgba(0,0,0,0.1)' },
-                    pointLabels: {
-                        color: '#475569',
-                        font: { size: 12, weight: 'bold' }
-                    },
-                    ticks: { backdropColor: 'transparent', beginAtZero: true, max: 100 }
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'right' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.label}: Ganado ${context.raw.toFixed(1)}%`;
+                        }
+                    }
                 }
             },
-            plugins: { legend: { position: 'bottom' } },
+            // EVENTO CLICK QUE ENCIENDE EL DESGLOSE
             onClick: (event, elements) => {
                 if (elements.length > 0) {
                     const index = elements[0].index;
-                    if(index < 3) mostrarDesglose(index);
+                    mostrarDesglose(index);
                 }
             }
-        }
+        },
+        plugins: [{
+            // Texto en el centro de la dona
+            id: 'textCenter',
+            beforeDraw: function(chart) {
+                var width = chart.width, height = chart.height, ctx = chart.ctx;
+                ctx.restore();
+                var fontSize = (height / 110).toFixed(2);
+                ctx.font = "bold " + fontSize + "em sans-serif";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "#004d40";
+                
+                var text = califFinal + "%",
+                    textX = Math.round((width - ctx.measureText(text).width) / 2) - 40,
+                    textY = height / 2;
+                
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        }]
     });
 }
 
 function mostrarDesglose(indexParcial) {
     if(!window.datosDesgloseParciales) return;
+    
     const datos = window.datosDesgloseParciales[indexParcial];
     if(!datos) return;
 
-    const contenedor = document.getElementById('desglose-calificacion');
-    if(contenedor) contenedor.style.display = 'block';
+    const contenedorDesglose = document.getElementById('desglose-calificacion');
+    if(contenedorDesglose) {
+        contenedorDesglose.style.display = 'block';
+    }
 
     document.getElementById('titulo-desglose').innerText = `Desglose ${datos.titulo} (Total: ${datos.total}/100)`;
     document.getElementById('val-tareas').innerText = datos.tareas || 0;
@@ -226,7 +250,6 @@ function subirEvidencia() {
         return;
     }
     
-    // Candado para evitar envíos sin actividad seleccionada[cite: 16]
     if (!selectTarea.value) {
         alert("❌ Por favor, selecciona una actividad del catálogo antes de subir tu evidencia.");
         return;
@@ -319,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const base64 = evt.target.result.split(',')[1];
-                document.getElementById('img-perfil').src = evt.target.result; // Previsualización inmediata
+                document.getElementById('img-perfil').src = evt.target.result; 
                 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
