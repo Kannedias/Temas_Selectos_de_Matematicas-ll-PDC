@@ -111,7 +111,6 @@
                         </span>
                       </div>
                       
-                      <!-- TEXTO CON SÍMBOLOS KATEX CORRECTOS -->
                       <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
                           <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
                           <li><strong>Física y Geometría:</strong> Vector desplazamiento $\Delta r$ y cálculo de magnitud $|\Delta r|$.</li>
@@ -129,7 +128,6 @@
                         </span>
                       </div>
                       
-                      <!-- TEXTO CON SÍMBOLOS KATEX CORRECTOS -->
                       <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
                           <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección $\theta$ y pendiente $m$.</li>
                           <li><strong>Modelado Algebraico:</strong> Las 3 formas de la ecuación (Punto-Pendiente, Explícita y General).</li>
@@ -137,13 +135,12 @@
                   </div>
               </div>
 
-              <!-- BOTÓN UNIFICADO DE ACCESO A LA UNIDAD 1 (Fuera de las tarjetas, centrado al fondo) -->
+              <!-- BOTÓN UNIFICADO DE ACCESO A LA UNIDAD 1 -->
               <div style="background: var(--bg-slate, #f8fafc); padding: 0 25px 25px 25px; display: flex; justify-content: center;">
                   <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; max-width: 600px; background: var(--conalep-accent, #00806A); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 128, 106, 0.3); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(0, 128, 106, 0.4)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 6px rgba(0, 128, 106, 0.3)'">
                       🚀 Entrar al Laboratorio de la Unidad 1
                   </button>
               </div>
-
           </div>
 
           <!-- UNIDAD 2: INTERACCIONES, CURVAS Y CINEMÁTICA -->
@@ -154,41 +151,51 @@
                   <p style="margin: 5px 0 0 0; font-size: 0.95rem; color: #64748b; font-style: italic;">El alumno evoluciona: analiza trayectorias múltiples y movimientos acelerados.</p>
               </div>
 
+              <!-- CONTENEDOR DE TARJETAS (2.1 y 2.2) -->
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; padding: 25px; background: #f8fafc;">
+                  
                   <!-- Módulo 2.1 -->
                   <div class="card-modulo" style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; display: flex; flex-direction: column;">
-                      <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem;">🎯 Módulo 2.1: Interacciones Lineales y Tendencias</h3>
-                      <div>
-                        <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                      <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                          🎯 Módulo 2.1: Interacciones Lineales
+                      </h3>
+                      <div style="margin-bottom: 12px;">
+                        <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
                             🔒 Próximamente
                         </span>
                       </div>
+                      
                       <ul style="font-size: 0.85rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                          <li style="margin-bottom: 8px;"><strong>Intersección y Colisiones (Sistemas 2x2):</strong> Calcular el punto exacto $(x, y)$ donde dos trayectorias chocan, y comparar pendientes para definir paralelismo o perpendicularidad.</li>
-                          <li><strong>Trayectorias por Múltiples Puntos (Regresión):</strong> Si hay 5 o 6 puntos dispersos, trazar la línea "promedio" que mejor modela ese comportamiento.</li>
+                          <li style="margin-bottom: 8px;"><strong>Intersección y Colisiones (Sistemas 2x2):</strong> Calcular el punto exacto $(x, y)$ donde dos trayectorias chocan.</li>
+                          <li><strong>Trayectorias por Múltiples Puntos:</strong> Trazar la línea promedio que mejor modela un comportamiento.</li>
                       </ul>
-                      <button disabled style="width: 100%; background: #f1f5f9; color: #cbd5e1; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; cursor: not-allowed; font-weight: bold;">
-                          Bloqueado
-                      </button>
                   </div>
 
                   <!-- Módulo 2.2 -->
                   <div class="card-modulo" style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; display: flex; flex-direction: column;">
-                      <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem;">☄️ Módulo 2.2: Tiro Parabólico y Simetría</h3>
-                      <div>
-                        <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;">
+                      <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                          ☄️ Módulo 2.2: Tiro Parabólico y Simetría
+                      </h3>
+                      <div style="margin-bottom: 12px;">
+                        <span style="display: inline-flex; align-items: center; background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
                             🔒 Próximamente
                         </span>
                       </div>
+                      
                       <ul style="font-size: 0.85rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                          <li style="margin-bottom: 8px;"><strong>La Parábola en Movimiento:</strong> Modelar el lanzamiento de un proyectil o salto de un vehículo usando la gravedad para encontrar el alcance y la altura máxima.</li>
-                          <li><strong>Simetría de la Curva:</strong> Comprender cómo la trayectoria de vuelo funciona como un espejo, donde la subida refleja exactamente a la bajada.</li>
+                          <li style="margin-bottom: 8px;"><strong>La Parábola en Movimiento:</strong> Modelar el lanzamiento usando la gravedad para el alcance y altura máxima.</li>
+                          <li><strong>Simetría de la Curva:</strong> Comprender cómo la trayectoria refleja exactamente a la bajada.</li>
                       </ul>
-                      <button disabled style="width: 100%; background: #f1f5f9; color: #cbd5e1; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; cursor: not-allowed; font-weight: bold;">
-                          Bloqueado
-                      </button>
                   </div>
               </div>
+
+              <!-- BOTÓN UNIFICADO DE ACCESO A LA UNIDAD 2 -->
+              <div style="background: #f8fafc; padding: 0 25px 25px 25px; display: flex; justify-content: center;">
+                  <button disabled style="width: 100%; max-width: 600px; background: #cbd5e1; color: white; border: none; padding: 12px; border-radius: 8px; cursor: not-allowed; font-size: 1.05rem; font-weight: bold; box-shadow: none;">
+                      🔒 Módulo Bloqueado (Próximamente)
+                  </button>
+              </div>
+
           </div>
 
           <!-- ==========================================
