@@ -1,9 +1,16 @@
+/**
+ * MOTOR MATEMÁTICO: LA RECTA EN 2D Y VECTORES
+ * Unidad 1 - Temas Selectos de Matemáticas II
+ */
+
 const MathEngine = {
     calcularSecuenciaRecta: function(x1, y1, x2, y2) {
+        // PASO 1 y 2
         const dx = x2 - x1;
         const dy = y2 - y1;
         const magnitud = Math.sqrt(dx * dx + dy * dy);
 
+        // PASO 3
         let anguloRadianes = Math.atan2(dy, dx);
         let anguloGrados = anguloRadianes * (180 / Math.PI);
         if (anguloGrados < 0) anguloGrados += 360;
@@ -19,29 +26,83 @@ const MathEngine = {
         if (dx !== 0) anguloReferencia = Math.abs(Math.atan(dy / dx) * (180 / Math.PI));
         else if (dy !== 0) anguloReferencia = 90;
 
+        // PASO 4
         const esVertical = dx === 0;
         const pendiente = esVertical ? null : dy / dx;
 
-        let formaPuntoPendiente = esVertical ? `x = ${x1}` : `y ${y1 >= 0 ? `- ${y1}` : `+ ${Math.abs(y1)}`} = ${pendiente.toFixed(2)}(x ${x1 >= 0 ? `- ${x1}` : `+ ${Math.abs(x1)}`})`;
-        let b = esVertical ? null : y1 - (pendiente * x1);
-        let formaExplicita = esVertical ? `x = ${x1}` : `y = ${pendiente.toFixed(2)}x ${b >= 0 ? `+ ${b.toFixed(2)}` : `- ${Math.abs(b).toFixed(2)}`}`;
-        
+        // --- FORMATEADOR ALGEBRAICO INTELIGENTE ---
+        // Elimina decimales .00 innecesarios
+        const fmt = (num) => Number.isInteger(Number(num)) ? Number(num).toString() : Number(num).toFixed(2);
+
+        let formaPuntoPendiente = "";
+        let formaExplicita = "";
         let formaGeneral = "";
+        let b = null;
+
         if (esVertical) {
-            formaGeneral = `x - ${x1} = 0`;
+            formaPuntoPendiente = `x = ${fmt(x1)}`;
+            formaExplicita = `x = ${fmt(x1)}`;
+            formaGeneral = x1 === 0 ? `x = 0` : `x ${x1 > 0 ? `- ${fmt(x1)}` : `+ ${fmt(Math.abs(x1))}`} = 0`;
         } else {
-            const B = -1;
-            formaGeneral = `${pendiente.toFixed(2)}x ${B >= 0 ? `+ ${B}` : `- ${Math.abs(B)}`}y ${b >= 0 ? `+ ${b.toFixed(2)}` : `- ${Math.abs(b).toFixed(2)}`} = 0`;
+            b = y1 - (pendiente * x1);
+            
+            // PASO 5: Forma Punto-Pendiente ( y - y1 = m(x - x1) )
+            const leftSide = y1 === 0 ? `y` : `y ${y1 > 0 ? `- ${fmt(y1)}` : `+ ${fmt(Math.abs(y1))}`}`;
+            let rightSide = "";
+            
+            if (pendiente === 0) {
+                rightSide = "0";
+            } else {
+                let mStr = "";
+                if (pendiente === 1) mStr = "";       // Si m=1, se oculta
+                else if (pendiente === -1) mStr = "-"; // Si m=-1, solo queda el signo menos
+                else mStr = fmt(pendiente);
+                
+                const xTerm = x1 === 0 ? `x` : `(x ${x1 > 0 ? `- ${fmt(x1)}` : `+ ${fmt(Math.abs(x1))}`})`;
+                rightSide = `${mStr}${xTerm}`;
+            }
+            formaPuntoPendiente = `${leftSide} = ${rightSide}`;
+
+            // PASO 6: Forma Explícita ( y = mx + b )
+            let termsExp = [];
+            if (pendiente !== 0) {
+                if (pendiente === 1) termsExp.push("x");
+                else if (pendiente === -1) termsExp.push("-x");
+                else termsExp.push(`${fmt(pendiente)}x`);
+            }
+            if (b !== 0) {
+                if (termsExp.length === 0) termsExp.push(fmt(b));
+                else termsExp.push(b > 0 ? `+ ${fmt(b)}` : `- ${fmt(Math.abs(b))}`);
+            }
+            if (termsExp.length === 0) termsExp.push("0");
+            formaExplicita = `y = ${termsExp.join(" ")}`;
+
+            // PASO 7: Forma General ( Ax + By + C = 0 )
+            let termsGen = [];
+            if (pendiente !== 0) {
+                if (pendiente === 1) termsGen.push("x");
+                else if (pendiente === -1) termsGen.push("-x");
+                else termsGen.push(`${fmt(pendiente)}x`);
+            }
+            
+            // Insertar "y" respetando el formato
+            termsGen.push(termsGen.length === 0 ? "-y" : "- y");
+            
+            // Término independiente (C)
+            if (b !== 0) {
+                termsGen.push(b > 0 ? `+ ${fmt(b)}` : `- ${fmt(Math.abs(b))}`);
+            }
+            formaGeneral = `${termsGen.join(" ")} = 0`;
         }
 
         return {
             puntos: { x1, y1, x2, y2 },
             vector: { dx, dy },
-            magnitud: magnitud.toFixed(2),
-            direccion: { grados: anguloGrados.toFixed(2), cuadrante: cuadrante, anguloReferencia: anguloReferencia.toFixed(2) },
-            pendiente: esVertical ? "Indefinida" : pendiente.toFixed(2),
+            magnitud: fmt(magnitud),
+            direccion: { grados: fmt(anguloGrados), cuadrante: cuadrante, anguloReferencia: fmt(anguloReferencia) },
+            pendiente: esVertical ? "Indefinida" : fmt(pendiente),
             esVertical: esVertical,
-            ordenadaOrigen: b !== null ? b.toFixed(2) : "N/A",
+            ordenadaOrigen: b !== null ? fmt(b) : "N/A",
             ecuaciones: { puntoPendiente: formaPuntoPendiente, explicita: formaExplicita, general: formaGeneral }
         };
     }
