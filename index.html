@@ -239,20 +239,111 @@
       </div>
     </section>
 
-    <!-- ==========================================
-         VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
-         ========================================== -->
-    <section id="vista-admin" class="hidden">
-      <div class="card-box" style="border-left: 4px solid var(--conalep-dark, #004d40); margin-top: 2rem;">
-        <h2 style="color: var(--conalep-dark, #004d40);">👨‍🏫 Panel de Control Docente (SICAL)</h2>
-        <p style="color: var(--text-muted, #64748b); margin-bottom: 1.5rem;">Bienvenido, Prof. Juan Luis. Aquí tienes los accesos rápidos a tu base de datos.</p>
-        
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <button class="btn-conalep" onclick="window.open('#', '_blank')">📊 Abrir Google Sheets Master</button>
-            <button class="btn-conalep" style="background-color: var(--conalep-gold, #d97706);" onclick="alert('Función de Nueva Tarea en desarrollo')">📝 Publicar Nueva Tarea</button>
+    <!-- =========================================================================
+     VISTA C - PANEL DE ADMINISTRADOR (DOCENTE)
+     ========================================================================= -->
+<section id="vista-admin" class="hidden">
+  <div class="card-box" style="border-left: 4px solid var(--conalep-dark); margin-top: 2rem;">
+    
+    <!-- Cabecera del Panel Docente -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-card); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+      <div>
+        <h2 style="color: var(--conalep-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+          👨‍🏫 SICAL - PANEL DOCENTE 
+          <span style="font-size: 0.8rem; background: var(--conalep-gold); color: white; padding: 2px 8px; border-radius: 12px;">Modo Administrador</span>
+        </h2>
+        <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 0.9rem;">Gestión de grupos, catálogo de tareas y evaluación de evidencias.</p>
+      </div>
+      <button class="btn-conalep" style="background-color: #ef4444; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+    
+    <!-- Barra de Navegación del Administrador -->
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+      <button class="btn-conalep" style="background-color: var(--conalep-primary);" onclick="mostrarPanelGrupos()">👥 Mis Grupos</button>
+      <button class="btn-conalep" style="background-color: #f1f5f9; color: var(--conalep-dark); border: 1px solid #cbd5e1;" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">📊 Reporte Global (Sheets)</button>
+    </div>
+
+    <!-- CONTENEDOR 1: LISTA DINÁMICA DE GRUPOS -->
+    <div id="panel-mis-grupos">
+      <h3 style="color: var(--conalep-dark); margin-bottom: 1rem;">📂 Grupos Activos</h3>
+      <div id="contenedor-tarjetas-grupos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem;">
+        <p style="color: var(--text-muted);">Cargando grupos disponibles desde la base de datos...</p>
+      </div>
+    </div>
+
+    <!-- CONTENEDOR 2: GESTIÓN INTERNA DEL GRUPO -->
+    <div id="panel-gestion-interno" class="hidden" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-card);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+        <h3 id="titulo-gestion-grupo" style="margin: 0; color: var(--conalep-dark);">👥 Panel de Gestión: Grupo</h3>
+        <button class="btn-conalep" style="background-color: #94a3b8; padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="mostrarPanelGrupos()">⬅ Volver a Mis Grupos</button>
+      </div>
+      
+      <!-- Acciones del Grupo -->
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1.2rem;">
+        <button class="btn-conalep" style="background-color: var(--conalep-dark);" onclick="mostrarFormularioTareaGrupo()">📝 + Nueva Tarea para este Grupo</button>
+        <button class="btn-conalep" style="background-color: #0369a1;" onclick="recargarDatosGrupoActual()">🔄 Actualizar Entregas</button>
+      </div>
+
+      <!-- FORMULARIO DE TAREA ESPECÍFICA POR GRUPO (Oculto) -->
+      <div id="form-tarea-grupo" class="hidden card-box" style="border-left: 4px solid var(--conalep-gold); background: #ffffff; margin-bottom: 1.5rem;">
+        <h4 style="margin-top: 0; color: var(--conalep-dark);">Configurar Tarea para <span id="lbl-grupo-tarea">--</span></h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold;">ID Tarea (Ej. T12_03):</label>
+            <input type="text" id="admin-id" placeholder="T12_03" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold;">Módulo/SubUnidad:</label>
+            <input type="text" id="admin-mod" placeholder="1.2" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size: 0.85rem; font-weight: bold;">Título de la Tarea:</label>
+            <input type="text" id="admin-titulo" placeholder="Ej. Ejercicios de pendiente m" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size: 0.85rem; font-weight: bold;">Instrucciones:</label>
+            <textarea id="admin-desc" rows="2" placeholder="Describir pasos y criterios de entrega..." style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></textarea>
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold;">Fecha Límite:</label>
+            <input type="date" id="admin-fecha" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: bold;">Puntos Máximos:</label>
+            <input type="number" id="admin-puntos" value="100" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+        </div>
+        <div style="margin-top: 1rem; display: flex; gap: 10px;">
+          <button id="btn-publicar-tarea" class="btn-conalep" onclick="publicarTareaGrupoActual()">🚀 Publicar Tarea</button>
+          <button class="btn-conalep" style="background-color: #94a3b8;" onclick="document.getElementById('form-tarea-grupo').classList.add('hidden')">Cancelar</button>
         </div>
       </div>
-    </section>
+
+      <!-- TABLA DE ALUMNOS Y EVIDENCIAS DEL GRUPO -->
+      <h4 style="color: var(--text-main); margin-bottom: 0.8rem;">📋 Entregas y Calificaciones del Grupo</h4>
+      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow-x: auto; padding: 0.5rem;">
+        <table class="table-evidencias" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+              <th style="padding: 10px; text-align: left;">Alumno / Matrícula</th>
+              <th style="padding: 10px; text-align: left;">Actividad</th>
+              <th style="padding: 10px; text-align: left;">Evidencia</th>
+              <th style="padding: 10px; text-align: center;">Estado Actual</th>
+              <th style="padding: 10px; text-align: center;">Calificación</th>
+              <th style="padding: 10px; text-align: center;">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-gestion-entregas">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Cargando entregas del grupo...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</section>
 
   </main>
 
