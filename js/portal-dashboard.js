@@ -351,3 +351,77 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+/* =======================================================
+   RUTAS ADICIONALES PARA EL PANEL ADMINISTRATIVO
+   ======================================================= */
+
+// 1. Contabilizar grupos y alumnos dinámicamente
+if (data.accion === "obtener_resumen_admin") {
+  var sheetAlumnos = libro.getSheetByName("Alumnos");
+  var datos = sheetAlumnos.getDataRange().getValues();
+  var gruposMap = {};
+
+  for (var i = 1; i < datos.length; i++) {
+    var grp = String(datos[i][2] || datos[i][4] || "").trim(); // Columna Grupo
+    if (grp) {
+      gruposMap[grp] = (gruposMap[grp] || 0) + 1;
+    }
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({
+    "status": "éxito",
+    "grupos": gruposMap
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+// 2. Traer evidencias filtradas por grupo con nombres de alumnos
+if (data.accion === "obtener_entregas_grupo") {
+  var sheetEntregas = libro.getSheetByName("Entregas_Evidencias");
+  var sheetAlumnos = libro.getSheetByName("Alumnos");
+  var entregasRaw = sheetEntregas.getDataRange().getValues();
+  var alumnosRaw = sheetAlumnos.getDataRange().getValues();
+
+  // Diccionario Matricula -> Nombre
+  var nombresMap = {};
+  for (var a = 1; a < alumnosRaw.length; a++) {
+    var mat = String(alumnosRaw[a][0]).trim();
+    var nom = alumnosRaw[a][1] + (alumnosRaw[a][2] ? " " + alumnosRaw[a][2] : "");
+    nombresMap[mat] = nom;
+  }
+
+  var entregasFiltradas = [];
+  for (var j = 1; j < entregasRaw.length; j++) {
+    var grupoFila = String(entregasRaw[j][2]).trim();
+    if (grupoFila === String(data.grupo).trim()) {
+      var matriculaFila = String(entregasRaw[j][1]).trim();
+      entregasFiltradas.push({
+        filaFisica: j + 1,
+        matricula: matriculaFila,
+        nombre: nombresMap[matriculaFila] || "Estudiante",
+        actividad: entregasRaw[j][3],
+        archivoUrl: entregasRaw[j][4],
+        estado: entregasRaw[j][5] || "Pendiente",
+        calificacion: entregasRaw[j][6] || ""
+      });
+    }
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({
+    "status": "éxito",
+    "entregas": entregasFiltradas
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+// 3. Calificar y cambiar estado directamente en la fila
+if (data.accion === "calificar_entrega") {
+  var sheetEntregas = libro.getSheetByName("Entregas_Evidencias");
+  var fila = parseInt(data.fila);
+  
+  // Columna 6 = Estado (Revisado), Columna 7 = Calificación
+  sheetEntregas.getRange(fila, 6).setValue(data.estado);
+  sheetEntregas.getRange(fila, 7).setValue(data.calificacion);
+
+  return ContentService.createTextOutput(JSON.stringify({
+    "status": "éxito"
+  })).setMimeType(ContentService.MimeType.JSON);
+}
