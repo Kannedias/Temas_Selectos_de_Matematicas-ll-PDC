@@ -370,6 +370,23 @@ function publicarTareaGrupoActual() {
         return;
     }
 
+    // --- MAGIA DE GRUPOS MÚLTIPLES ---
+    // 1. Iniciamos la lista con el grupo desde donde abriste el panel
+    let gruposSeleccionados = [grupoSeleccionadoAdmin];
+    
+    // 2. Buscamos qué otros checkboxes se marcaron
+    const checkboxesExtra = document.querySelectorAll('.chk-grupo-extra:checked');
+    checkboxesExtra.forEach(chk => {
+        // Evitamos duplicar si por accidente marcas el grupo en el que ya estás
+        if (chk.value !== grupoSeleccionadoAdmin) {
+            gruposSeleccionados.push(chk.value);
+        }
+    });
+
+    // 3. Unimos todo con una coma y un espacio (Ej. "505, 508")
+    const stringGruposDestino = gruposSeleccionados.join(", ");
+    // ---------------------------------
+
     const btn = document.getElementById('btn-publicar-tarea');
     if (btn) {
         btn.disabled = true;
@@ -386,14 +403,20 @@ function publicarTareaGrupoActual() {
             desc: desc,
             fecha: fecha,
             puntos: puntos,
-            grupo: grupoSeleccionadoAdmin
+            grupo: stringGruposDestino // Enviamos la cadena combinada ("505, 508")
         })
     })
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert(`✅ Tarea publicada correctamente para el Grupo ${grupoSeleccionadoAdmin}.`);
-            document.querySelectorAll('#form-tarea-grupo input, #form-tarea-grupo textarea').forEach(e => e.value = '');
+            alert(`✅ Tarea publicada correctamente para los grupos: ${stringGruposDestino}.`);
+            
+            // Limpiar los campos de texto
+            document.querySelectorAll('#form-tarea-grupo input[type="text"], #form-tarea-grupo input[type="date"], #form-tarea-grupo input[type="number"], #form-tarea-grupo textarea').forEach(e => e.value = '');
+            // Limpiar los checkboxes
+            document.querySelectorAll('.chk-grupo-extra').forEach(chk => chk.checked = false); 
+            
+            // Ocultar el formulario
             document.getElementById('form-tarea-grupo')?.classList.add('hidden');
         } else {
             alert("❌ Error: " + data.mensaje);
