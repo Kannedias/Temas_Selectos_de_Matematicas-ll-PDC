@@ -429,3 +429,116 @@ function publicarTareaGrupoActual() {
         }
     });
 }
+// ==========================================
+// 6. GESTIÓN DEL CATÁLOGO DE TAREAS Y ASISTENCIA (PANEL DOCENTE)
+// ==========================================
+let catalogoGeneralTareas = [];
+let listaCompletaAlumnos = [];
+
+// Esta función se puede llamar cuando se inicializa el Panel Admin
+function cargarDatosAdministrativos() {
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "consultar", matricula: "ADMIN-JL" }) // Forzamos una consulta general
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            catalogoGeneralTareas = data.catalogo || [];
+            listaCompletaAlumnos = data.listaAlumnos || [];
+            
+            // Poblar selectores de filtros de grupo
+            poblarSelectoresGrupos(data.listaAlumnos);
+            
+            // Renderizar vistas por defecto
+            filtrarCatalogoGeneral();
+            filtrarAsistencia();
+        }
+    })
+    .catch(err => console.error("Error al cargar datos administrativos:", err));
+}
+
+function poblarSelectoresGrupos(alumnos) {
+    const grupos = [...new Set(alumnos.map(a => a.grupo).filter(g => g && g !== "Grupo"))];
+    
+    const selectCatalogo = document.getElementById('filtro-catalogo-grupo');
+    const selectAsistencia = document.getElementById('filtro-asistencia-grupo');
+    
+    if (selectCatalogo) {
+        selectCatalogo.innerHTML = `<option value="TODOS">Todos los Grupos</option>` + grupos.map(g => `<option value="${g}">Grupo ${g}</option>`).join('');
+        selectCatalogo.onchange = filtrarCatalogoGeneral;
+    }
+    
+    if (selectAsistencia) {
+        selectAsistencia.innerHTML = `<option value="">-- Selecciona --</option>` + grupos.map(g => `<option value="${g}">Grupo ${g}</option>`).join('');
+    }
+}
+
+function filtrarCatalogoGeneral() {
+    const grupoSeleccionado = document.getElementById('filtro-catalogo-grupo')?.value;
+    const tbody = document.getElementById('tabla-catalogo-general');
+    if (!tbody) return;
+
+    let tareasFiltradas = catalogoGeneralTareas;
+    
+    if (grupoSeleccionado && grupoSeleccionado !== "TODOS") {
+        tareasFiltradas = catalogoGeneralTareas.filter(t => t.grupos === "Todos" || t.grupos.includes(grupoSeleccionado));
+    }
+
+    if (tareasFiltradas.length > 0) {
+        tbody.innerHTML = tareasFiltradas.map(t => `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 10px;"><strong>${t.id}</strong><br><small>${t.titulo}</small></td>
+                <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${t.grupos}</span></td>
+                <td style="padding: 10px; text-align: center; color: var(--text-muted);">${t.fecha}</td>
+                <td style="padding: 10px; text-align: center;">
+                    <button class="btn-conalep" style="background-color: #ef4444; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.desactivarTarea('${t.id}')">🛑 Desactivar</button>
+                </td>
+            </tr>
+        `).join('');
+    } else {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas encontradas para este filtro.</td></tr>`;
+    }
+}
+
+function filtrarAsistencia() {
+    const grupoSeleccionado = document.getElementById('filtro-asistencia-grupo')?.value;
+    const modalidadSeleccionada = document.getElementById('filtro-asistencia-modalidad')?.value;
+    const tbody = document.getElementById('tabla-lista-asistencia');
+    
+    if (!tbody) return;
+
+    if (!grupoSeleccionado) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Por favor, selecciona un grupo para ver la lista.</td></tr>`;
+        return;
+    }
+
+    let alumnosFiltrados = listaCompletaAlumnos.filter(a => a.grupo === grupoSeleccionado);
+
+    if (modalidadSeleccionada && modalidadSeleccionada !== "TODAS") {
+        alumnosFiltrados = alumnosFiltrados.filter(a => a.modalidad.includes(modalidadSeleccionada));
+    }
+
+    if (alumnosFiltrados.length > 0) {
+        tbody.innerHTML = alumnosFiltrados.map((a, index) => `
+            <tr style="border-bottom: 1px solid #e2e8f0; background: ${index % 2 === 0 ? '#ffffff' : '#f8fafc'}">
+                <td style="padding: 10px; font-family: monospace; color: var(--text-muted);">${a.matricula}</td>
+                <td style="padding: 10px; font-weight: bold; color: var(--conalep-dark);">${a.nombre}</td>
+                <td style="padding: 10px; text-align: center;">
+                    <span style="font-size: 0.8rem; background: ${a.modalidad.includes('Dual') ? '#fef3c7' : '#dcfce7'}; color: ${a.modalidad.includes('Dual') ? '#b45309' : '#166534'}; padding: 3px 8px; border-radius: 4px;">
+                        ${a.modalidad || "Sin Definir"}
+                    </span>
+                </td>
+                <td style="padding: 10px; text-align: center;">
+                    <select id="asist-${a.matricula}" style="padding: 0.4rem; border-radius: 4px; border: 1px solid #cbd5e1;">
+                        <option value="Presente">✅ Presente</option>
+                        <option value="Falta">❌ Falta</option>
+                        <option value="Justificado">📝 Justificado</option>
+                    </select>
+                </td>
+            </tr>
+        `).join('');
+    } else {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay alumnos que coincidan con este filtro.</td></tr>`;
+    }
+}
