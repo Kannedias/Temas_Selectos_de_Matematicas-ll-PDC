@@ -1,23 +1,36 @@
 // =======================================================
 // URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
-// ¡NO OLVIDES PEGAR TU URL REAL AQUÍ!
 // =======================================================
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA7G85jucZJj7dtOsBWgI3Xo07pyhi-QP3cHeALPLzzzy1HFlKXldaY6EP6Y7sFdRGgw/exec"; 
+
+let miGrafica = null;
+let grupoSeleccionadoAdmin = null;
 
 // ==========================================
 // 1. LÓGICA DE INICIO DE SESIÓN
 // ==========================================
 function iniciarSesion() {
-    const matricula = document.getElementById('input-matricula').value.trim();
+    const matriculaInput = document.getElementById('input-matricula');
+    if (!matriculaInput) return;
+    
+    const matricula = matriculaInput.value.trim();
     const btnIngresar = document.getElementById('btn-ingresar');
 
     if (!matricula) {
-        alert("Por favor, ingresa tu matrícula.");
+        alert("⚠️ Por favor, ingresa tu matrícula.");
         return;
     }
 
-    btnIngresar.innerText = "⏳ Conectando...";
-    btnIngresar.disabled = true;
+    // ACCESO ADMINISTRATIVO (DOCENTE)
+    if (matricula.toUpperCase() === "ADMIN-JL") {
+        inicializarPanelAdmin();
+        return;
+    }
+
+    if (btnIngresar) {
+        btnIngresar.innerText = "⏳ Conectando...";
+        btnIngresar.disabled = true;
+    }
 
     fetch(SCRIPT_URL, {
         method: 'POST',
@@ -26,19 +39,22 @@ function iniciarSesion() {
     .then(response => response.json())
     .then(data => {
         if (data.status === "éxito") {
-            document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${data.primerNombre}`;
-            document.getElementById('lbl-nombre').innerText = data.nombreCompleto;
-            document.getElementById('lbl-matricula').innerText = matricula;
-            document.getElementById('lbl-grupo').innerText = `Grupo ${data.grupo}`;
-            
-            if(data.fotoPerfilUrl) {
-                document.getElementById('img-perfil').src = data.fotoPerfilUrl;
-            }
+            const welcome = document.getElementById('welcome-name');
+            const lblNombre = document.getElementById('lbl-nombre');
+            const lblMat = document.getElementById('lbl-matricula');
+            const lblGrp = document.getElementById('lbl-grupo');
+            const imgPerfil = document.getElementById('img-perfil');
 
-            document.getElementById('vista-login').classList.add('hidden');
-            document.getElementById('vista-dashboard').classList.remove('hidden');
-            document.getElementById('user-menu').classList.remove('hidden');
-            
+            if (welcome) welcome.innerText = `👤 Bienvenido, ${data.primerNombre}`;
+            if (lblNombre) lblNombre.innerText = data.nombreCompleto;
+            if (lblMat) lblMat.innerText = matricula;
+            if (lblGrp) lblGrp.innerText = `Grupo ${data.grupo}`;
+            if (imgPerfil && data.fotoPerfilUrl) imgPerfil.src = data.fotoPerfilUrl;
+
+            document.getElementById('vista-login')?.classList.add('hidden');
+            document.getElementById('vista-dashboard')?.classList.remove('hidden');
+            document.getElementById('user-menu')?.classList.remove('hidden');
+
             sessionStorage.setItem('matriculaActiva', matricula);
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
             sessionStorage.setItem('grupoActivo', data.grupo);
@@ -53,22 +69,26 @@ function iniciarSesion() {
         console.error(error);
     })
     .finally(() => {
-        btnIngresar.innerText = "🚀 Ingresar al Portal";
-        btnIngresar.disabled = false;
+        if (btnIngresar) {
+            btnIngresar.innerText = "🚀 Ingresar al Portal";
+            btnIngresar.disabled = false;
+        }
     });
 }
 
 function cerrarSesion() {
     sessionStorage.clear();
-    document.getElementById('vista-dashboard').classList.add('hidden');
-    document.getElementById('vista-admin').classList.add('hidden');
-    document.getElementById('user-menu').classList.add('hidden');
-    document.getElementById('vista-login').classList.remove('hidden');
-    document.getElementById('input-matricula').value = "";
+    document.getElementById('vista-dashboard')?.classList.add('hidden');
+    document.getElementById('vista-admin')?.classList.add('hidden');
+    document.getElementById('user-menu')?.classList.add('hidden');
+    document.getElementById('vista-login')?.classList.remove('hidden');
+    
+    const matInput = document.getElementById('input-matricula');
+    if (matInput) matInput.value = "";
 }
 
 // ==========================================
-// 2. SINCRONIZACIÓN DE DATOS CON GOOGLE SHEETS
+// 2. CONSULTA DE DATOS DEL ALUMNO
 // ==========================================
 function consultarAvanceReal(matricula) {
     fetch(SCRIPT_URL, {
@@ -81,13 +101,9 @@ function consultarAvanceReal(matricula) {
         if (badge1_1) {
             if (data.modulo1_1 === "Concluido") {
                 badge1_1.className = "badge-status status-ok";
-                badge1_1.style.background = "#dcfce7";
-                badge1_1.style.color = "#166534";
                 badge1_1.innerHTML = "🟢 Concluido";
             } else {
                 badge1_1.className = "badge-status status-pend";
-                badge1_1.style.background = "#fef2f2";
-                badge1_1.style.color = "#991b1b";
                 badge1_1.innerHTML = "🔴 Pendiente de Entrega";
             }
         }
@@ -103,17 +119,14 @@ function consultarAvanceReal(matricula) {
             if (data.historial.length === 0) {
                 tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">No hay entregas registradas.</td></tr>`;
             } else {
-                data.historial.forEach(item => {
-                    let estadoEmoji = item.estado.toLowerCase().includes("revisad") ? "✅" : (item.estado.toLowerCase().includes("cumplid") ? "🌟" : "⏳");
-                    let colorClase = item.estado.toLowerCase().includes("pendient") ? 'status-pend' : 'status-ok';
-                    let row = `<tr>
-                        <td style="font-size: 0.9rem; font-weight: 500; padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.actividad}</td>
+                tbodyHistorial.innerHTML = data.historial.map(item => `
+                    <tr>
+                        <td style="font-size: 0.9rem; padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.actividad}</td>
                         <td style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.fecha}</td>
-                        <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><span class="badge-status ${colorClase}">${estadoEmoji} ${item.estado}</span></td>
+                        <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><span class="badge-status ${item.estado.toLowerCase().includes('pendient') ? 'status-pend' : 'status-ok'}">${item.estado}</span></td>
                         <td style="text-align: center; padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><strong>${item.nota}</strong></td>
-                    </tr>`;
-                    tbodyHistorial.innerHTML += row; 
-                });
+                    </tr>
+                `).join('');
             }
         }
 
@@ -121,10 +134,10 @@ function consultarAvanceReal(matricula) {
         if (selectTarea && data.catalogo) {
             selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
             data.catalogo.forEach(tarea => {
-                let option = document.createElement('option');
-                option.value = tarea.id + " - " + tarea.titulo;
-                option.text = tarea.id + " | " + tarea.titulo;
-                selectTarea.appendChild(option);
+                const opt = document.createElement('option');
+                opt.value = tarea.id + " - " + tarea.titulo;
+                opt.text = tarea.id + " | " + tarea.titulo;
+                selectTarea.appendChild(opt);
             });
         }
     })
@@ -132,38 +145,30 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA DE DONA (SIN TEXTO EN EL CENTRO)
+// 3. GRÁFICA DE EVALUACIÓN
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
-    if (!canvas) return; 
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    if(window.miGrafica !== undefined && window.miGrafica !== null) { 
-        window.miGrafica.destroy(); 
-    }
+    if (miGrafica) miGrafica.destroy();
 
-    // Extraemos de 0 a 100 y dividimos para escala de 10
     const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
     const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
-    
-    const escala10P1 = (p1 / 10).toFixed(1);
-    const escala10P2 = (p2 / 10).toFixed(1);
-    const escala10P3 = (p3 / 10).toFixed(1);
-    const calificacionesReales10 = [escala10P1, escala10P2, escala10P3];
 
-    // Los datos para dibujar la dona basándonos en los porcentajes reales
-    const rawP1 = p1 * 0.25;
-    const rawP2 = p2 * 0.30;
-    const rawP3 = p3 * 0.45;
+    const ptjeP1 = (p1 * 0.25);
+    const ptjeP2 = (p2 * 0.30);
+    const ptjeP3 = (p3 * 0.45);
+    const califFinal = (ptjeP1 + ptjeP2 + ptjeP3).toFixed(1);
 
-    window.miGrafica = new Chart(ctx, {
+    miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: ['Parcial 1 (25%)', 'Parcial 2 (30%)', 'Parcial 3 (45%)'],
             datasets: [{
-                data: [rawP1, rawP2, rawP3], 
+                data: [ptjeP1, ptjeP2, ptjeP3],
                 backgroundColor: ['#00806A', '#d97706', '#94a3b8'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
@@ -172,256 +177,200 @@ function dibujarGrafica(parcialesData) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '75%', // Hacemos la dona ligeramente más delgada para un look más moderno
+            cutout: '70%',
             plugins: {
-                legend: { position: 'right' },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            // En el tooltip al pasar el ratón se muestra la calificación en base 10
-                            const calif10 = calificacionesReales10[context.dataIndex];
-                            return ` ${context.label}: Calif. ${calif10} / 10.0`;
-                        }
-                    }
-                }
-            },
-            onClick: (event, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    mostrarDesglose(index);
-                }
+                legend: { position: 'right' }
             }
         }
     });
 }
 
-function mostrarDesglose(indexParcial) {
-    if(!window.datosDesgloseParciales) return;
+// ==========================================
+// 4. CONTROLADOR DEL PANEL ADMINISTRATIVO
+// ==========================================
+function inicializarPanelAdmin() {
+    document.getElementById('vista-login')?.classList.add('hidden');
+    document.getElementById('vista-admin')?.classList.remove('hidden');
+    document.getElementById('user-menu')?.classList.remove('hidden');
     
-    const datos = window.datosDesgloseParciales[indexParcial];
-    if(!datos) return;
-
-    const contenedorDesglose = document.getElementById('desglose-calificacion');
-    if(contenedorDesglose) {
-        contenedorDesglose.style.display = 'block';
-    }
-
-    // El desglose inferior en escala de 1 a 10
-    const califTotal10 = ((parseFloat(datos.total) || 0) / 10).toFixed(1);
-    const califTareas10 = ((parseFloat(datos.tareas) || 0) / 10).toFixed(1);
-    const califPart10 = ((parseFloat(datos.part) || 0) / 10).toFixed(1);
-    const califAsist10 = ((parseFloat(datos.asist) || 0) / 10).toFixed(1);
-    const califExam10 = ((parseFloat(datos.exam) || 0) / 10).toFixed(1);
-
-    document.getElementById('titulo-desglose').innerText = `Desglose ${datos.titulo} (Calificación: ${califTotal10})`;
-    document.getElementById('val-tareas').innerText = califTareas10 + " pts";
-    document.getElementById('val-part').innerText = califPart10 + " pts";
-    document.getElementById('val-asist').innerText = califAsist10 + " pts";
-    document.getElementById('val-exam').innerText = califExam10 + " pts";
+    const welcome = document.getElementById('welcome-name');
+    if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
+    
+    cargarGruposDocente();
 }
 
-// ==========================================
-// 4. LÓGICA DE VENTANILLA DE ENTREGAS
-// ==========================================
-function subirEvidencia() {
-    const fileInput = document.getElementById('input-archivo');
-    const selectTarea = document.getElementById('select-tarea');
-    const matricula = sessionStorage.getItem('matriculaActiva');
-    const nombre = sessionStorage.getItem('nombreActivo');
-    const grupo = sessionStorage.getItem('grupoActivo');
+function cargarGruposDocente() {
+    const contenedor = document.getElementById('contenedor-tarjetas-grupos');
+    if (!contenedor) return;
+    contenedor.innerHTML = `<p style="color: var(--text-muted);">Consultando grupos...</p>`;
 
-    if (!matricula) {
-        alert("⚠️ Sesión no válida. Inicia sesión nuevamente.");
-        return;
-    }
-    
-    if (!selectTarea.value) {
-        alert("❌ Por favor, selecciona una actividad del catálogo antes de subir tu evidencia.");
-        return;
-    }
-
-    if (!fileInput.files || fileInput.files.length === 0) {
-        alert("⚠️ Selecciona al menos un archivo.");
-        return;
-    }
-
-    const btnEnviar = document.getElementById('btn-enviar');
-    btnEnviar.innerText = "⏳ Subiendo archivos...";
-    btnEnviar.disabled = true;
-
-    const idTarea = selectTarea.value.split(" - ")[0];
-    const actividadCompleta = selectTarea.value;
-
-    let archivosBase64 = [];
-    let procesados = 0;
-
-    Array.from(fileInput.files).forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            let base64 = e.target.result.split(',')[1];
-            archivosBase64.push({
-                nombreOriginal: file.name,
-                mimeType: file.type,
-                base64: base64
-            });
-            procesados++;
-
-            if (procesados === fileInput.files.length) {
-                enviarArchivosBackend(matricula, nombre, grupo, actividadCompleta, idTarea, archivosBase64, btnEnviar);
-            }
-        };
-        reader.readAsDataURL(file);
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "obtener_resumen_admin" })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            contenedor.innerHTML = Object.keys(data.grupos).map(grupo => `
+                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="abrirGestionGrupo('${grupo}')">
+                    <h4 style="margin: 0; font-size: 1.2rem;">📘 Grupo ${grupo}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 ${data.grupos[grupo]} Alumnos</span>
+                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            contenedor.innerHTML = `<p style="color: red;">Error: ${data.mensaje}</p>`;
+        }
+    })
+    .catch(() => {
+        contenedor.innerHTML = `<p style="color: red;">No se pudo conectar con el servidor.</p>`;
     });
 }
 
-function enviarArchivosBackend(matricula, nombre, grupo, actividadCompleta, idTarea, archivosBase64, btnEnviar) {
+function mostrarPanelGrupos() {
+    document.getElementById('panel-gestion-interno')?.classList.add('hidden');
+    document.getElementById('panel-mis-grupos')?.classList.remove('hidden');
+    grupoSeleccionadoAdmin = null;
+}
+
+function abrirGestionGrupo(grupoId) {
+    grupoSeleccionadoAdmin = grupoId;
+    document.getElementById('panel-mis-grupos')?.classList.add('hidden');
+    
+    const titulo = document.getElementById('titulo-gestion-grupo');
+    const lbl = document.getElementById('lbl-grupo-tarea');
+    if (titulo) titulo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
+    if (lbl) lbl.innerText = `Grupo ${grupoId}`;
+    
+    document.getElementById('panel-gestion-interno')?.classList.remove('hidden');
+    document.getElementById('form-tarea-grupo')?.classList.add('hidden');
+    cargarEntregasGrupo(grupoId);
+}
+
+function recargarDatosGrupoActual() {
+    if (grupoSeleccionadoAdmin) cargarEntregasGrupo(grupoSeleccionadoAdmin);
+}
+
+function mostrarFormularioTareaGrupo() {
+    document.getElementById('form-tarea-grupo')?.classList.toggle('hidden');
+}
+
+function cargarEntregasGrupo(grupoId) {
+    const tbody = document.getElementById('tabla-gestion-entregas');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem;">Cargando entregas...</td></tr>`;
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "obtener_entregas_grupo", grupo: grupoId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito" && data.entregas.length > 0) {
+            tbody.innerHTML = data.entregas.map(e => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px;">
+                        <strong>${e.nombre}</strong><br>
+                        <small style="color: var(--text-muted);">${e.matricula}</small>
+                    </td>
+                    <td style="padding: 10px;">${e.actividad}</td>
+                    <td style="padding: 10px;">
+                        <a href="${e.archivoUrl}" target="_blank" style="color: var(--conalep-accent); font-weight: bold; text-decoration: none;">📎 Ver Archivo</a>
+                    </td>
+                    <td style="padding: 10px; text-align: center;">
+                        <span class="badge-status ${e.estado === 'Revisado' ? 'status-ok' : 'status-pend'}">${e.estado}</span>
+                    </td>
+                    <td style="padding: 10px; text-align: center;">
+                        <input type="number" id="nota-${e.filaFisica}" value="${e.calificacion}" min="0" max="100" style="width: 60px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px;">
+                    </td>
+                    <td style="padding: 10px; text-align: center;">
+                        <button class="btn-conalep" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="guardarCalificacionFila(${e.filaFisica})">💾 Guardar</button>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay evidencias registradas para el Grupo ${grupoId}.</td></tr>`;
+        }
+    })
+    .catch(() => {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error al consultar entregas.</td></tr>`;
+    });
+}
+
+function guardarCalificacionFila(filaFisica) {
+    const inputNota = document.getElementById(`nota-${filaFisica}`);
+    const nota = inputNota ? inputNota.value : "";
+    
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
-            accion: "subir_multiples",
-            matricula: matricula,
-            nombre: nombre,
-            grupo: grupo,
-            actividad: actividadCompleta,
-            idTarea: idTarea,
-            archivos: archivosBase64
+            accion: "calificar_entrega",
+            fila: filaFisica,
+            calificacion: nota,
+            estado: "Revisado"
         })
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert("✅ Evidencia enviada correctamente a revisión.");
-            document.getElementById('input-archivo').value = "";
-            document.getElementById('select-tarea').value = "";
-            consultarAvanceReal(matricula); 
+            alert("✅ Calificación guardada exitosamente.");
+            recargarDatosGrupoActual();
         } else {
-            alert("❌ Error en el servidor: " + data.mensaje);
+            alert("❌ Error: " + data.mensaje);
         }
     })
-    .catch(error => {
-        alert("⚠️ Error de conexión. Intenta de nuevo.");
-        console.error(error);
+    .catch(() => alert("⚠️ Error de comunicación con el servidor."));
+}
+
+function publicarTareaGrupoActual() {
+    const idTarea = document.getElementById('admin-id')?.value.trim();
+    const unidad = document.getElementById('admin-mod')?.value.trim();
+    const titulo = document.getElementById('admin-titulo')?.value.trim();
+    const desc = document.getElementById('admin-desc')?.value.trim();
+    const fecha = document.getElementById('admin-fecha')?.value;
+    const puntos = document.getElementById('admin-puntos')?.value;
+
+    if (!idTarea || !unidad || !titulo) {
+        alert("⚠️ Completa los campos obligatorios: ID, Módulo y Título.");
+        return;
+    }
+
+    const btn = document.getElementById('btn-publicar-tarea');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Publicando...";
+    }
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            accion: "nueva_tarea",
+            idTarea: idTarea,
+            unidad: unidad,
+            titulo: titulo,
+            desc: desc,
+            fecha: fecha,
+            puntos: puntos,
+            grupo: grupoSeleccionadoAdmin
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert(`✅ Tarea publicada correctamente para el Grupo ${grupoSeleccionadoAdmin}.`);
+            document.querySelectorAll('#form-tarea-grupo input, #form-tarea-grupo textarea').forEach(e => e.value = '');
+            document.getElementById('form-tarea-grupo')?.classList.add('hidden');
+        } else {
+            alert("❌ Error: " + data.mensaje);
+        }
     })
     .finally(() => {
-        btnEnviar.innerText = "📤 Enviar Evidencia a Revisión";
-        btnEnviar.disabled = false;
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = "🚀 Publicar Tarea";
+        }
     });
-}
-
-// ==========================================
-// 5. CARGA DE FOTOGRAFÍA DE PERFIL
-// ==========================================
-document.addEventListener("DOMContentLoaded", () => {
-    const inputFoto = document.getElementById('input-foto-perfil');
-    if (inputFoto) {
-        inputFoto.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const matricula = sessionStorage.getItem('matriculaActiva');
-            const nombre = sessionStorage.getItem('nombreActivo');
-            const grupo = sessionStorage.getItem('grupoActivo');
-            
-            if (!matricula) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const base64 = evt.target.result.split(',')[1];
-                document.getElementById('img-perfil').src = evt.target.result; 
-                
-                fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        accion: "subir_foto_perfil",
-                        matricula: matricula,
-                        nombre: nombre,
-                        grupo: grupo,
-                        nombreArchivo: file.name,
-                        mimeType: file.type,
-                        archivoBase64: base64
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.status !== "éxito") alert("⚠️ Hubo un error guardando la foto en el servidor.");
-                })
-                .catch(err => console.error("Error subiendo foto:", err));
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-});
-/* =======================================================
-   RUTAS ADICIONALES PARA EL PANEL ADMINISTRATIVO
-   ======================================================= */
-
-// 1. Contabilizar grupos y alumnos dinámicamente
-if (data.accion === "obtener_resumen_admin") {
-  var sheetAlumnos = libro.getSheetByName("Alumnos");
-  var datos = sheetAlumnos.getDataRange().getValues();
-  var gruposMap = {};
-
-  for (var i = 1; i < datos.length; i++) {
-    var grp = String(datos[i][2] || datos[i][4] || "").trim(); // Columna Grupo
-    if (grp) {
-      gruposMap[grp] = (gruposMap[grp] || 0) + 1;
-    }
-  }
-
-  return ContentService.createTextOutput(JSON.stringify({
-    "status": "éxito",
-    "grupos": gruposMap
-  })).setMimeType(ContentService.MimeType.JSON);
-}
-
-// 2. Traer evidencias filtradas por grupo con nombres de alumnos
-if (data.accion === "obtener_entregas_grupo") {
-  var sheetEntregas = libro.getSheetByName("Entregas_Evidencias");
-  var sheetAlumnos = libro.getSheetByName("Alumnos");
-  var entregasRaw = sheetEntregas.getDataRange().getValues();
-  var alumnosRaw = sheetAlumnos.getDataRange().getValues();
-
-  // Diccionario Matricula -> Nombre
-  var nombresMap = {};
-  for (var a = 1; a < alumnosRaw.length; a++) {
-    var mat = String(alumnosRaw[a][0]).trim();
-    var nom = alumnosRaw[a][1] + (alumnosRaw[a][2] ? " " + alumnosRaw[a][2] : "");
-    nombresMap[mat] = nom;
-  }
-
-  var entregasFiltradas = [];
-  for (var j = 1; j < entregasRaw.length; j++) {
-    var grupoFila = String(entregasRaw[j][2]).trim();
-    if (grupoFila === String(data.grupo).trim()) {
-      var matriculaFila = String(entregasRaw[j][1]).trim();
-      entregasFiltradas.push({
-        filaFisica: j + 1,
-        matricula: matriculaFila,
-        nombre: nombresMap[matriculaFila] || "Estudiante",
-        actividad: entregasRaw[j][3],
-        archivoUrl: entregasRaw[j][4],
-        estado: entregasRaw[j][5] || "Pendiente",
-        calificacion: entregasRaw[j][6] || ""
-      });
-    }
-  }
-
-  return ContentService.createTextOutput(JSON.stringify({
-    "status": "éxito",
-    "entregas": entregasFiltradas
-  })).setMimeType(ContentService.MimeType.JSON);
-}
-
-// 3. Calificar y cambiar estado directamente en la fila
-if (data.accion === "calificar_entrega") {
-  var sheetEntregas = libro.getSheetByName("Entregas_Evidencias");
-  var fila = parseInt(data.fila);
-  
-  // Columna 6 = Estado (Revisado), Columna 7 = Calificación
-  sheetEntregas.getRange(fila, 6).setValue(data.estado);
-  sheetEntregas.getRange(fila, 7).setValue(data.calificacion);
-
-  return ContentService.createTextOutput(JSON.stringify({
-    "status": "éxito"
-  })).setMimeType(ContentService.MimeType.JSON);
 }
