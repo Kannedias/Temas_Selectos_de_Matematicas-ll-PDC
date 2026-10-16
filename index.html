@@ -16,8 +16,6 @@
        ========================================== -->
   <header class="main-header">
     <div class="header-container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
-      
-      <!-- Lado Izquierdo: Logo y Título -->
       <div style="display: flex; align-items: center; gap: 15px;">
         <img src="assets/logo-conalep.png" alt="Logo CONALEP" style="height: 50px; width: auto;" onerror="this.style.display='none'">
         <div>
@@ -25,14 +23,11 @@
           <div style="font-size: 0.8rem; color: #a7f3d0;">Módulo: Temas Selectos de Matemáticas II</div>
         </div>
       </div>
-
-      <!-- Lado Derecho: Menú de Usuario -->
       <div id="user-menu" class="hidden" style="background: rgba(0,0,0,0.15); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; gap: 10px; align-items: center;">
         <span id="welcome-name">👤 Bienvenido</span>
         <span style="color: #cbd5e1;">|</span>
         <button onclick="cerrarSesion()" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer;">Salir</button>
       </div>
-      
     </div>
   </header>
 
@@ -44,7 +39,7 @@
          ========================================== -->
     <section id="vista-login" class="card-box" style="max-width: 400px; margin: 4rem auto; text-align: center;">
       <h2 style="color: var(--conalep-dark); margin-bottom: 1.5rem;">🎓 Acceso al Portal</h2>
-      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
+      <input type="text" id="input-matricula" placeholder="Ingresa tu Matrícula (Ej. ADMIN-JL)" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid var(--border-card); border-radius: 4px; font-size: 1rem;">
       <button id="btn-ingresar" class="btn-conalep" style="width: 100%; font-size: 1.05rem;" onclick="iniciarSesion()">🚀 Ingresar al Portal</button>
     </section>
 
@@ -72,8 +67,6 @@
             <div style="flex-grow: 1; position: relative; height: 180px; display: flex; justify-content: center; align-items: center;">
                 <canvas id="graficaParciales"></canvas>
             </div>
-            
-            <!-- Contenedor del desglose de calificación (Oculto por defecto) -->
             <div id="desglose-calificacion" style="display: none; margin-top: 15px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-align: center;">
                 <h4 id="titulo-desglose" style="margin: 0 0 10px 0; color: var(--conalep-dark);">Desglose del Parcial</h4>
                 <div style="display: flex; justify-content: space-around; font-size: 0.9rem;">
@@ -86,44 +79,131 @@
         </div>
       </div>
 
-      <!-- UNIDADES Y MÓDULOS DEL ALUMNO -->
-      <h3 style="color: var(--conalep-dark); margin-bottom: 1rem; border-bottom: 2px solid var(--border-card); padding-bottom: 0.5rem;">📚 Unidades de Estudio</h3>
-      <div class="grid-unidades" style="margin-bottom: 2.5rem;">
+      <!-- ==========================================
+           CONTENEDOR UNIDAD 1
+           ========================================== -->
+      <div style="background: #ffffff; border: 1px solid var(--border-card); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+          <h3 style="color: var(--conalep-dark); margin-top: 0; border-bottom: 2px solid var(--border-card); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">📚 UNIDAD 1: Geometría Analítica Vectorial</h3>
           
-          <!-- Módulo 1.1 -->
-          <div class="card-modulo" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
-              <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">📐 Módulo 1.1: Sistemas y Vectores</h3>
-              <div style="margin-bottom: 12px;">
-                <span id="status-mod-1.1" style="display: inline-flex; align-items: center; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
-                    ⏳ Consultando...
-                </span>
+          <div class="grid-unidades" style="margin-top: 1.5rem;">
+              <!-- Módulo 1.1 -->
+              <div class="card-modulo" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #10b981;">
+                  <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem;">📐 Módulo 1.1: Sistemas y Vectores</h3>
+                  <div style="margin-bottom: 12px;">
+                    <span id="status-mod-1.1" style="display: inline-flex; align-items: center; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                        ⏳ Consultando...
+                    </span>
+                  </div>
+                  <ul style="font-size: 0.88rem; color: #475569; margin: 0; padding-left: 20px;">
+                      <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
+                      <li><strong>Física y Geometría:</strong> Vector desplazamiento y cálculo de magnitud.</li>
+                  </ul>
               </div>
-              <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                  <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
-                  <li><strong>Física y Geometría:</strong> Vector desplazamiento y cálculo de magnitud.</li>
-              </ul>
-              <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; margin-top: auto;">
-                  🚀 Entrar al Laboratorio
-              </button>
+
+              <!-- Módulo 1.2 -->
+              <div class="card-modulo" style="border: 1px solid #fde047; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #f59e0b;">
+                  <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem;">📈 Módulo 1.2: La Línea Recta</h3>
+                  <div style="margin-bottom: 12px;">
+                    <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                        🟡 En Curso
+                    </span>
+                  </div>
+                  <ul style="font-size: 0.88rem; color: #475569; margin: 0; padding-left: 20px;">
+                      <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección y pendiente.</li>
+                      <li><strong>Modelado Algebraico:</strong> Las 3 formas de la ecuación.</li>
+                  </ul>
+              </div>
           </div>
 
-          <!-- Módulo 1.2 -->
-          <div class="card-modulo" style="background: #ffffff; border: 1px solid #fde047; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #f59e0b; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.1); display: flex; flex-direction: column;">
-              <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">📈 Módulo 1.2: La Línea Recta</h3>
-              <div style="margin-bottom: 12px;">
-                <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
-                    🟡 En Curso
-                </span>
-              </div>
-              <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                  <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección y pendiente.</li>
-                  <li><strong>Modelado Algebraico:</strong> Las 3 formas de la ecuación.</li>
-              </ul>
-              <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-accent); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; margin-top: auto;">
-                  🚀 Entrar al Laboratorio
+          <!-- BOTÓN UNIFICADO PARA LA UNIDAD 1 -->
+          <div style="text-align: right; margin-top: 1.5rem; border-top: 1px dashed #cbd5e1; padding-top: 1rem;">
+              <button onclick="window.location.href='unidad1_recta.html'" class="btn-conalep" style="background-color: var(--conalep-accent); padding: 0.7rem 2rem; font-size: 1rem; box-shadow: 0 4px 6px rgba(0, 128, 106, 0.2);">
+                  🚀 Entrar al Laboratorio (Unidad 1)
               </button>
           </div>
       </div>
+
+      <!-- ==========================================
+           CONTENEDOR UNIDAD 2
+           ========================================== -->
+      <div style="background: #ffffff; border: 1px solid var(--border-card); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; opacity: 0.9;">
+          <h3 style="color: #475569; margin-top: 0; border-bottom: 2px solid var(--border-card); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">🌌 UNIDAD 2: Interacciones, Curvas y Cinemática</h3>
+          
+          <div class="grid-unidades" style="margin-top: 1.5rem;">
+              <!-- Módulo 2.1 -->
+              <div class="card-modulo" style="border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; background: #f8fafc;">
+                  <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem;">⭕ Módulo 2.1: La Circunferencia</h3>
+                  <div style="margin-bottom: 12px;">
+                    <span style="display: inline-flex; align-items: center; background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                        🔒 Próximamente
+                    </span>
+                  </div>
+                  <ul style="font-size: 0.85rem; color: #64748b; margin: 0; padding-left: 20px;">
+                      <li style="margin-bottom: 8px;"><strong>Radares y Cobertura:</strong> Centro (h,k) y radio de acción.</li>
+                      <li><strong>Modelado de Áreas:</strong> Ecuación canónica y general.</li>
+                  </ul>
+              </div>
+
+              <!-- Módulo 2.2 -->
+              <div class="card-modulo" style="border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; background: #f8fafc;">
+                  <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem;">☄️ Módulo 2.2: Tiro Parabólico</h3>
+                  <div style="margin-bottom: 12px;">
+                    <span style="display: inline-flex; align-items: center; background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                        🔒 Próximamente
+                    </span>
+                  </div>
+                  <ul style="font-size: 0.85rem; color: #64748b; margin: 0; padding-left: 20px;">
+                      <li style="margin-bottom: 8px;"><strong>La Parábola en Movimiento:</strong> Alcance y altura máxima.</li>
+                      <li><strong>Simetría:</strong> Vértice, foco y directriz de impacto.</li>
+                  </ul>
+              </div>
+          </div>
+
+          <div style="text-align: right; margin-top: 1.5rem; border-top: 1px dashed #cbd5e1; padding-top: 1rem;">
+              <button disabled class="btn-conalep" style="background-color: #cbd5e1; color: #ffffff; cursor: not-allowed; padding: 0.7rem 2rem; font-size: 1rem;">
+                  Bloqueado
+              </button>
+          </div>
+      </div>
+
+      <!-- ==========================================
+           GRID INFERIOR: HISTORIAL Y VENTANILLA
+           ========================================== -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        
+        <!-- Historial de Evidencias -->
+        <div class="card-box" style="overflow-x: auto; margin: 0;">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📁 Historial de Evidencias</h3>
+          <table style="width: 100%; border-collapse: collapse; min-width: 400px; text-align: left; font-size: 0.9rem;">
+            <thead>
+              <tr style="background-color: #f1f5f9; border-bottom: 2px solid var(--border-card);">
+                <th style="padding: 10px;">Actividad</th>
+                <th style="padding: 10px;">Fecha</th>
+                <th style="padding: 10px;">Estado</th>
+                <th style="padding: 10px; text-align: center;">Nota</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-historial">
+              <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">Cargando registros...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Ventanilla de Entrega -->
+        <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
+          <h3 style="color: var(--conalep-dark); margin-top: 0;">📤 Ventanilla de Entrega Digital</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Sube tu foto de libreta o PDF con procedimiento (máx 5MB).</p>
+          
+          <label style="font-size: 0.85rem; font-weight: bold;">Selecciona la Tarea:</label>
+          <select id="select-tarea" style="width: 100%; padding: 0.6rem; margin-bottom: 12px; border: 1px solid var(--border-card); border-radius: 4px;">
+            <option value="">Cargando catálogo...</option>
+          </select>
+          
+          <input type="file" id="input-archivo" accept="image/*,application/pdf" multiple style="width: 100%; margin-bottom: 15px; font-size: 0.9rem;">
+          <button id="btn-enviar" class="btn-conalep" style="width: 100%; background-color: var(--conalep-dark);" onclick="subirEvidencia()">📤 Enviar Evidencia a Revisión</button>
+        </div>
+
+      </div> <!-- Cierre del Grid Inferior -->
 
     </section> <!-- CIERRE DASHBOARD ALUMNO -->
   </main> <!-- CIERRE DEL CONTENEDOR DE 1200px -->
@@ -134,7 +214,6 @@
        ========================================================================= -->
   <section id="vista-admin" class="hidden" style="width: 100%; max-width: 1600px; margin: 0 auto; padding: 1rem 2rem;">
     
-    <!-- Contenedor del Panel Expansivo (Sin márgenes exagerados) -->
     <div style="background: #ffffff; border: 1px solid var(--border-card); border-top: 5px solid var(--conalep-dark); border-radius: 8px; padding: 1.5rem 2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); min-height: 80vh;">
       
       <!-- Cabecera del Panel -->
@@ -158,8 +237,6 @@
       <!-- CONTENEDOR DINÁMICO: MIS GRUPOS ACTIVOS -->
       <div id="panel-mis-grupos">
           <h3 style="color: var(--conalep-dark); margin-bottom: 1rem; font-size: 1.2rem;">📂 Tus Grupos Activos</h3>
-          
-          <!-- Grid de Tarjetas de Grupos (Se expandirán dinámicamente) -->
           <div id="contenedor-tarjetas-grupos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem;">
               <p style="color: var(--text-muted);">Cargando grupos desde la base de datos...</p>
           </div>
@@ -229,6 +306,26 @@
               </div>
           </div>
 
+          <!-- TABLA DE TAREAS ACTIVAS DEL GRUPO -->
+          <h4 style="color: var(--text-main); margin-top: 1rem; margin-bottom: 0.8rem; font-size: 1.1rem;">📝 Tareas Publicadas (Activas)</h4>
+          <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto; margin-bottom: 2.5rem;">
+              <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                  <thead>
+                      <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                          <th style="padding: 12px; text-align: left;">ID Tarea</th>
+                          <th style="padding: 12px; text-align: left;">Título</th>
+                          <th style="padding: 12px; text-align: center;">Fecha Límite</th>
+                          <th style="padding: 12px; text-align: center;">Acción</th>
+                      </tr>
+                  </thead>
+                  <tbody id="tabla-gestion-tareas">
+                      <tr>
+                          <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Cargando tareas activas...</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+
           <!-- TABLA DE ALUMNOS (Ocupará todo el ancho disponible) -->
           <h4 style="color: var(--text-main); margin-bottom: 0.8rem; font-size: 1.1rem;">📋 Entregas y Calificaciones del Grupo</h4>
           <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
@@ -272,6 +369,6 @@
   </script>
 
   <!-- Script principal con variable para forzar la actualización -->
-  <script src="js/portal-dashboard.js?v=6"></script>
+  <script src="js/portal-dashboard.js?v=7"></script>
 </body>
 </html>
