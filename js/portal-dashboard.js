@@ -145,7 +145,7 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA DE EVALUACIÓN
+// 3. GRÁFICA DE EVALUACIÓN Y DESGLOSE
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
@@ -161,7 +161,6 @@ function dibujarGrafica(parcialesData) {
     const ptjeP1 = (p1 * 0.25);
     const ptjeP2 = (p2 * 0.30);
     const ptjeP3 = (p3 * 0.45);
-    const califFinal = (ptjeP1 + ptjeP2 + ptjeP3).toFixed(1);
 
     miGrafica = new Chart(ctx, {
         type: 'doughnut',
@@ -180,11 +179,44 @@ function dibujarGrafica(parcialesData) {
             cutout: '70%',
             plugins: {
                 legend: { position: 'right' }
+            },
+            // EVENTO CLICK QUE ENCIENDE EL DESGLOSE
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    mostrarDesglose(index);
+                }
             }
         }
     });
 }
 
+// FUNCIÓN PARA MOSTRAR LA CAJA DE DESGLOSE INFERIOR
+window.mostrarDesglose = function(indexParcial) {
+    if(!window.datosDesgloseParciales) return;
+    
+    const datos = window.datosDesgloseParciales[indexParcial];
+    if(!datos) return;
+
+    // Encender el contenedor que está oculto en el HTML
+    const contenedorDesglose = document.getElementById('desglose-calificacion');
+    if(contenedorDesglose) {
+        contenedorDesglose.style.display = 'block';
+    }
+
+    // Inyectar los valores en los spans correspondientes
+    const titulo = document.getElementById('titulo-desglose');
+    const valTareas = document.getElementById('val-tareas');
+    const valPart = document.getElementById('val-part');
+    const valAsist = document.getElementById('val-asist');
+    const valExam = document.getElementById('val-exam');
+
+    if (titulo) titulo.innerText = `Desglose ${datos.titulo} (Total: ${datos.total}/100)`;
+    if (valTareas) valTareas.innerText = datos.tareas || 0;
+    if (valPart) valPart.innerText = datos.part || 0;
+    if (valAsist) valAsist.innerText = datos.asist || 0;
+    if (valExam) valExam.innerText = datos.exam || 0;
+};
 // ==========================================
 // 4. CONTROLADOR DEL PANEL ADMINISTRATIVO
 // ==========================================
