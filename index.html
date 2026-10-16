@@ -352,15 +352,27 @@
     </div>
   </section>
 
-  <!-- SCRIPT INCRUSTADO PARA FORZAR LA NAVEGACIÓN (Bypass de Caché) -->
+ <!-- SCRIPT INCRUSTADO PARA EL PANEL DE ADMINISTRADOR -->
   <script>
-    window.mostrarPanelGrupos = function() {
-        const panelInterno = document.getElementById('panel-gestion-interno');
-        const panelGrupos = document.getElementById('panel-mis-grupos');
-        if (panelInterno && panelGrupos) {
-            panelInterno.classList.add('hidden');
-            panelGrupos.classList.remove('hidden');
+    // Gestor Universal de Vistas del Panel Administrativo
+    window.cambiarVistaAdmin = function(vistaDestino) {
+        // 1. Ocultamos todos los paneles
+        const paneles = document.querySelectorAll('.admin-panel-vista');
+        paneles.forEach(panel => panel.classList.add('hidden'));
+
+        // 2. Mostramos solo el que nos interesa
+        if (vistaDestino === 'grupos') {
+            document.getElementById('panel-mis-grupos').classList.remove('hidden');
+        } else if (vistaDestino === 'catalogo') {
+            document.getElementById('panel-catalogo-tareas').classList.remove('hidden');
+        } else if (vistaDestino === 'asistencia') {
+            document.getElementById('panel-asistencia').classList.remove('hidden');
         }
+    };
+
+    // Redirecciones de los botones
+    window.mostrarPanelGrupos = function() {
+        window.cambiarVistaAdmin('grupos');
     };
 
     window.mostrarFormularioTareaGrupo = function() {
@@ -369,6 +381,6 @@
   </script>
 
   <!-- Script principal con variable para forzar la actualización -->
-  <script src="js/portal-dashboard.js?v=7"></script>
+  <script src="js/portal-dashboard.js?v=8"></script>
 </body>
 </html>
