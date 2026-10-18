@@ -1,7 +1,7 @@
 // =======================================================
 // URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
 // =======================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyA7G85jucZJj7dtOsBWgI3Xo07pyhi-QP3cHeALPLzzzy1HFlKXldaY6EP6Y7sFdRGgw/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCMQODKXv1yJ3Muqisn2udm5BrbXyWUKEBQjY4WMDxEvl-5R541NGO4oftXTuQ6SuP0A/exec"; 
 
 let miGrafica = null;
 let grupoSeleccionadoAdmin = null;
