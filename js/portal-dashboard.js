@@ -530,7 +530,7 @@ function filtrarAsistencia() {
     }
 }
 // ==========================================
-// 7. SUBIDA DE FOTO DE PERFIL (ALUMNOS) CON COMPRESIÓN
+// 7. SUBIDA DE FOTO DE PERFIL (ALUMNOS) - SIN COMPRESIÓN
 // ==========================================
 window.subirFotoPerfil = function() {
     const fileInput = document.getElementById('input-foto-perfil');
@@ -538,48 +538,57 @@ window.subirFotoPerfil = function() {
 
     const file = fileInput.files[0];
     const matricula = sessionStorage.getItem('matriculaActiva');
-    const grupo = sessionStorage.getItem('grupoActivo');
     const nombre = sessionStorage.getItem('nombreActivo');
-    
-    const imgPerfil = document.getElementById('img-perfil');
-    const emojiCamara = document.getElementById('emoji-camara');
+    const grupo = sessionStorage.getItem('grupoActivo');
+
+    if (!matricula) {
+        alert("⚠️ Debes iniciar sesión para subir una foto.");
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
+        // Enviar la imagen ORIGINAL (sin compresión)
         const base64Data = e.target.result.split(',')[1];
-        
-        // ✨ MOSTRAR VISTA PREVIA INMEDIATA ✨
-        if (imgPerfil && emojiCamara) {
+
+        // 1. Mostrar visualmente de inmediato en la página
+        const imgPerfil = document.getElementById('img-perfil');
+        const emojiCamara = document.getElementById('emoji-camara');
+        if(imgPerfil && emojiCamara) {
             imgPerfil.src = e.target.result;
             imgPerfil.style.display = 'block';
             emojiCamara.style.display = 'none';
         }
 
-        alert("⏳ Guardando foto en la nube... Por favor espera.");
+        alert("⏳ Guardando tu foto de perfil... Por favor espera.");
 
+        // 2. Enviar la imagen original al Backend
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({
                 accion: "subir_foto_perfil",
                 matricula: matricula,
-                grupo: grupo,
                 nombre: nombre,
-                nombreArchivo: "Perfil_" + matricula + "_" + file.name,
+                grupo: grupo,
+                nombreArchivo: file.name, // Enviamos el nombre original
                 mimeType: file.type,
-                archivoBase64: base64Data
+                archivoBase64: base64Data // La foto pesada original
             })
         })
         .then(res => res.json())
         .then(data => {
-            if(data.status === "éxito") { 
-                // Actualizamos a la URL definitiva de Drive
-                if(imgPerfil) imgPerfil.src = data.url; 
-                alert("✅ ¡Foto guardada exitosamente!");
+            if (data.status === "éxito") {
+                alert("✅ ¡Foto de perfil guardada exitosamente!");
+                // Opcional: Actualizar la imagen con la URL del servidor si lo deseas
+                // if (imgPerfil) imgPerfil.src = data.url; 
             } else {
-                alert("❌ Error: " + data.mensaje);
+                alert("❌ Error en la nube: " + data.mensaje);
             }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error(err);
+            alert("⚠️ Error de conexión.");
+        });
     };
     reader.readAsDataURL(file);
 };
