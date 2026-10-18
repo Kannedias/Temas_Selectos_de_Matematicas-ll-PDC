@@ -72,23 +72,32 @@
             <span id="lbl-grupo" style="background: var(--conalep-accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px;">Grupo --</span>
         </div>
 
-        <!-- Gráfica de Avance -->
-        <div class="card-box" style="margin: 0; display: flex; flex-direction: column;">
-            <h3 style="color: var(--conalep-dark); margin-top: 0;">📊 Ponderación de Evaluaciones</h3>
-            <div style="flex-grow: 1; position: relative; height: 180px; display: flex; justify-content: center; align-items: center;">
+            <!-- ==========================================
+             MÓDULO DE GRÁFICA Y DESGLOSE
+             ========================================== -->
+        <div class="card-box" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--conalep-dark); margin-top: 0; margin-bottom: 1rem;">📊 Ponderación de Evaluaciones</h3>
+            
+            <!-- Lienzo de la Gráfica de Dona -->
+            <div style="position: relative; height: 220px; width: 100%; margin-bottom: 1.5rem;">
                 <canvas id="graficaParciales"></canvas>
             </div>
-            <div id="desglose-calificacion" style="display: none; margin-top: 15px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-align: center;">
-                <h4 id="titulo-desglose" style="margin: 0 0 10px 0; color: var(--conalep-dark);">Desglose del Parcial</h4>
-                <div style="display: flex; justify-content: space-around; font-size: 0.9rem;">
-                    <div>📝 Tareas: <strong id="val-tareas">0</strong></div>
-                    <div>🙋 Participación: <strong id="val-part">0</strong></div>
-                    <div>✅ Asistencia: <strong id="val-asist">0</strong></div>
-                    <div>🎯 Examen: <strong id="val-exam">0</strong></div>
+            
+            <!-- TABLA DE DESGLOSE (AQUÍ APARECEN LAS PONDERACIONES) -->
+            <div id="desglose-calificacion" style="display: none; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.2rem; margin-top: 1rem;">
+                <h4 id="titulo-desglose" style="margin: 0 0 10px 0; color: var(--conalep-dark); text-align: center; font-size: 1.1rem;">Desglose</h4>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; font-size: 0.95rem; color: var(--text-main);">
+                    <div>📝 Tareas: <strong id="val-tareas" style="color: var(--conalep-dark);">--</strong></div>
+                    <div>🙋‍♂️ Participación: <strong id="val-part" style="color: var(--conalep-dark);">--</strong></div>
+                    <div>✅ Asistencia: <strong id="val-asist" style="color: var(--conalep-dark);">--</strong></div>
+                    <div>🎯 Examen: <strong id="val-exam" style="color: var(--conalep-dark);">--</strong></div>
                 </div>
             </div>
+            
+            <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 15px;">
+                <em>* Haz clic en una sección de la gráfica para ver tu desglose exacto de calificaciones.</em>
+            </p>
         </div>
-      </div>
 
       <!-- ==========================================
            CONTENEDOR UNIDAD 1
