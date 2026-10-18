@@ -9,83 +9,67 @@ let grupoSeleccionadoAdmin = null;
 // ==========================================
 // 1. LÓGICA DE INICIO DE SESIÓN
 // ==========================================
-function iniciarSesion() {
-    const matriculaInput = document.getElementById('input-matricula');
-    if (!matriculaInput) return;
-    
-    const matricula = matriculaInput.value.trim();
-    const btnIngresar = document.getElementById('btn-ingresar');
+window.iniciarSesion = function() {
+    const matricula = document.getElementById('input-matricula').value.trim();
 
-    if (!matricula) {
-        alert("⚠️ Por favor, ingresa tu matrícula.");
+    if (matricula === "") {
+        alert("⚠️ Por favor, ingresa tu matrícula para acceder.");
         return;
     }
 
-    // ACCESO ADMINISTRATIVO (DOCENTE)
-    if (matricula.toUpperCase() === "ADMIN-JL") {
-        inicializarPanelAdmin();
-        return;
-    }
-
-    if (btnIngresar) {
-        btnIngresar.innerText = "⏳ Conectando...";
-        btnIngresar.disabled = true;
-    }
-
+    // Llamamos al backend para el LOGIN real
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "login", matricula: matricula })
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            const welcome = document.getElementById('welcome-name');
-            const lblNombre = document.getElementById('lbl-nombre');
-            const lblMat = document.getElementById('lbl-matricula');
-            const lblGrp = document.getElementById('lbl-grupo');
+            // Llenamos los datos del alumno
+            document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${data.primerNombre}`;
+            document.getElementById('lbl-nombre').innerText = `${data.nombreCompleto}`;
+            
+            const lblMatricula = document.getElementById('lbl-matricula');
+            if(lblMatricula) lblMatricula.innerText = matricula;
+            
+            const lblGrupo = document.getElementById('lbl-grupo');
+            if(lblGrupo) lblGrupo.innerText = `Grupo ${data.grupo}`;
+
+            // ✨ LA MAGIA: ENCENDEMOS LA FOTO Y APAGAMOS EL EMOJI ✨
             const imgPerfil = document.getElementById('img-perfil');
+            const emojiCamara = document.getElementById('emoji-camara');
+            
+            if (data.fotoPerfilUrl && data.fotoPerfilUrl !== "") {
+                if(imgPerfil) {
+                    imgPerfil.src = data.fotoPerfilUrl;
+                    imgPerfil.style.display = 'block';
+                }
+                if(emojiCamara) emojiCamara.style.display = 'none';
+            }
 
-            if (welcome) welcome.innerText = `👤 Bienvenido, ${data.primerNombre}`;
-            if (lblNombre) lblNombre.innerText = data.nombreCompleto;
-            if (lblMat) lblMat.innerText = matricula;
-            if (lblGrp) lblGrp.innerText = `Grupo ${data.grupo}`;
-            if (imgPerfil && data.fotoPerfilUrl) imgPerfil.src = data.fotoPerfilUrl;
-
-            document.getElementById('vista-login')?.classList.add('hidden');
-            document.getElementById('vista-dashboard')?.classList.remove('hidden');
-            document.getElementById('user-menu')?.classList.remove('hidden');
-
+            // Guardamos en memoria
             sessionStorage.setItem('matriculaActiva', matricula);
-            sessionStorage.setItem('nombreActivo', data.nombreCompleto);
             sessionStorage.setItem('grupoActivo', data.grupo);
+            sessionStorage.setItem('nombreActivo', data.nombreCompleto);
 
-            consultarAvanceReal(matricula);
+            // Cambiamos de pantalla
+            document.getElementById('vista-login').classList.add('hidden');
+            document.getElementById('vista-dashboard').classList.remove('hidden');
+            
+            const userMenu = document.getElementById('user-menu');
+            if(userMenu) userMenu.classList.remove('hidden');
+            
+            // Aquí puedes llamar a tu función que dibuja la gráfica
+            // cargarDatosDashboard(matricula); 
         } else {
-            alert("❌ " + (data.mensaje || "Matrícula no encontrada"));
+            alert("❌ " + data.mensaje);
         }
     })
-    .catch(error => {
-        alert("⚠️ Error de conexión con la base de datos.");
-        console.error(error);
-    })
-    .finally(() => {
-        if (btnIngresar) {
-            btnIngresar.innerText = "🚀 Ingresar al Portal";
-            btnIngresar.disabled = false;
-        }
+    .catch(err => {
+        console.error(err);
+        alert("⚠️ Error de conexión con el servidor.");
     });
-}
-
-function cerrarSesion() {
-    sessionStorage.clear();
-    document.getElementById('vista-dashboard')?.classList.add('hidden');
-    document.getElementById('vista-admin')?.classList.add('hidden');
-    document.getElementById('user-menu')?.classList.add('hidden');
-    document.getElementById('vista-login')?.classList.remove('hidden');
-    
-    const matInput = document.getElementById('input-matricula');
-    if (matInput) matInput.value = "";
-}
+};
 
 // ==========================================
 // 2. CONSULTA DE DATOS DEL ALUMNO
@@ -554,80 +538,48 @@ window.subirFotoPerfil = function() {
 
     const file = fileInput.files[0];
     const matricula = sessionStorage.getItem('matriculaActiva');
-    const nombre = sessionStorage.getItem('nombreActivo');
     const grupo = sessionStorage.getItem('grupoActivo');
-
-    if (!matricula) {
-        alert("⚠️ Debes iniciar sesión para subir una foto.");
-        return;
-    }
+    const nombre = sessionStorage.getItem('nombreActivo');
+    
+    const imgPerfil = document.getElementById('img-perfil');
+    const emojiCamara = document.getElementById('emoji-camara');
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        // COMPRESIÓN DE LA IMAGEN A TAMAÑO AVATAR (Para evitar el límite de Sheets)
-        const img = new Image();
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 200;
-            const MAX_HEIGHT = 200;
-            let width = img.width;
-            let height = img.height;
+        const base64Data = e.target.result.split(',')[1];
+        
+        // ✨ MOSTRAR VISTA PREVIA INMEDIATA ✨
+        if (imgPerfil && emojiCamara) {
+            imgPerfil.src = e.target.result;
+            imgPerfil.style.display = 'block';
+            emojiCamara.style.display = 'none';
+        }
 
-            // Recortar proporcionalmente
-            if (width > height) {
-                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+        alert("⏳ Guardando foto en la nube... Por favor espera.");
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                accion: "subir_foto_perfil",
+                matricula: matricula,
+                grupo: grupo,
+                nombre: nombre,
+                nombreArchivo: "Perfil_" + matricula + "_" + file.name,
+                mimeType: file.type,
+                archivoBase64: base64Data
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === "éxito") { 
+                // Actualizamos a la URL definitiva de Drive
+                if(imgPerfil) imgPerfil.src = data.url; 
+                alert("✅ ¡Foto guardada exitosamente!");
             } else {
-                if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                alert("❌ Error: " + data.mensaje);
             }
-            
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Convertir a texto Base64 ligero (formato JPEG, calidad 70%)
-            const dataUrlLigera = canvas.toDataURL('image/jpeg', 0.7);
-            const base64Pura = dataUrlLigera.split(',')[1];
-
-            // 1. Mostrar visualmente de inmediato
-            const imgPerfil = document.getElementById('img-perfil');
-            const emojiCamara = document.getElementById('emoji-camara');
-            if(imgPerfil && emojiCamara) {
-                imgPerfil.src = dataUrlLigera;
-                imgPerfil.style.display = 'block';
-                emojiCamara.style.display = 'none';
-            }
-
-            alert("⏳ Guardando tu foto de forma permanente... Por favor espera.");
-
-            // 2. Enviar la imagen comprimida al Backend
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    accion: "subir_foto_perfil",
-                    matricula: matricula,
-                    nombre: nombre,
-                    grupo: grupo,
-                    nombreArchivo: "Foto_Perfil.jpg",
-                    mimeType: "image/jpeg",
-                    archivoBase64: base64Pura, // Va a Drive
-                    dataUriCompleta: dataUrlLigera // ¡ESTA ES LA QUE SE QUEDA EN SHEETS!
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "éxito") {
-                    alert("✅ ¡Foto de perfil guardada exitosamente y sin bloqueos!");
-                } else {
-                    alert("❌ Error en la nube: " + data.mensaje);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("⚠️ Error de conexión.");
-            });
-        };
-        img.src = e.target.result;
+        })
+        .catch(err => console.error(err));
     };
     reader.readAsDataURL(file);
 };
