@@ -145,7 +145,7 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA DE EVALUACIÓN Y DESGLOSE
+// 3. GRÁFICA DE EVALUACIÓN Y DESGLOSE (ESCALA 1-10 Y LIMPIA)
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
@@ -154,20 +154,18 @@ function dibujarGrafica(parcialesData) {
     
     if (miGrafica) miGrafica.destroy();
 
+    // Ahora graficamos los puntos reales (0 a 100 internamente para la proporción visual)
     const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
     const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
 
-    const ptjeP1 = (p1 * 0.25);
-    const ptjeP2 = (p2 * 0.30);
-    const ptjeP3 = (p3 * 0.45);
-
     miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Parcial 1 (25%)', 'Parcial 2 (30%)', 'Parcial 3 (45%)'],
+            // Etiquetas limpias, sin porcentajes de ponderación
+            labels: ['Parcial 1', 'Parcial 2', 'Parcial 3'],
             datasets: [{
-                data: [ptjeP1, ptjeP2, ptjeP3],
+                data: [p1, p2, p3],
                 backgroundColor: ['#00806A', '#d97706', '#94a3b8'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
@@ -178,9 +176,18 @@ function dibujarGrafica(parcialesData) {
             maintainAspectRatio: false,
             cutout: '70%',
             plugins: {
-                legend: { position: 'right' }
+                legend: { position: 'right' },
+                tooltip: {
+                    callbacks: {
+                        // Cambiamos el texto flotante para mostrar la calificación en escala de 1 a 10
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const calif10 = parcialesData[index].enEscala10;
+                            return ` Calificación: ${calif10} / 10`;
+                        }
+                    }
+                }
             },
-            // EVENTO CLICK QUE ENCIENDE EL DESGLOSE
             onClick: (event, elements) => {
                 if (elements.length > 0) {
                     const index = elements[0].index;
@@ -194,24 +201,20 @@ function dibujarGrafica(parcialesData) {
 // FUNCIÓN PARA MOSTRAR LA CAJA DE DESGLOSE INFERIOR
 window.mostrarDesglose = function(indexParcial) {
     if(!window.datosDesgloseParciales) return;
-    
     const datos = window.datosDesgloseParciales[indexParcial];
     if(!datos) return;
 
-    // Encender el contenedor que está oculto en el HTML
     const contenedorDesglose = document.getElementById('desglose-calificacion');
-    if(contenedorDesglose) {
-        contenedorDesglose.style.display = 'block';
-    }
+    if(contenedorDesglose) contenedorDesglose.style.display = 'block';
 
-    // Inyectar los valores en los spans correspondientes
     const titulo = document.getElementById('titulo-desglose');
     const valTareas = document.getElementById('val-tareas');
     const valPart = document.getElementById('val-part');
     const valAsist = document.getElementById('val-asist');
     const valExam = document.getElementById('val-exam');
 
-    if (titulo) titulo.innerText = `Desglose ${datos.titulo} (Total: ${datos.total}/100)`;
+    // Mostramos el desglose usando los puntos base 100, pero el total general lo mostramos en escala 10
+    if (titulo) titulo.innerText = `Desglose ${datos.titulo} (Calificación: ${datos.enEscala10})`;
     if (valTareas) valTareas.innerText = datos.tareas || 0;
     if (valPart) valPart.innerText = datos.part || 0;
     if (valAsist) valAsist.innerText = datos.asist || 0;
@@ -542,3 +545,63 @@ function filtrarAsistencia() {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay alumnos que coincidan con este filtro.</td></tr>`;
     }
 }
+// ==========================================
+// 7. SUBIDA DE FOTO DE PERFIL (ALUMNOS)
+// ==========================================
+window.subirFotoPerfil = function() {
+    const fileInput = document.getElementById('input-foto-perfil');
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) return;
+
+    const file = fileInput.files[0];
+    const matricula = sessionStorage.getItem('matriculaActiva');
+    const nombre = sessionStorage.getItem('nombreActivo');
+    const grupo = sessionStorage.getItem('grupoActivo');
+
+    if (!matricula) {
+        alert("⚠️ Debes iniciar sesión para subir una foto.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result.split(',')[1];
+        
+        // 1. Mostrar la foto inmediatamente en la pantalla (Efecto visual)
+        const imgPerfil = document.getElementById('img-perfil');
+        const emojiCamara = document.getElementById('emoji-camara');
+        if(imgPerfil && emojiCamara) {
+            imgPerfil.src = e.target.result;
+            imgPerfil.style.display = 'block';
+            emojiCamara.style.display = 'none';
+        }
+
+        alert("⏳ Subiendo tu foto a la nube... Por favor, no cierres la página.");
+
+        // 2. Enviar a Google Apps Script
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                accion: "subir_foto_perfil",
+                matricula: matricula,
+                nombre: nombre,
+                grupo: grupo,
+                nombreArchivo: "perfil_" + file.name,
+                mimeType: file.type,
+                archivoBase64: base64Data
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "éxito") {
+                alert("✅ ¡Foto de perfil guardada exitosamente!");
+            } else {
+                alert("❌ Error al guardar en la nube: " + data.mensaje);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("⚠️ Error de conexión con el servidor.");
+        });
+    };
+    reader.readAsDataURL(file);
+};
