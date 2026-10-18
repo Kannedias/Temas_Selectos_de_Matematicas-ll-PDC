@@ -546,7 +546,7 @@ function filtrarAsistencia() {
     }
 }
 // ==========================================
-// 7. SUBIDA DE FOTO DE PERFIL (ALUMNOS)
+// 7. SUBIDA DE FOTO DE PERFIL (ALUMNOS) CON COMPRESIÓN
 // ==========================================
 window.subirFotoPerfil = function() {
     const fileInput = document.getElementById('input-foto-perfil');
@@ -564,44 +564,70 @@ window.subirFotoPerfil = function() {
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        const base64Data = e.target.result.split(',')[1];
-        
-        // 1. Mostrar la foto inmediatamente en la pantalla (Efecto visual)
-        const imgPerfil = document.getElementById('img-perfil');
-        const emojiCamara = document.getElementById('emoji-camara');
-        if(imgPerfil && emojiCamara) {
-            imgPerfil.src = e.target.result;
-            imgPerfil.style.display = 'block';
-            emojiCamara.style.display = 'none';
-        }
+        // COMPRESIÓN DE LA IMAGEN A TAMAÑO AVATAR (Para evitar el límite de Sheets)
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 200;
+            const MAX_HEIGHT = 200;
+            let width = img.width;
+            let height = img.height;
 
-        alert("⏳ Subiendo tu foto a la nube... Por favor, no cierres la página.");
-
-        // 2. Enviar a Google Apps Script
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                accion: "subir_foto_perfil",
-                matricula: matricula,
-                nombre: nombre,
-                grupo: grupo,
-                nombreArchivo: "perfil_" + file.name,
-                mimeType: file.type,
-                archivoBase64: base64Data
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "éxito") {
-                alert("✅ ¡Foto de perfil guardada exitosamente!");
+            // Recortar proporcionalmente
+            if (width > height) {
+                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
             } else {
-                alert("❌ Error al guardar en la nube: " + data.mensaje);
+                if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
             }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("⚠️ Error de conexión con el servidor.");
-        });
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Convertir a texto Base64 ligero (formato JPEG, calidad 70%)
+            const dataUrlLigera = canvas.toDataURL('image/jpeg', 0.7);
+            const base64Pura = dataUrlLigera.split(',')[1];
+
+            // 1. Mostrar visualmente de inmediato
+            const imgPerfil = document.getElementById('img-perfil');
+            const emojiCamara = document.getElementById('emoji-camara');
+            if(imgPerfil && emojiCamara) {
+                imgPerfil.src = dataUrlLigera;
+                imgPerfil.style.display = 'block';
+                emojiCamara.style.display = 'none';
+            }
+
+            alert("⏳ Guardando tu foto de forma permanente... Por favor espera.");
+
+            // 2. Enviar la imagen comprimida al Backend
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    accion: "subir_foto_perfil",
+                    matricula: matricula,
+                    nombre: nombre,
+                    grupo: grupo,
+                    nombreArchivo: "Foto_Perfil.jpg",
+                    mimeType: "image/jpeg",
+                    archivoBase64: base64Pura, // Va a Drive
+                    dataUriCompleta: dataUrlLigera // ¡ESTA ES LA QUE SE QUEDA EN SHEETS!
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "éxito") {
+                    alert("✅ ¡Foto de perfil guardada exitosamente y sin bloqueos!");
+                } else {
+                    alert("❌ Error en la nube: " + data.mensaje);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("⚠️ Error de conexión.");
+            });
+        };
+        img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 };
