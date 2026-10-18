@@ -129,24 +129,27 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-// 3. GRÁFICA DE EVALUACIÓN Y DESGLOSE (ESCALA 1-10 Y LIMPIA)
+//  3. GRÁFICA DE EVALUACIÓN Y DESGLOSE (ESCALA 1-10 Y LIMPIA)
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    if (miGrafica) miGrafica.destroy();
+    // Evitamos duplicados
+    if (window.miGrafica) window.miGrafica.destroy();
 
-    // Ahora graficamos los puntos reales (0 a 100 internamente para la proporción visual)
-    const p1 = parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
-    const p2 = parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
-    const p3 = parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
+    // Extraemos el total bruto de cada parcial (sobre 100) para graficar proporciones
+    const p1 = parcialesData && parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
+    const p2 = parcialesData && parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
+    const p3 = parcialesData && parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
 
-    miGrafica = new Chart(ctx, {
+    // Guardamos los datos globalmente para el evento click
+    window.datosDesgloseParciales = parcialesData;
+
+    window.miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            // Etiquetas limpias, sin porcentajes de ponderación
             labels: ['Parcial 1', 'Parcial 2', 'Parcial 3'],
             datasets: [{
                 data: [p1, p2, p3],
@@ -163,10 +166,14 @@ function dibujarGrafica(parcialesData) {
                 legend: { position: 'right' },
                 tooltip: {
                     callbacks: {
-                        // Cambiamos el texto flotante para mostrar la calificación en escala de 1 a 10
                         label: function(context) {
                             const index = context.dataIndex;
-                            const calif10 = parcialesData[index].enEscala10;
+                            if (!window.datosDesgloseParciales || !window.datosDesgloseParciales[index]) return "Sin datos";
+                            
+                            // Extraemos el total base 100 y lo dividimos para la escala a 10
+                            const totalBase100 = parseFloat(window.datosDesgloseParciales[index].total) || 0;
+                            const calif10 = (totalBase100 / 10).toFixed(1);
+                            
                             return ` Calificación: ${calif10} / 10`;
                         }
                     }
@@ -188,21 +195,27 @@ window.mostrarDesglose = function(indexParcial) {
     const datos = window.datosDesgloseParciales[indexParcial];
     if(!datos) return;
 
+    // Encender el contenedor que antes estaba oculto
     const contenedorDesglose = document.getElementById('desglose-calificacion');
-    if(contenedorDesglose) contenedorDesglose.style.display = 'block';
+    if(contenedorDesglose) {
+        contenedorDesglose.style.display = 'block';
+    }
 
+    const totalBase100 = parseFloat(datos.total) || 0;
+    const calif10 = (totalBase100 / 10).toFixed(1);
+
+    // Inyectar los valores
     const titulo = document.getElementById('titulo-desglose');
     const valTareas = document.getElementById('val-tareas');
     const valPart = document.getElementById('val-part');
     const valAsist = document.getElementById('val-asist');
     const valExam = document.getElementById('val-exam');
 
-    // Mostramos el desglose usando los puntos base 100, pero el total general lo mostramos en escala 10
-    if (titulo) titulo.innerText = `Desglose ${datos.titulo} (Calificación: ${datos.enEscala10})`;
-    if (valTareas) valTareas.innerText = datos.tareas || 0;
-    if (valPart) valPart.innerText = datos.part || 0;
-    if (valAsist) valAsist.innerText = datos.asist || 0;
-    if (valExam) valExam.innerText = datos.exam || 0;
+    if(titulo) titulo.innerText = `Desglose ${datos.titulo} (Nota Final: ${calif10} / 10)`;
+    if(valTareas) valTareas.innerText = datos.tareas || 0;
+    if(valPart) valPart.innerText = datos.part || 0;
+    if(valAsist) valAsist.innerText = datos.asist || 0;
+    if(valExam) valExam.innerText = datos.exam || 0;
 };
 // ==========================================
 // 4. CONTROLADOR DEL PANEL ADMINISTRATIVO
