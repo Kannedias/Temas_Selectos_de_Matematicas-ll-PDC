@@ -215,29 +215,30 @@
         </section>
 
 <!-- =========================================================================
-         VISTA C - PANEL DE ADMINISTRADOR (DOCENTE) - TEMA UNIFICADO CONALEP
+         VISTA C - PANEL DE ADMINISTRADOR DOCENTE (PANORÁMICO FULL WIDTH)
          ========================================================================= -->
     <style>
-      /* Layout principal alineado a la esquina superior izquierda */
+      /* Expansión total de la pantalla docente */
       #vista-admin {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        padding: 1rem 1.5rem;
-        box-sizing: border-box;
+        width: 100% !important;
+        max-width: 98vw !important;
+        margin: 0.5rem auto 2rem auto !important;
+        padding: 0 1rem !important;
+        box-sizing: border-box !important;
       }
 
       .admin-layout-container {
         display: flex;
-        gap: 1.5rem;
+        gap: 1.25rem;
         align-items: flex-start;
-        justify-content: flex-start;
+        width: 100%;
       }
 
-      /* Barra Lateral / Sidebar (Esquina superior izquierda) */
+      /* Sidebar pegado al margen izquierdo superior */
       .sidebar-menu {
         width: 270px;
-        background-color: #0d1b18; /* Verde noche ultra oscuro elegante */
+        min-width: 270px;
+        background-color: #0d1b18;
         border: 1px solid #134e4a;
         border-radius: 8px;
         padding: 1.25rem 1rem;
@@ -259,7 +260,7 @@
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #5eead4; /* Verde aguamarina suave */
+        color: #5eead4;
         margin: 1.25rem 0 0.45rem 0.5rem;
         font-weight: 700;
       }
@@ -294,19 +295,15 @@
         border-radius: 0 6px 6px 0;
       }
 
-      /* Encabezados de tablas con el tema unificado CONALEP */
       .banner-tabla-admin {
         background: linear-gradient(135deg, #004d40 0%, #00594C 100%);
         color: #ffffff;
       }
     </style>
 
-    <section id="vista-admin" class="hidden">
-      <div class="admin-layout-container">
+        <div class="admin-layout-container">
         
-        <!-- ==========================================
-             COLUMNA IZQUIERDA: MENÚ LATERAL (SIDEBAR)
-             ========================================== -->
+        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL -->
         <aside class="sidebar-menu">
             <div class="sidebar-header-box">
                 <h3 style="color: #f8fafc; margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
@@ -314,32 +311,18 @@
                 </h3>
             </div>
             
-            <!-- SECCIÓN: GESTIÓN DE AULA -->
             <div class="sidebar-title" style="margin-top: 0;">Gestión de Aula</div>
-            <button class="sidebar-btn active" onclick="/* Acción Mis Grupos */">
-                👥 Mis Grupos
-            </button>
-            <button class="sidebar-btn" onclick="/* Acción Asistencia */">
-                🙋‍♂️ Asistencia Diaria
-            </button>
+            <button class="sidebar-btn active">👥 Mis Grupos</button>
+            <button class="sidebar-btn">🙋‍♂️ Asistencia Diaria</button>
 
-            <!-- SECCIÓN: MÓDULO DE EVALUACIÓN -->
             <div class="sidebar-title">Módulo de Evaluación</div>
-            <button class="sidebar-btn" onclick="/* Acción Calificaciones */">
-                💯 Calificaciones
-            </button>
-            <button class="sidebar-btn" onclick="/* Acción Catálogo */">
-                📚 Catálogo de Tareas
-            </button>
-            <!-- NUEVO CAMPO: REPOSITORIO DE TAREAS / EVIDENCIAS RECIBIDAS -->
-            <button class="sidebar-btn" style="background: rgba(0, 128, 106, 0.15); border: 1px dashed #00806A;" title="Consulta todas las tareas y evidencias enviadas por los alumnos">
+            <button class="sidebar-btn">💯 Calificaciones</button>
+            <button class="sidebar-btn">📚 Catálogo de Tareas</button>
+            <button class="sidebar-btn" style="background: rgba(0, 128, 106, 0.2); border: 1px dashed #00806A;" title="Todas las tareas y evidencias recibidas">
                 📥 Repositorio de Evidencias <span style="font-size: 0.65rem; background: #00806A; color: white; padding: 1px 5px; border-radius: 4px; margin-left: auto;">Entregas</span>
             </button>
-            <button class="sidebar-btn" onclick="/* Acción Nueva Tarea */">
-                📝 Colocar Tarea Nueva
-            </button>
+            <button class="sidebar-btn">📝 Colocar Tarea Nueva</button>
 
-            <!-- SECCIÓN: SEGURIDAD Y SISTEMA -->
             <div class="sidebar-title">Seguridad y Sistema</div>
             <button class="sidebar-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">
                 📊 Base de Datos
@@ -349,74 +332,72 @@
             </button>
         </aside>
 
-        <!-- ==========================================
-             COLUMNA DERECHA: CUADRO MAESTRO INTACTO
-             ========================================== -->
-        <div style="flex-grow: 1; min-width: 0;">
-            <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid #e2e8f0;">
+        <!-- COLUMNA DERECHA: ÁREA DE TRABAJO PANORÁMICA -->
+        <div style="flex-grow: 1; width: calc(100% - 290px); min-width: 0;">
+            <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
                 
-                <!-- ENCABEZADO PRINCIPAL ESTILO CONALEP -->
+                <!-- ENCABEZADO PRINCIPAL -->
                 <div class="banner-tabla-admin" style="text-align: center; padding: 1.1rem; border-radius: 6px 6px 0 0; position: relative; border-bottom: 3px solid #00806A;">
                     <h2 style="margin: 0; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 1px;">PANEL ADMINISTRATIVO DOCENTE</h2>
                     <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #a7f3d0;">Gestión Académica • Grupos Activos: 505 y 508 • Panel de Control Docente</p>
                 </div>
 
-                <!-- INDICADORES GLOBALES (Fila 4-5) -->
+                <!-- INDICADORES GLOBALES (KPIs) -->
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); background: #f8fafc; border: 1px solid #cbd5e1; border-top: none; margin-bottom: 2rem; border-radius: 0 0 6px 6px;">
                     <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
                         <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Grupos Activos</div>
-                        <div style="font-size: 1.15rem; color: #004d40; font-weight: bold;" id="kpi-grupos">2 (G-505 / G-508)</div>
+                        <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-grupos">2 (G-505 / G-508)</div>
                     </div>
                     <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
                         <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Total Estudiantes</div>
-                        <div style="font-size: 1.15rem; color: #004d40; font-weight: bold;" id="kpi-alumnos">75 Alumnos</div>
+                        <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-alumnos">75 Alumnos</div>
                     </div>
                     <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
                         <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Tareas en Curso</div>
-                        <div style="font-size: 1.15rem; color: #004d40; font-weight: bold;" id="kpi-tareas">12 Actividades</div>
+                        <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-tareas">12 Actividades</div>
                     </div>
                     <div style="padding: 1rem; text-align: center;">
                         <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Tasa de Entrega</div>
-                        <div style="font-size: 1.15rem; color: #00806A; font-weight: bold;" id="kpi-tasa">88.5%</div>
+                        <div style="font-size: 1.2rem; color: #00806A; font-weight: bold;" id="kpi-tasa">88.5%</div>
                     </div>
                 </div>
 
                 <!-- SECCIÓN 1: CONTROL DE UNIDADES Y AVANCE TEMÁTICO -->
                 <h3 class="banner-tabla-admin" style="padding: 0.65rem 1rem; font-size: 0.92rem; margin: 0; border-radius: 4px 4px 0 0; text-transform: uppercase;">Control de Unidades y Avance Temático</h3>
                 <div style="overflow-x: auto; margin-bottom: 2rem; border: 1px solid #cbd5e1; border-top: none;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.85rem; text-align: center;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: center;">
                         <thead>
                             <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                                <th style="padding: 8px;">Unidad / Bloque</th>
-                                <th style="padding: 8px; text-align: left;">Tema Principal</th>
-                                <th style="padding: 8px;">Grupo</th>
-                                <th style="padding: 8px;">Periodo / Semanas</th>
-                                <th style="padding: 8px;">Avance %</th>
-                                <th style="padding: 8px;">Estatus de Unidad</th>
-                                <th style="padding: 8px;">Última Modificación</th>
-                                <th style="padding: 8px;">Evidencias Asociadas</th>
+                                <th style="padding: 10px;">Unidad / Bloque</th>
+                                <th style="padding: 10px; text-align: left;">Tema Principal</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Periodo / Semanas</th>
+                                <th style="padding: 10px;">Avance %</th>
+                                <th style="padding: 10px;">Estatus de Unidad</th>
+                                <th style="padding: 10px;">Última Modificación</th>
+                                <th style="padding: 10px;">Evidencias Asociadas</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-unidades-maestra">
                             <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 8px;">Unidad 1</td>
-                                <td style="padding: 8px; text-align: left;">Fundamentos y Entornos de Desarrollo</td>
-                                <td style="padding: 8px;"><span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px;">Grupo 505</span></td>
-                                <td style="padding: 8px;">Sem 1 - 4</td>
-                                <td style="padding: 8px; font-weight: bold;">100%</td>
-                                <td style="padding: 8px;"><span style="background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-weight: bold;">Completada</span></td>
-                                <td style="padding: 8px; color: #64748b;">2026-09-20</td>
-                                <td style="padding: 8px;">3 Tareas concluidas</td>
+                                <td style="padding: 10px;">Unidad 1</td>
+                                <td style="padding: 10px; text-align: left;">Fundamentos y Entornos de Desarrollo</td>
+                                <td style="padding: 10px;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
+                                <td style="padding: 10px;">Sem 1 - 4</td>
+                                <td style="padding: 10px; font-weight: bold;">100%</td>
+                                <td style="padding: 10px;"><span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-weight: bold;">Completada</span></td>
+                                <td style="padding: 10px; color: #64748b;">2026-09-20</td>
+                                <td style="padding: 10px;">3 Tareas concluidas</td>
                             </tr>
                             <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 8px;">Unidad 2</td>
-                                <td style="padding: 8px; text-align: left;">Estructuras de Datos y Algoritmos</td>
-                                <td style="padding: 8px;"><span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px;">Grupo 505</span></td>
-                                <td style="padding: 8px;">Sem 5 - 8</td>
-                                <td style="padding: 8px; font-weight: bold;">85%</td>
-                                <td style="padding: 8px;"><span style="background: #fef08a; color: #854d0e; padding: 3px 8px; border-radius: 12px; font-weight: bold;">En Curso</span></td>
-                                <td style="padding: 8px; color: #64748b;">2026-10-15</td>
-                                <td style="padding: 8px;">4 Tareas en curso</td>
+                                <td style="padding: 10px;">Unidad 2</td>
+                                <td style="padding: 10px; text-align: left;">Estructuras de Datos y Algoritmos</td>
+                                <td style="padding: 10px;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
+                                <td style="padding: 10px;">Sem 5 - 8</td>
+                                <td style="padding: 10px; font-weight: bold;">85%</td>
+                                <td style="padding: 10px;"><span style="background: #fef08a; color: #854d0e; padding: 4px 10px; border-radius: 12px; font-weight: bold;">En Curso</span></td>
+                                <td style="padding: 10px; color: #64748b;">2026-10-15</td>
+                                <td style="padding: 10px;">4 Tareas en curso</td>
                             </tr>
                         </tbody>
                     </table>
@@ -425,39 +406,39 @@
                 <!-- SECCIÓN 2: GESTIÓN Y CONTROL DE TAREAS -->
                 <h3 class="banner-tabla-admin" style="padding: 0.65rem 1rem; font-size: 0.92rem; margin: 0; border-radius: 4px 4px 0 0; text-transform: uppercase;">Gestión y Control de Tareas por Grupo</h3>
                 <div style="overflow-x: auto; margin-bottom: 2rem; border: 1px solid #cbd5e1; border-top: none;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.85rem; text-align: center;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: center;">
                         <thead>
                             <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                                <th style="padding: 8px;">ID Tarea</th>
-                                <th style="padding: 8px;">Grupo</th>
-                                <th style="padding: 8px;">Unidad</th>
-                                <th style="padding: 8px; text-align: left;">Título de la Actividad</th>
-                                <th style="padding: 8px;">Fecha Límite</th>
-                                <th style="padding: 8px;">Puntaje Máx</th>
-                                <th style="padding: 8px;">Estado de Tarea</th>
-                                <th style="padding: 8px;">Entregas Recibidas</th>
+                                <th style="padding: 10px;">ID Tarea</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Unidad</th>
+                                <th style="padding: 10px; text-align: left;">Título de la Actividad</th>
+                                <th style="padding: 10px;">Fecha Límite</th>
+                                <th style="padding: 10px;">Puntaje Máx</th>
+                                <th style="padding: 10px;">Estado de Tarea</th>
+                                <th style="padding: 10px;">Entregas Recibidas</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-tareas-maestra">
                             <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
-                                <td style="padding: 8px; font-weight: bold;">ACT-101</td>
-                                <td style="padding: 8px;"><span style="background: #ede9fe; color: #5b21b6; padding: 2px 6px; border-radius: 4px;">Grupo 505</span></td>
-                                <td style="padding: 8px;">Unidad 1</td>
-                                <td style="padding: 8px; text-align: left;">Configuración de Entorno y Repositorio</td>
-                                <td style="padding: 8px;">2026-09-08</td>
-                                <td style="padding: 8px;">10 pts</td>
-                                <td style="padding: 8px;"><span style="background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 12px;">Cerrada</span></td>
-                                <td style="padding: 8px; font-weight: bold;">38 / 38 (100%)</td>
+                                <td style="padding: 10px; font-weight: bold;">ACT-101</td>
+                                <td style="padding: 10px;"><span style="background: #ede9fe; color: #5b21b6; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
+                                <td style="padding: 10px;">Unidad 1</td>
+                                <td style="padding: 10px; text-align: left;">Configuración de Entorno y Repositorio</td>
+                                <td style="padding: 10px;">2026-09-08</td>
+                                <td style="padding: 10px;">10 pts</td>
+                                <td style="padding: 10px;"><span style="background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 12px;">Cerrada</span></td>
+                                <td style="padding: 10px; font-weight: bold;">38 / 38 (100%)</td>
                             </tr>
                             <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 8px; font-weight: bold;">ACT-203</td>
-                                <td style="padding: 8px;"><span style="background: #ede9fe; color: #5b21b6; padding: 2px 6px; border-radius: 4px;">Grupo 505</span></td>
-                                <td style="padding: 8px;">Unidad 2</td>
-                                <td style="padding: 8px; text-align: left;">Práctica de Consultas SQL Multitabla</td>
-                                <td style="padding: 8px;">2026-10-22</td>
-                                <td style="padding: 8px;">20 pts</td>
-                                <td style="padding: 8px;"><span style="background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-weight: bold;">Activa</span></td>
-                                <td style="padding: 8px;">29 / 38 (76%)</td>
+                                <td style="padding: 10px; font-weight: bold;">ACT-203</td>
+                                <td style="padding: 10px;"><span style="background: #ede9fe; color: #5b21b6; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
+                                <td style="padding: 10px;">Unidad 2</td>
+                                <td style="padding: 10px; text-align: left;">Práctica de Consultas SQL Multitabla</td>
+                                <td style="padding: 10px;">2026-10-22</td>
+                                <td style="padding: 10px;">20 pts</td>
+                                <td style="padding: 10px;"><span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-weight: bold;">Activa</span></td>
+                                <td style="padding: 10px;">29 / 38 (76%)</td>
                             </tr>
                         </tbody>
                     </table>
@@ -466,45 +447,45 @@
                 <!-- SECCIÓN 3: MONITOREO DE ALUMNOS (VENTANILLA) -->
                 <div class="banner-tabla-admin" style="display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 1rem; border-radius: 4px 4px 0 0;">
                     <h3 style="margin: 0; font-size: 0.92rem; text-transform: uppercase;">Monitoreo de Alumnos y Evidencias</h3>
-                    <select id="filtro-rapido-grupo" style="font-size: 0.8rem; padding: 4px 8px; color: #004d40; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1;">
+                    <select id="filtro-rapido-grupo" style="font-size: 0.85rem; padding: 4px 10px; color: #004d40; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1;">
                         <option value="TODOS">Filtrar: Todos los Grupos</option>
                         <option value="505">Grupo 505</option>
                         <option value="508">Grupo 508</option>
                     </select>
                 </div>
                 <div style="overflow-x: auto; border: 1px solid #cbd5e1; border-top: none;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 1000px; font-size: 0.85rem; text-align: center;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: center;">
                         <thead>
                             <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                                <th style="padding: 10px;">Matrícula</th>
-                                <th style="padding: 10px; text-align: left;">Nombre Completo del Alumno</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px; text-align: left;">Última Tarea</th>
-                                <th style="padding: 10px;">Calificación</th>
-                                <th style="padding: 10px;">Estatus</th>
+                                <th style="padding: 12px;">Matrícula</th>
+                                <th style="padding: 12px; text-align: left;">Nombre Completo del Alumno</th>
+                                <th style="padding: 12px;">Grupo</th>
+                                <th style="padding: 12px; text-align: left;">Última Tarea</th>
+                                <th style="padding: 12px;">Calificación</th>
+                                <th style="padding: 12px;">Estatus</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-alumnos-maestra">
                             <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 10px; font-family: monospace; color: #475569;">20240101</td>
-                                <td style="padding: 10px; text-align: left; font-weight: bold;">García Morales, Sofía</td>
-                                <td style="padding: 10px;"><span style="background: #ede9fe; color: #5b21b6; padding: 2px 6px; border-radius: 4px;">Grupo 505</span></td>
-                                <td style="padding: 10px; text-align: left;">ACT-201 Diagrama ER</td>
-                                <td style="padding: 10px; font-weight: bold;">10 / 10</td>
-                                <td style="padding: 10px;"><span style="color: #16a34a; font-weight: bold;">Aprobada</span></td>
+                                <td style="padding: 12px; font-family: monospace; color: #475569;">20240101</td>
+                                <td style="padding: 12px; text-align: left; font-weight: bold;">García Morales, Sofía</td>
+                                <td style="padding: 12px;"><span style="background: #ede9fe; color: #5b21b6; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
+                                <td style="padding: 12px; text-align: left;">ACT-201 Diagrama ER</td>
+                                <td style="padding: 12px; font-weight: bold;">10 / 10</td>
+                                <td style="padding: 12px;"><span style="color: #16a34a; font-weight: bold;">Aprobada</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-            </div> <!-- Fin del cuadro maestro -->
-        </div> <!-- Fin de la columna derecha -->
+            </div>
+        </div>
 
       </div>
     </section>
 
     </main>
-
+    <section id="vista-admin" class="hidden">
     <!-- Script principal con rompe-cachés -->
     <script src="js/portal-dashboard.js?v=8"></script>
 </body>
