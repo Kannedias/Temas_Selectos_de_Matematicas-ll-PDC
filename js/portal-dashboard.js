@@ -17,6 +17,23 @@ window.iniciarSesion = function() {
         return;
     }
 
+    // ==========================================
+    // 🔑 ATAJO VIP PARA EL PANEL DOCENTE
+    // ==========================================
+    if (matricula.toUpperCase() === "ADMIN-JL") {
+        inicializarPanelAdmin();
+        return; // Esto detiene el código para que NO busque en Google Sheets
+    }
+
+    // ==========================================
+    // FLUJO NORMAL PARA ALUMNOS
+    // ==========================================
+    const btnIngresar = document.querySelector('#vista-login button') || document.getElementById('btn-ingresar');
+    if (btnIngresar) {
+        btnIngresar.innerText = "⏳ Consultando...";
+        btnIngresar.disabled = true;
+    }
+
     // Llamamos al backend para el LOGIN real
     fetch(SCRIPT_URL, {
         method: 'POST',
@@ -59,8 +76,10 @@ window.iniciarSesion = function() {
             const userMenu = document.getElementById('user-menu');
             if(userMenu) userMenu.classList.remove('hidden');
             
-            // Aquí puedes llamar a tu función que dibuja la gráfica
-            // cargarDatosDashboard(matricula); 
+            // Disparamos la carga de avance e historial si existe la función
+            if(typeof consultarAvanceReal === 'function') {
+                consultarAvanceReal(matricula);
+            }
         } else {
             alert("❌ " + data.mensaje);
         }
@@ -68,6 +87,12 @@ window.iniciarSesion = function() {
     .catch(err => {
         console.error(err);
         alert("⚠️ Error de conexión con el servidor.");
+    })
+    .finally(() => {
+        if (btnIngresar) {
+            btnIngresar.innerText = "🚀 Ingresar al Portal";
+            btnIngresar.disabled = false;
+        }
     });
 };
 
