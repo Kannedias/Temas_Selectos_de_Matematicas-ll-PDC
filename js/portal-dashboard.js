@@ -21,8 +21,17 @@ window.iniciarSesion = function() {
     // 🔑 ATAJO VIP PARA EL PANEL DOCENTE
     // ==========================================
     if (matricula.toUpperCase() === "ADMIN-JL") {
-        inicializarPanelAdmin();
-        return; // Esto detiene el código para que NO busque en Google Sheets
+        document.getElementById('vista-login').classList.add('hidden');
+        document.getElementById('vista-admin').classList.remove('hidden');
+        const userMenu = document.getElementById('user-menu');
+        if (userMenu) userMenu.classList.remove('hidden');
+        
+        const welcome = document.getElementById('welcome-name');
+        if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
+
+        // ¡Disparo automático del Motor de Mis Grupos!
+        window.cargarModuloMisGrupos("TODOS");
+        return; 
     }
 
     // ==========================================
@@ -154,7 +163,7 @@ function consultarAvanceReal(matricula) {
 }
 
 // ==========================================
-//  3. GRÁFICA DE EVALUACIÓN Y DESGLOSE (ESCALA 1-10 Y LIMPIA)
+//  3. GRÁFICA DE EVALUACIÓN Y DESGLOSE
 // ==========================================
 function dibujarGrafica(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
@@ -164,12 +173,11 @@ function dibujarGrafica(parcialesData) {
     // Evitamos duplicados
     if (window.miGrafica) window.miGrafica.destroy();
 
-    // Extraemos el total bruto de cada parcial (sobre 100) para graficar proporciones
+    // Extraemos el total bruto de cada parcial
     const p1 = parcialesData && parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
     const p2 = parcialesData && parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
     const p3 = parcialesData && parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
 
-    // Guardamos los datos globalmente para el evento click
     window.datosDesgloseParciales = parcialesData;
 
     window.miGrafica = new Chart(ctx, {
@@ -194,11 +202,8 @@ function dibujarGrafica(parcialesData) {
                         label: function(context) {
                             const index = context.dataIndex;
                             if (!window.datosDesgloseParciales || !window.datosDesgloseParciales[index]) return "Sin datos";
-                            
-                            // Extraemos el total base 100 y lo dividimos para la escala a 10
                             const totalBase100 = parseFloat(window.datosDesgloseParciales[index].total) || 0;
                             const calif10 = (totalBase100 / 10).toFixed(1);
-                            
                             return ` Calificación: ${calif10} / 10`;
                         }
                     }
@@ -220,16 +225,12 @@ window.mostrarDesglose = function(indexParcial) {
     const datos = window.datosDesgloseParciales[indexParcial];
     if(!datos) return;
 
-    // Encender el contenedor que antes estaba oculto
     const contenedorDesglose = document.getElementById('desglose-calificacion');
-    if(contenedorDesglose) {
-        contenedorDesglose.style.display = 'block';
-    }
+    if(contenedorDesglose) contenedorDesglose.style.display = 'block';
 
     const totalBase100 = parseFloat(datos.total) || 0;
     const calif10 = (totalBase100 / 10).toFixed(1);
 
-    // Inyectar los valores
     const titulo = document.getElementById('titulo-desglose');
     const valTareas = document.getElementById('val-tareas');
     const valPart = document.getElementById('val-part');
@@ -242,333 +243,93 @@ window.mostrarDesglose = function(indexParcial) {
     if(valAsist) valAsist.innerText = datos.asist || 0;
     if(valExam) valExam.innerText = datos.exam || 0;
 };
-// ==========================================
-// 4. CONTROLADOR DEL PANEL ADMINISTRATIVO
-// ==========================================
-function inicializarPanelAdmin() {
-    document.getElementById('vista-login')?.classList.add('hidden');
-    document.getElementById('vista-admin')?.classList.remove('hidden');
-    document.getElementById('user-menu')?.classList.remove('hidden');
+
+// =======================================================
+// 4. PANEL ADMINISTRATIVO: CARGA DINÁMICA DE MIS GRUPOS
+// =======================================================
+window.cargarModuloMisGrupos = function(grupoFiltro = "TODOS") {
+    const tbodyAlumnos = document.getElementById('tabla-alumnos-maestra');
     
-    const welcome = document.getElementById('welcome-name');
-    if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
-    
-    cargarGruposDocente();
-}
-
-function cargarGruposDocente() {
-    const contenedor = document.getElementById('contenedor-tarjetas-grupos');
-    if (!contenedor) return;
-    contenedor.innerHTML = `<p style="color: var(--text-muted);">Consultando grupos...</p>`;
-
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ accion: "obtener_resumen_admin" })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "éxito") {
-            contenedor.innerHTML = Object.keys(data.grupos).map(grupo => `
-                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="abrirGestionGrupo('${grupo}')">
-                    <h4 style="margin: 0; font-size: 1.2rem;">📘 Grupo ${grupo}</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 ${data.grupos[grupo]} Alumnos</span>
-                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            contenedor.innerHTML = `<p style="color: red;">Error: ${data.mensaje}</p>`;
-        }
-    })
-    .catch(() => {
-        contenedor.innerHTML = `<p style="color: red;">No se pudo conectar con el servidor.</p>`;
-    });
-}
-
-function mostrarPanelGrupos() {
-    document.getElementById('panel-gestion-interno')?.classList.add('hidden');
-    document.getElementById('panel-mis-grupos')?.classList.remove('hidden');
-    grupoSeleccionadoAdmin = null;
-}
-
-function abrirGestionGrupo(grupoId) {
-    grupoSeleccionadoAdmin = grupoId;
-    document.getElementById('panel-mis-grupos')?.classList.add('hidden');
-    
-    const titulo = document.getElementById('titulo-gestion-grupo');
-    const lbl = document.getElementById('lbl-grupo-tarea');
-    if (titulo) titulo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
-    if (lbl) lbl.innerText = `Grupo ${grupoId}`;
-    
-    document.getElementById('panel-gestion-interno')?.classList.remove('hidden');
-    document.getElementById('form-tarea-grupo')?.classList.add('hidden');
-    cargarEntregasGrupo(grupoId);
-}
-
-function recargarDatosGrupoActual() {
-    if (grupoSeleccionadoAdmin) cargarEntregasGrupo(grupoSeleccionadoAdmin);
-}
-
-function mostrarFormularioTareaGrupo() {
-    document.getElementById('form-tarea-grupo')?.classList.toggle('hidden');
-}
-
-function cargarEntregasGrupo(grupoId) {
-    const tbody = document.getElementById('tabla-gestion-entregas');
-    if (!tbody) return;
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem;">Cargando entregas...</td></tr>`;
-
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ accion: "obtener_entregas_grupo", grupo: grupoId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "éxito" && data.entregas.length > 0) {
-            tbody.innerHTML = data.entregas.map(e => `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 10px;">
-                        <strong>${e.nombre}</strong><br>
-                        <small style="color: var(--text-muted);">${e.matricula}</small>
-                    </td>
-                    <td style="padding: 10px;">${e.actividad}</td>
-                    <td style="padding: 10px;">
-                        <a href="${e.archivoUrl}" target="_blank" style="color: var(--conalep-accent); font-weight: bold; text-decoration: none;">📎 Ver Archivo</a>
-                    </td>
-                    <td style="padding: 10px; text-align: center;">
-                        <span class="badge-status ${e.estado === 'Revisado' ? 'status-ok' : 'status-pend'}">${e.estado}</span>
-                    </td>
-                    <td style="padding: 10px; text-align: center;">
-                        <input type="number" id="nota-${e.filaFisica}" value="${e.calificacion}" min="0" max="100" style="width: 60px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px;">
-                    </td>
-                    <td style="padding: 10px; text-align: center;">
-                        <button class="btn-conalep" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="guardarCalificacionFila(${e.filaFisica})">💾 Guardar</button>
-                    </td>
-                </tr>
-            `).join('');
-        } else {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay evidencias registradas para el Grupo ${grupoId}.</td></tr>`;
-        }
-    })
-    .catch(() => {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error al consultar entregas.</td></tr>`;
-    });
-}
-
-function guardarCalificacionFila(filaFisica) {
-    const inputNota = document.getElementById(`nota-${filaFisica}`);
-    const nota = inputNota ? inputNota.value : "";
-    
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            accion: "calificar_entrega",
-            fila: filaFisica,
-            calificacion: nota,
-            estado: "Revisado"
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "éxito") {
-            alert("✅ Calificación guardada exitosamente.");
-            recargarDatosGrupoActual();
-        } else {
-            alert("❌ Error: " + data.mensaje);
-        }
-    })
-    .catch(() => alert("⚠️ Error de comunicación con el servidor."));
-}
-
-function publicarTareaGrupoActual() {
-    const idTarea = document.getElementById('admin-id')?.value.trim();
-    const unidad = document.getElementById('admin-mod')?.value.trim();
-    const titulo = document.getElementById('admin-titulo')?.value.trim();
-    const desc = document.getElementById('admin-desc')?.value.trim();
-    const fecha = document.getElementById('admin-fecha')?.value;
-    const puntos = document.getElementById('admin-puntos')?.value;
-
-    if (!idTarea || !unidad || !titulo) {
-        alert("⚠️ Completa los campos obligatorios: ID, Módulo y Título.");
-        return;
-    }
-
-    // --- MAGIA DE GRUPOS MÚLTIPLES ---
-    // 1. Iniciamos la lista con el grupo desde donde abriste el panel
-    let gruposSeleccionados = [grupoSeleccionadoAdmin];
-    
-    // 2. Buscamos qué otros checkboxes se marcaron
-    const checkboxesExtra = document.querySelectorAll('.chk-grupo-extra:checked');
-    checkboxesExtra.forEach(chk => {
-        // Evitamos duplicar si por accidente marcas el grupo en el que ya estás
-        if (chk.value !== grupoSeleccionadoAdmin) {
-            gruposSeleccionados.push(chk.value);
-        }
-    });
-
-    // 3. Unimos todo con una coma y un espacio (Ej. "505, 508")
-    const stringGruposDestino = gruposSeleccionados.join(", ");
-    // ---------------------------------
-
-    const btn = document.getElementById('btn-publicar-tarea');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerText = "Publicando...";
+    if (tbodyAlumnos) {
+        tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">⏳ Sincronizando datos con Google Sheets...</td></tr>`;
     }
 
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
-            accion: "nueva_tarea",
-            idTarea: idTarea,
-            unidad: unidad,
-            titulo: titulo,
-            desc: desc,
-            fecha: fecha,
-            puntos: puntos,
-            grupo: stringGruposDestino // Enviamos la cadena combinada ("505, 508")
+            accion: "admin_obtener_grupo",
+            grupo: grupoFiltro
         })
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === "éxito") {
-            alert(`✅ Tarea publicada correctamente para los grupos: ${stringGruposDestino}.`);
-            
-            // Limpiar los campos de texto
-            document.querySelectorAll('#form-tarea-grupo input[type="text"], #form-tarea-grupo input[type="date"], #form-tarea-grupo input[type="number"], #form-tarea-grupo textarea').forEach(e => e.value = '');
-            // Limpiar los checkboxes
-            document.querySelectorAll('.chk-grupo-extra').forEach(chk => chk.checked = false); 
-            
-            // Ocultar el formulario
-            document.getElementById('form-tarea-grupo')?.classList.add('hidden');
-        } else {
-            alert("❌ Error: " + data.mensaje);
+        if (data.status !== "éxito") {
+            if (tbodyAlumnos) tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #ef4444;">⚠️ Error: ${data.mensaje}</td></tr>`;
+            return;
+        }
+
+        // 1. Inyectar KPIs Globales
+        const kpiGrupos = document.getElementById('kpi-grupos');
+        const kpiAlumnos = document.getElementById('kpi-alumnos');
+        const kpiTareas = document.getElementById('kpi-tareas');
+        const kpiTasa = document.getElementById('kpi-tasa');
+
+        if(kpiGrupos) kpiGrupos.innerText = data.kpis.gruposTexto;
+        if(kpiAlumnos) kpiAlumnos.innerText = data.kpis.totalAlumnos;
+        if(kpiTareas) kpiTareas.innerText = data.kpis.tareasEnCurso;
+        if(kpiTasa) kpiTasa.innerText = data.kpis.tasaEntrega;
+
+        // 2. Llenar Tabla de Alumnos
+        if (tbodyAlumnos) {
+            tbodyAlumnos.innerHTML = "";
+            if (data.alumnos.length === 0) {
+                tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">No hay alumnos registrados en este grupo.</td></tr>`;
+                return;
+            }
+
+            data.alumnos.forEach(alumno => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid #e2e8f0";
+
+                // Colores dinámicos según el estado de la tarea
+                let statusColor = "#475569";
+                let statusBg = "#f1f5f9";
+                if (alumno.estado === "Cumplido" || alumno.estado === "Revisado") {
+                    statusColor = "#166534";
+                    statusBg = "#dcfce7";
+                } else if (alumno.estado === "Pendiente") {
+                    statusColor = "#b45309";
+                    statusBg = "#fef3c7";
+                }
+
+                tr.innerHTML = `
+                    <td style="padding: 12px; font-family: monospace; color: #475569;">${alumno.matricula}</td>
+                    <td style="padding: 12px; text-align: left; font-weight: bold; color: #1e293b;">${alumno.nombre}</td>
+                    <td style="padding: 12px;">
+                        <span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem;">
+                            G-${alumno.grupo}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: left; color: #334155;">${alumno.ultimaTarea}</td>
+                    <td style="padding: 12px; font-weight: bold; color: #004d40;">${alumno.calificacion}</td>
+                    <td style="padding: 12px;">
+                        <span style="background: ${statusBg}; color: ${statusColor}; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 0.85rem;">
+                            ${alumno.estado}
+                        </span>
+                    </td>
+                `;
+                tbodyAlumnos.appendChild(tr);
+            });
         }
     })
-    .finally(() => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerText = "🚀 Publicar Tarea";
-        }
+    .catch(err => {
+        console.error("Error al cargar grupos:", err);
+        if (tbodyAlumnos) tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #ef4444;">❌ Error de conexión al consultar el servidor.</td></tr>`;
     });
-}
+};
+
 // ==========================================
-// 6. GESTIÓN DEL CATÁLOGO DE TAREAS Y ASISTENCIA (PANEL DOCENTE)
-// ==========================================
-let catalogoGeneralTareas = [];
-let listaCompletaAlumnos = [];
-
-// Esta función se puede llamar cuando se inicializa el Panel Admin
-function cargarDatosAdministrativos() {
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ accion: "consultar", matricula: "ADMIN-JL" }) // Forzamos una consulta general
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "éxito") {
-            catalogoGeneralTareas = data.catalogo || [];
-            listaCompletaAlumnos = data.listaAlumnos || [];
-            
-            // Poblar selectores de filtros de grupo
-            poblarSelectoresGrupos(data.listaAlumnos);
-            
-            // Renderizar vistas por defecto
-            filtrarCatalogoGeneral();
-            filtrarAsistencia();
-        }
-    })
-    .catch(err => console.error("Error al cargar datos administrativos:", err));
-}
-
-function poblarSelectoresGrupos(alumnos) {
-    const grupos = [...new Set(alumnos.map(a => a.grupo).filter(g => g && g !== "Grupo"))];
-    
-    const selectCatalogo = document.getElementById('filtro-catalogo-grupo');
-    const selectAsistencia = document.getElementById('filtro-asistencia-grupo');
-    
-    if (selectCatalogo) {
-        selectCatalogo.innerHTML = `<option value="TODOS">Todos los Grupos</option>` + grupos.map(g => `<option value="${g}">Grupo ${g}</option>`).join('');
-        selectCatalogo.onchange = filtrarCatalogoGeneral;
-    }
-    
-    if (selectAsistencia) {
-        selectAsistencia.innerHTML = `<option value="">-- Selecciona --</option>` + grupos.map(g => `<option value="${g}">Grupo ${g}</option>`).join('');
-    }
-}
-
-function filtrarCatalogoGeneral() {
-    const grupoSeleccionado = document.getElementById('filtro-catalogo-grupo')?.value;
-    const tbody = document.getElementById('tabla-catalogo-general');
-    if (!tbody) return;
-
-    let tareasFiltradas = catalogoGeneralTareas;
-    
-    if (grupoSeleccionado && grupoSeleccionado !== "TODOS") {
-        tareasFiltradas = catalogoGeneralTareas.filter(t => t.grupos === "Todos" || t.grupos.includes(grupoSeleccionado));
-    }
-
-    if (tareasFiltradas.length > 0) {
-        tbody.innerHTML = tareasFiltradas.map(t => `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 10px;"><strong>${t.id}</strong><br><small>${t.titulo}</small></td>
-                <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${t.grupos}</span></td>
-                <td style="padding: 10px; text-align: center; color: var(--text-muted);">${t.fecha}</td>
-                <td style="padding: 10px; text-align: center;">
-                    <button class="btn-conalep" style="background-color: #ef4444; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.desactivarTarea('${t.id}')">🛑 Desactivar</button>
-                </td>
-            </tr>
-        `).join('');
-    } else {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas encontradas para este filtro.</td></tr>`;
-    }
-}
-
-function filtrarAsistencia() {
-    const grupoSeleccionado = document.getElementById('filtro-asistencia-grupo')?.value;
-    const modalidadSeleccionada = document.getElementById('filtro-asistencia-modalidad')?.value;
-    const tbody = document.getElementById('tabla-lista-asistencia');
-    
-    if (!tbody) return;
-
-    if (!grupoSeleccionado) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Por favor, selecciona un grupo para ver la lista.</td></tr>`;
-        return;
-    }
-
-    let alumnosFiltrados = listaCompletaAlumnos.filter(a => a.grupo === grupoSeleccionado);
-
-    if (modalidadSeleccionada && modalidadSeleccionada !== "TODAS") {
-        alumnosFiltrados = alumnosFiltrados.filter(a => a.modalidad.includes(modalidadSeleccionada));
-    }
-
-    if (alumnosFiltrados.length > 0) {
-        tbody.innerHTML = alumnosFiltrados.map((a, index) => `
-            <tr style="border-bottom: 1px solid #e2e8f0; background: ${index % 2 === 0 ? '#ffffff' : '#f8fafc'}">
-                <td style="padding: 10px; font-family: monospace; color: var(--text-muted);">${a.matricula}</td>
-                <td style="padding: 10px; font-weight: bold; color: var(--conalep-dark);">${a.nombre}</td>
-                <td style="padding: 10px; text-align: center;">
-                    <span style="font-size: 0.8rem; background: ${a.modalidad.includes('Dual') ? '#fef3c7' : '#dcfce7'}; color: ${a.modalidad.includes('Dual') ? '#b45309' : '#166534'}; padding: 3px 8px; border-radius: 4px;">
-                        ${a.modalidad || "Sin Definir"}
-                    </span>
-                </td>
-                <td style="padding: 10px; text-align: center;">
-                    <select id="asist-${a.matricula}" style="padding: 0.4rem; border-radius: 4px; border: 1px solid #cbd5e1;">
-                        <option value="Presente">✅ Presente</option>
-                        <option value="Falta">❌ Falta</option>
-                        <option value="Justificado">📝 Justificado</option>
-                    </select>
-                </td>
-            </tr>
-        `).join('');
-    } else {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay alumnos que coincidan con este filtro.</td></tr>`;
-    }
-}
-// ==========================================
-// 7. SUBIDA DE FOTO DE PERFIL (ALUMNOS) - SIN COMPRESIÓN
+// 5. SUBIDA DE FOTO DE PERFIL (ALUMNOS)
 // ==========================================
 window.subirFotoPerfil = function() {
     const fileInput = document.getElementById('input-foto-perfil');
@@ -586,10 +347,8 @@ window.subirFotoPerfil = function() {
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        // Enviar la imagen ORIGINAL (sin compresión)
         const base64Data = e.target.result.split(',')[1];
 
-        // 1. Mostrar visualmente de inmediato en la página
         const imgPerfil = document.getElementById('img-perfil');
         const emojiCamara = document.getElementById('emoji-camara');
         if(imgPerfil && emojiCamara) {
@@ -600,7 +359,6 @@ window.subirFotoPerfil = function() {
 
         alert("⏳ Guardando tu foto de perfil... Por favor espera.");
 
-        // 2. Enviar la imagen original al Backend
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({
@@ -608,17 +366,15 @@ window.subirFotoPerfil = function() {
                 matricula: matricula,
                 nombre: nombre,
                 grupo: grupo,
-                nombreArchivo: file.name, // Enviamos el nombre original
+                nombreArchivo: file.name, 
                 mimeType: file.type,
-                archivoBase64: base64Data // La foto pesada original
+                archivoBase64: base64Data 
             })
         })
         .then(res => res.json())
         .then(data => {
             if (data.status === "éxito") {
                 alert("✅ ¡Foto de perfil guardada exitosamente!");
-                // Opcional: Actualizar la imagen con la URL del servidor si lo deseas
-                // if (imgPerfil) imgPerfil.src = data.url; 
             } else {
                 alert("❌ Error en la nube: " + data.mensaje);
             }
