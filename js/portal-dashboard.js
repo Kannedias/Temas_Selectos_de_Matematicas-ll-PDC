@@ -610,3 +610,40 @@ window.subirFotoPerfil = function() {
     };
     reader.readAsDataURL(file);
 };
+
+// ==========================================
+// 7. BUSCADOR EN VIVO DE ALUMNOS (MEJORADO)
+// ==========================================
+window.filtrarBusquedaAlumnos = function() {
+    // 1. Capturamos lo que escribes y lo pasamos a minúsculas
+    const input = document.getElementById("buscador-alumno");
+    if (!input) return;
+    const filtro = input.value.toLowerCase();
+    
+    // 2. Tomamos solo las filas del cuerpo de la tabla (tbody)
+    const tbody = document.getElementById("tabla-alumnos-maestra");
+    if (!tbody) return;
+    const filas = tbody.getElementsByTagName("tr");
+
+    // 3. Recorremos fila por fila
+    for (let i = 0; i < filas.length; i++) {
+        const fila = filas[i];
+        // Si la fila es un mensaje de carga, la ignoramos
+        if (fila.innerText.includes("Sincronizando") || fila.innerText.includes("No hay alumnos")) continue;
+
+        const celdas = fila.getElementsByTagName("td");
+        let textoFilaCompleta = "";
+
+        // Unimos el texto de todas las celdas de esa fila
+        for (let j = 0; j < celdas.length; j++) {
+            textoFilaCompleta += celdas[j].innerText.toLowerCase() + " ";
+        }
+
+        // Si el texto de la fila contiene lo que escribiste, la mostramos, sino, la ocultamos
+        if (textoFilaCompleta.includes(filtro)) {
+            fila.style.display = ""; 
+        } else {
+            fila.style.display = "none"; 
+        }
+    }
+};
