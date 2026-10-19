@@ -66,8 +66,6 @@
                 
                 <!-- 1. Ficha de Identidad -->
                 <div class="card-box" style="margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    
-                    <!-- CONTENEDOR INTERACTIVO DE LA FOTO (RESTAURADO) -->
                     <div style="position: relative; width: 120px; height: 120px; margin-bottom: 15px; cursor: pointer;" onclick="document.getElementById('input-foto-perfil').click()" title="Haz clic para subir/cambiar tu foto">
                         <div style="width: 100%; height: 100%; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 4px solid var(--conalep-primary); overflow: hidden;">
                             <span id="emoji-camara">📷</span>
@@ -124,9 +122,8 @@
                         </div>
                         <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
                             <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
-                            <li><strong>Física y Geometría:</strong> Vector desplazamiento $\Delta r$ y magnitud.</li>
+                            <li><strong>Física y Geometría:</strong> Vector desplazamiento y magnitud.</li>
                         </ul>
-                        <!-- BOTÓN CENTRALIZADO UNIDAD 1.1 -->
                         <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-primary); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: auto; transition: 0.2s;">
                             🚀 Entrar a la Unidad
                         </button>
@@ -141,10 +138,9 @@
                             <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">🟡 En Curso</span>
                         </div>
                         <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                            <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección $\theta$ y pendiente $m$.</li>
+                            <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección y pendiente.</li>
                             <li><strong>Modelado Algebraico:</strong> Formas Punto-Pendiente, Explícita y General.</li>
                         </ul>
-                        <!-- BOTÓN CENTRALIZADO UNIDAD 1.2 -->
                         <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-primary); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: auto; transition: 0.2s;">
                             🚀 Entrar a la Unidad
                         </button>
@@ -155,7 +151,6 @@
                 <h3 style="color: var(--conalep-dark); margin-top: 0; border-bottom: 2px solid var(--border-card); padding-bottom: 10px;">📚 UNIDAD 2: Aplicaciones Dinámicas</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
                     
-                    <!-- Módulo 2.1 (Pendiente/Bloqueado) -->
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #94a3b8; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; opacity: 0.8;">
                         <h3 style="margin: 0 0 10px 0; color: #475569; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
                             ⚙️ Módulo 2.1: Ecuaciones Avanzadas
@@ -166,7 +161,6 @@
                         <ul style="font-size: 0.88rem; color: #64748b; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
                             <li style="margin-bottom: 8px;">Contenido programado para evaluación futura.</li>
                         </ul>
-                        <!-- BOTÓN CENTRALIZADO UNIDAD 2.1 -->
                         <button disabled style="width: 100%; background: #cbd5e1; color: #475569; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: not-allowed; margin-top: auto;">
                             Próximamente
                         </button>
@@ -214,7 +208,9 @@
             
         </section>
 
-<!-- =========================================================================
+    </main> <!-- CIERRE DE CONTENEDOR PRINCIPAL: Libera al admin del límite de 1100px -->
+
+    <!-- =========================================================================
          VISTA C - PANEL DE ADMINISTRADOR DOCENTE (PANORÁMICO FULL WIDTH)
          ========================================================================= -->
     <style>
@@ -234,7 +230,7 @@
         width: 100%;
       }
 
-      /* Sidebar pegado al margen izquierdo superior */
+      /* Sidebar pegado al margen izquierdo superior con paleta CONALEP */
       .sidebar-menu {
         width: 270px;
         min-width: 270px;
@@ -301,7 +297,8 @@
       }
     </style>
 
-        <div class="admin-layout-container">
+    <section id="vista-admin" class="hidden">
+      <div class="admin-layout-container">
         
         <!-- COLUMNA IZQUIERDA: MENÚ LATERAL -->
         <aside class="sidebar-menu">
@@ -327,7 +324,7 @@
             <button class="sidebar-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">
                 📊 Base de Datos
             </button>
-            <button class="sidebar-btn" style="color: #fca5a5;" onclick="window.cerrarSesion()">
+            <button class="sidebar-btn" style="color: #fca5a5;" onclick="location.reload()">
                 🚪 Cerrar Sesión
             </button>
         </aside>
@@ -336,7 +333,7 @@
         <div style="flex-grow: 1; width: calc(100% - 290px); min-width: 0;">
             <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
                 
-                <!-- ENCABEZADO PRINCIPAL -->
+                <!-- ENCABEZADO PRINCIPAL ESTILO CONALEP -->
                 <div class="banner-tabla-admin" style="text-align: center; padding: 1.1rem; border-radius: 6px 6px 0 0; position: relative; border-bottom: 3px solid #00806A;">
                     <h2 style="margin: 0; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 1px;">PANEL ADMINISTRATIVO DOCENTE</h2>
                     <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #a7f3d0;">Gestión Académica • Grupos Activos: 505 y 508 • Panel de Control Docente</p>
@@ -484,8 +481,6 @@
       </div>
     </section>
 
-    </main>
-    <section id="vista-admin" class="hidden">
     <!-- Script principal con rompe-cachés -->
     <script src="js/portal-dashboard.js?v=8"></script>
 </body>
