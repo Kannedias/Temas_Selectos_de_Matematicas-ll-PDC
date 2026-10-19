@@ -244,88 +244,78 @@ window.mostrarDesglose = function(indexParcial) {
     if(valExam) valExam.innerText = datos.exam || 0;
 };
 
-// =======================================================
-// 4. PANEL ADMINISTRATIVO: CARGA DINÁMICA DE MIS GRUPOS
-// =======================================================
-window.cargarModuloMisGrupos = function(grupoFiltro = "TODOS") {
-    const tbodyAlumnos = document.getElementById('tabla-alumnos-maestra');
+// ==========================================
+// 4. CONTROLADOR DEL PANEL ADMINISTRATIVO
+// ==========================================
+function inicializarPanelAdmin() {
+    document.getElementById('vista-login')?.classList.add('hidden');
+    document.getElementById('vista-admin')?.classList.remove('hidden');
+    document.getElementById('user-menu')?.classList.remove('hidden');
     
-    if (tbodyAlumnos) {
-        tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">⏳ Sincronizando datos con Google Sheets...</td></tr>`;
-    }
+    const welcome = document.getElementById('welcome-name');
+    if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
+    
+    cargarGruposDocente();
+}
+
+function cargarGruposDocente() {
+    const contenedor = document.getElementById('contenedor-tarjetas-grupos');
+    if (!contenedor) return;
+    contenedor.innerHTML = `<p style="color: var(--text-muted);">Consultando grupos...</p>`;
 
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({
-            accion: "admin_obtener_grupo",
-            grupo: grupoFiltro
-        })
+        body: JSON.stringify({ accion: "obtener_resumen_admin" })
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status !== "éxito") {
-            if (tbodyAlumnos) tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #ef4444;">⚠️ Error: ${data.mensaje}</td></tr>`;
-            return;
-        }
-
-        // 1. Inyectar KPIs Globales
-        const kpiGrupos = document.getElementById('kpi-grupos');
-        const kpiAlumnos = document.getElementById('kpi-alumnos');
-        const kpiTareas = document.getElementById('kpi-tareas');
-        const kpiTasa = document.getElementById('kpi-tasa');
-
-        if(kpiGrupos) kpiGrupos.innerText = data.kpis.gruposTexto;
-        if(kpiAlumnos) kpiAlumnos.innerText = data.kpis.totalAlumnos;
-        if(kpiTareas) kpiTareas.innerText = data.kpis.tareasEnCurso;
-        if(kpiTasa) kpiTasa.innerText = data.kpis.tasaEntrega;
-
-        // 2. Llenar Tabla de Alumnos
-        if (tbodyAlumnos) {
-            tbodyAlumnos.innerHTML = "";
-            if (data.alumnos.length === 0) {
-                tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">No hay alumnos registrados en este grupo.</td></tr>`;
-                return;
-            }
-
-            data.alumnos.forEach(alumno => {
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = "1px solid #e2e8f0";
-
-                // Colores dinámicos según el estado de la tarea
-                let statusColor = "#475569";
-                let statusBg = "#f1f5f9";
-                if (alumno.estado === "Cumplido" || alumno.estado === "Revisado") {
-                    statusColor = "#166534";
-                    statusBg = "#dcfce7";
-                } else if (alumno.estado === "Pendiente") {
-                    statusColor = "#b45309";
-                    statusBg = "#fef3c7";
-                }
-
-                tr.innerHTML = `
-                    <td style="padding: 12px; font-family: monospace; color: #475569;">${alumno.matricula}</td>
-                    <td style="padding: 12px; text-align: left; font-weight: bold; color: #1e293b;">${alumno.nombre}</td>
-                    <td style="padding: 12px;">
-                        <span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem;">
-                            G-${alumno.grupo}
-                        </span>
-                    </td>
-                    <td style="padding: 12px; text-align: left; color: #334155;">${alumno.ultimaTarea}</td>
-                    <td style="padding: 12px; font-weight: bold; color: #004d40;">${alumno.calificacion}</td>
-                    <td style="padding: 12px;">
-                        <span style="background: ${statusBg}; color: ${statusColor}; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 0.85rem;">
-                            ${alumno.estado}
-                        </span>
-                    </td>
-                `;
-                tbodyAlumnos.appendChild(tr);
-            });
+        if (data.status === "éxito") {
+            contenedor.innerHTML = Object.keys(data.grupos).map(grupo => `
+                <div class="card-modulo" style="cursor: pointer; border-top: 4px solid var(--conalep-primary);" onclick="window.abrirGestionGrupo('${grupo}')">
+                    <h4 style="margin: 0; font-size: 1.2rem;">📘 Grupo ${grupo}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 5px 0 15px 0;">Matemáticas</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px;">👥 ${data.grupos[grupo]} Alumnos</span>
+                        <span style="font-size: 0.85rem; color: var(--conalep-accent); font-weight: bold;">Gestionar ➜</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            contenedor.innerHTML = `<p style="color: red;">Error: ${data.mensaje}</p>`;
         }
     })
-    .catch(err => {
-        console.error("Error al cargar grupos:", err);
-        if (tbodyAlumnos) tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #ef4444;">❌ Error de conexión al consultar el servidor.</td></tr>`;
+    .catch(() => {
+        contenedor.innerHTML = `<p style="color: red;">No se pudo conectar con el servidor.</p>`;
     });
+}
+
+// DECLARACIÓN GLOBAL DE LAS FUNCIONES DE NAVEGACIÓN
+window.mostrarPanelGrupos = function() {
+    document.getElementById('panel-gestion-interno')?.classList.add('hidden');
+    document.getElementById('panel-mis-grupos')?.classList.remove('hidden');
+    grupoSeleccionadoAdmin = null;
+};
+
+window.abrirGestionGrupo = function(grupoId) {
+    grupoSeleccionadoAdmin = grupoId;
+    document.getElementById('panel-mis-grupos')?.classList.add('hidden');
+    
+    const titulo = document.getElementById('titulo-gestion-grupo');
+    const lbl = document.getElementById('lbl-grupo-tarea');
+    if (titulo) titulo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
+    if (lbl) lbl.innerText = `Grupo ${grupoId}`;
+    
+    document.getElementById('panel-gestion-interno')?.classList.remove('hidden');
+    document.getElementById('form-tarea-grupo')?.classList.add('hidden');
+    cargarEntregasGrupo(grupoId);
+};
+
+window.recargarDatosGrupoActual = function() {
+    if (grupoSeleccionadoAdmin) cargarEntregasGrupo(grupoSeleccionadoAdmin);
+};
+
+window.mostrarFormularioTareaGrupo = function() {
+    document.getElementById('form-tarea-grupo')?.classList.toggle('hidden');
 };
 
 // ==========================================
