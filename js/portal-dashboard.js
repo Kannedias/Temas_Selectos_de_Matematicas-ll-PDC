@@ -647,3 +647,84 @@ window.filtrarBusquedaAlumnos = function() {
         }
     }
 };
+// ==========================================
+// 8. SUBIR EVIDENCIAS (VENTANILLA ALUMNO)
+// ==========================================
+window.subirEvidencia = function() {
+    const fileInput = document.getElementById('input-archivo');
+    const actividadCompleta = document.getElementById('select-tarea').value;
+    const matricula = sessionStorage.getItem('matriculaActiva');
+    const grupo = sessionStorage.getItem('grupoActivo');
+    const nombre = sessionStorage.getItem('nombreActivo');
+
+    if (!matricula) {
+        alert("⚠️ Debes iniciar sesión para subir evidencias.");
+        return;
+    }
+
+    // Candado para obligar a elegir la tarea
+    if (!actividadCompleta || actividadCompleta.includes("--") || actividadCompleta === "") {
+        alert("⚠️ Por favor, selecciona la tarea o evidencia a la que corresponden los archivos.");
+        return;
+    }
+
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert("⚠️ Por favor, selecciona al menos un archivo.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    
+    // Limitar tamaño a ~25MB
+    if (file.size > 26214400) { 
+        alert("⚠️ El archivo es demasiado pesado (máx 25MB). Comprime tu archivo e intenta de nuevo.");
+        return;
+    }
+
+    const btn = document.getElementById('btn-enviar');
+    if (btn) {
+        btn.innerText = "⏳ Subiendo evidencia, por favor espera...";
+        btn.disabled = true;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result.split(',')[1];
+        
+        const payload = {
+            accion: "subir",
+            matricula: matricula,
+            nombreArchivo: file.name,
+            mimeType: file.type,
+            archivoBase64: base64Data,
+            grupo: grupo,
+            nombre: nombre,
+            actividad: actividadCompleta
+        };
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "éxito") {
+                alert("✅ ¡Tu evidencia se ha enviado correctamente a revisión!");
+                fileInput.value = ""; // Limpia la casilla
+            } else {
+                alert("❌ Ocurrió un error en el servidor: " + data.mensaje);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("⚠️ Error de conexión con la base de datos.");
+        })
+        .finally(() => {
+            if (btn) {
+                btn.innerText = "📤 Enviar Evidencia a Revisión";
+                btn.disabled = false;
+            }
+        });
+    };
+    reader.readAsDataURL(file);
+};
