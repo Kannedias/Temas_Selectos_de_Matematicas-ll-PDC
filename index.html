@@ -230,24 +230,24 @@
         width: 100%;
       }
 
-      /* Sidebar sobrio en gris grafito mate (contraste limpio con el blanco) */
+      /* Sidebar en tono gris claro mate (contraste limpio con el blanco) */
       .sidebar-menu {
         width: 270px;
         min-width: 270px;
-        background-color: #1e293b; /* Gris pizarra oscuro / Slate elegante */
-        border: 1px solid #334155;
+        background-color: #f1f5f9; /* Gris suave neutral */
+        border: 1px solid #cbd5e1;
         border-radius: 8px;
         padding: 1.25rem 1rem;
-        color: #e2e8f0;
+        color: #334155;
         flex-shrink: 0;
         position: sticky;
         top: 1rem;
         height: fit-content;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
       }
 
       .sidebar-header-box {
-        border-bottom: 1px solid #334155;
+        border-bottom: 1px solid #cbd5e1;
         padding-bottom: 0.85rem;
         margin-bottom: 1rem;
       }
@@ -256,17 +256,17 @@
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #94a3b8; /* Gris tenue legible */
+        color: #64748b; /* Gris medio formal */
         margin: 1.25rem 0 0.45rem 0.5rem;
         font-weight: 700;
       }
 
-      /* Botones homogéneos y neutrales */
+      /* Botones homogéneos y en armonía */
       .sidebar-btn {
         width: 100%;
         text-align: left;
         background: transparent;
-        color: #cbd5e1;
+        color: #334155;
         border: none;
         padding: 9px 12px;
         border-radius: 6px;
@@ -280,16 +280,16 @@
       }
 
       .sidebar-btn:hover {
-        background-color: #334155; /* Resalte suave en gris medio al pasar el mouse */
-        color: #ffffff;
+        background-color: #e2e8f0; /* Sombreado gris sutil */
+        color: #0f172a;
       }
 
       .sidebar-btn.active {
-        background-color: #0f172a; /* Gris neutro más profundo para el activo */
-        color: #ffffff;
-        font-weight: 600;
-        border-left: 3px solid #64748b; /* Borde gris sutil */
-        border-radius: 0 6px 6px 0;
+        background-color: #ffffff;
+        color: #004d40;
+        font-weight: 700;
+        border: 1px solid #cbd5e1;
+        border-left: 4px solid #00806A; /* Distintivo verde Conalep */
       }
 
       .banner-tabla-admin {
@@ -301,16 +301,16 @@
     <section id="vista-admin" class="hidden">
       <div class="admin-layout-container">
         
-        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL SOBRIO -->
+        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL EN GRIS NEUTRO -->
         <aside class="sidebar-menu">
             <div class="sidebar-header-box">
-                <h3 style="color: #f8fafc; margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                <h3 style="color: #004d40; margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
                     ⚙️ General
                 </h3>
             </div>
             
             <div class="sidebar-title" style="margin-top: 0;">Gestión de Aula</div>
-            <button class="sidebar-btn">👥 Mis Grupos</button>
+            <button class="sidebar-btn active">👥 Mis Grupos</button>
             <button class="sidebar-btn">🙋‍♂️ Asistencia Diaria</button>
 
             <div class="sidebar-title">Módulo de Evaluación</div>
@@ -323,7 +323,7 @@
             <button class="sidebar-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">
                 📊 Base de Datos
             </button>
-            <button class="sidebar-btn" style="color: #fca5a5;" onclick="location.reload()">
+            <button class="sidebar-btn" style="color: #dc2626;" onclick="location.reload()">
                 🚪 Cerrar Sesión
             </button>
         </aside>
