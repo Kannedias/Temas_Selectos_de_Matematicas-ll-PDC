@@ -441,14 +441,21 @@
                 </div>
 
                 <!-- SECCIÓN 3: MONITOREO DE ALUMNOS (VENTANILLA) -->
-                <div class="banner-tabla-admin" style="display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 1rem; border-radius: 4px 4px 0 0;">
-                    <h3 style="margin: 0; font-size: 0.92rem; text-transform: uppercase;">Monitoreo de Alumnos y Evidencias</h3>
-                    <select id="filtro-rapido-grupo" style="font-size: 0.85rem; padding: 4px 10px; color: #004d40; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1;">
-                        <option value="TODOS">Filtrar: Todos los Grupos</option>
-                        <option value="505">Grupo 505</option>
-                        <option value="508">Grupo 508</option>
-                    </select>
-                </div>
+<div style="background-color: var(--conalep-primary); padding: 10px 15px; border-radius: 6px 6px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <h3 style="color: white; margin: 0; font-size: 1.1rem; letter-spacing: 1px;">MONITOREO DE ALUMNOS Y EVIDENCIAS</h3>
+    
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <!-- NUEVO: Buscador en vivo por texto -->
+        <input type="text" id="buscador-alumno" placeholder="🔍 Buscar por nombre o matrícula..." onkeyup="window.filtrarBusquedaAlumnos()" style="padding: 6px 12px; border-radius: 4px; border: none; font-size: 0.85rem; min-width: 250px; outline: none;">
+        
+        <!-- CORREGIDO: Selector de Grupo enlazado al backend -->
+        <select id="filtro-rapido-grupo" onchange="window.cargarModuloMisGrupos(this.value)" style="font-size: 0.85rem; padding: 6px 10px; color: #004d40; font-weight: bold; border-radius: 4px; border: none; outline: none; cursor: pointer;">
+            <option value="TODOS">Filtrar: Todos los Grupos</option>
+            <option value="505">Grupo 505</option>
+            <option value="508">Grupo 508</option>
+        </select>
+    </div>
+</div>
                 <div style="overflow-x: auto; border: 1px solid #cbd5e1; border-top: none;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: center;">
                         <thead>
