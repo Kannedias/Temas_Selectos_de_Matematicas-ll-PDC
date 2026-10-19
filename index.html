@@ -230,24 +230,24 @@
         width: 100%;
       }
 
-      /* Sidebar pegado al margen izquierdo superior con paleta CONALEP */
+      /* Sidebar sobrio en gris grafito mate (contraste limpio con el blanco) */
       .sidebar-menu {
         width: 270px;
         min-width: 270px;
-        background-color: #0d1b18;
-        border: 1px solid #134e4a;
+        background-color: #1e293b; /* Gris pizarra oscuro / Slate elegante */
+        border: 1px solid #334155;
         border-radius: 8px;
         padding: 1.25rem 1rem;
-        color: #cbd5e1;
+        color: #e2e8f0;
         flex-shrink: 0;
         position: sticky;
         top: 1rem;
         height: fit-content;
-        box-shadow: 0 4px 12px rgba(0, 43, 38, 0.15);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
       }
 
       .sidebar-header-box {
-        border-bottom: 1px solid #134e4a;
+        border-bottom: 1px solid #334155;
         padding-bottom: 0.85rem;
         margin-bottom: 1rem;
       }
@@ -256,16 +256,17 @@
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #5eead4;
+        color: #94a3b8; /* Gris tenue legible */
         margin: 1.25rem 0 0.45rem 0.5rem;
         font-weight: 700;
       }
 
+      /* Botones homogéneos y neutrales */
       .sidebar-btn {
         width: 100%;
         text-align: left;
         background: transparent;
-        color: #e2e8f0;
+        color: #cbd5e1;
         border: none;
         padding: 9px 12px;
         border-radius: 6px;
@@ -275,19 +276,19 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 3px;
-        transition: all 0.2s ease;
+        transition: background-color 0.2s ease, color 0.2s ease;
       }
 
       .sidebar-btn:hover {
-        background-color: #134e4a;
+        background-color: #334155; /* Resalte suave en gris medio al pasar el mouse */
         color: #ffffff;
       }
 
       .sidebar-btn.active {
-        background-color: #00594C;
+        background-color: #0f172a; /* Gris neutro más profundo para el activo */
         color: #ffffff;
         font-weight: 600;
-        border-left: 4px solid #10b981;
+        border-left: 3px solid #64748b; /* Borde gris sutil */
         border-radius: 0 6px 6px 0;
       }
 
@@ -300,7 +301,7 @@
     <section id="vista-admin" class="hidden">
       <div class="admin-layout-container">
         
-        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL -->
+        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL SOBRIO -->
         <aside class="sidebar-menu">
             <div class="sidebar-header-box">
                 <h3 style="color: #f8fafc; margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
@@ -309,15 +310,13 @@
             </div>
             
             <div class="sidebar-title" style="margin-top: 0;">Gestión de Aula</div>
-            <button class="sidebar-btn active">👥 Mis Grupos</button>
+            <button class="sidebar-btn">👥 Mis Grupos</button>
             <button class="sidebar-btn">🙋‍♂️ Asistencia Diaria</button>
 
             <div class="sidebar-title">Módulo de Evaluación</div>
             <button class="sidebar-btn">💯 Calificaciones</button>
             <button class="sidebar-btn">📚 Catálogo de Tareas</button>
-            <button class="sidebar-btn" style="background: rgba(0, 128, 106, 0.2); border: 1px dashed #00806A;" title="Todas las tareas y evidencias recibidas">
-                📥 Repositorio de Evidencias <span style="font-size: 0.65rem; background: #00806A; color: white; padding: 1px 5px; border-radius: 4px; margin-left: auto;">Entregas</span>
-            </button>
+            <button class="sidebar-btn">📥 Repositorio de Evidencias</button>
             <button class="sidebar-btn">📝 Colocar Tarea Nueva</button>
 
             <div class="sidebar-title">Seguridad y Sistema</div>
