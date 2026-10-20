@@ -757,25 +757,30 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
         { modulo: "2.2", unidad: "Unidad 2", tema: "La Parábola", periodo: "Sem 10 - 12" }
     ];
 
-    // Variables globales seguras
-    const tareasActivas = (typeof catalogoGeneralTareas !== "undefined") ? catalogoGeneralTareas : [];
-    // Nota: Para una versión 100% real, aquí también leerías 'entregasGlobales' si tu backend las enviara.
-    // Por ahora, calcularemos un avance simulado basado en el número de tareas activas para demostrar la reactividad.
-    
+    const tareasActivas = (typeof window.catalogoGeneralTareas !== "undefined") ? window.catalogoGeneralTareas : [];
     let filasHTML = "";
 
     temario.forEach(bloque => {
-        // 1. Filtramos tareas del módulo
+        // 1. Filtramos tareas con traductor inteligente de tus IDs (EV01, EV02, etc.)
         const tareasDelModulo = tareasActivas.filter(t => {
-            const coincideModulo = t.id.includes(bloque.modulo) || (t.titulo && t.titulo.includes(bloque.modulo));
-            const coincideGrupo = (grupoFiltro === "TODOS" || t.grupos === "Todos" || t.grupos.includes(grupoFiltro));
-            return coincideModulo && coincideGrupo;
+            let idFiltro = (t.id || "").toUpperCase();
+            let esDeEsteModulo = false;
+
+            // Traductor exacto para tus tareas actuales de Sheets
+            if (bloque.modulo === "1.1" && (idFiltro === "EV01" || idFiltro === "EV02" || idFiltro.includes("1ER P"))) esDeEsteModulo = true;
+            if (bloque.modulo === "1.2" && (idFiltro === "EV03" || idFiltro === "EV04" || idFiltro.includes("1ER P"))) esDeEsteModulo = true;
+            if (bloque.modulo === "2.1" && (idFiltro === "EV05" || idFiltro === "EV06")) esDeEsteModulo = true;
+            if (bloque.modulo === "2.2" && (idFiltro === "EV07" || idFiltro === "EV08")) esDeEsteModulo = true;
+
+            // Regla general por si en el futuro sí le escribes "1.1" al título de la tarea
+            if (t.titulo && t.titulo.includes(bloque.modulo)) esDeEsteModulo = true;
+
+            return esDeEsteModulo;
         });
 
         const totalTareas = tareasDelModulo.length;
         
-        // 2. Cálculo Reactivo de Avance
-        // Si hay 1 tarea = 25%, 2 tareas = 50%, etc. (Hasta que conectemos las entregas reales de cada alumno)
+        // 2. Cálculo Reactivo de Avance (25% por cada tarea que tengas)
         let avanceNum = totalTareas > 0 ? Math.min(totalTareas * 25, 100) : 0; 
         
         let estatusTexto = "Próximamente";
@@ -793,7 +798,7 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
         }
         
         let badgeGrupo = grupoFiltro === "TODOS" ? "Todos" : `G-${grupoFiltro}`;
-        let ultimaFecha = totalTareas > 0 ? (tareasDelModulo[tareasDelModulo.length - 1].fecha || "--") : "--";
+        let ultimaFecha = totalTareas > 0 ? "Activa" : "--";
 
         filasHTML += `
             <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;">
