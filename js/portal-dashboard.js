@@ -728,3 +728,59 @@ window.subirEvidencia = function() {
     };
     reader.readAsDataURL(file);
 };
+// ==========================================
+// 8. RENDERIZADO AUTOMÁTICO DE UNIDADES
+// ==========================================
+window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
+    const tbody = document.getElementById("tabla-avance-unidades");
+    if (!tbody) return;
+
+    // Tu temario oficial de Matemáticas II (Base inamovible)
+    const temario = [
+        { modulo: "1.1", unidad: "Unidad 1", tema: "Sistemas y Vectores", periodo: "Sem 1 - 3" },
+        { modulo: "1.2", unidad: "Unidad 1", tema: "La Línea Recta", periodo: "Sem 4 - 6" },
+        { modulo: "2.1", unidad: "Unidad 2", tema: "La Circunferencia", periodo: "Sem 7 - 9" },
+        { modulo: "2.2", unidad: "Unidad 2", tema: "La Parábola", periodo: "Sem 10 - 12" }
+    ];
+
+    // Leemos las tareas que ya descargamos de Google Sheets
+    const tareasActivas = window.catalogoGeneralTareas || [];
+    let filasHTML = "";
+
+    temario.forEach(bloque => {
+        // 1. Filtramos automáticamente cuántas tareas tienes para este submódulo y grupo
+        const tareasDelModulo = tareasActivas.filter(t => {
+            const coincideModulo = t.id.includes(bloque.modulo) || (t.titulo && t.titulo.includes(bloque.modulo));
+            const coincideGrupo = (grupoFiltro === "TODOS" || t.grupos === "Todos" || t.grupos.includes(grupoFiltro));
+            return coincideModulo && coincideGrupo;
+        });
+
+        const totalTareas = tareasDelModulo.length;
+        
+        // 2. Lógica reactiva (Si hay tareas = En Curso, si no = Próximamente)
+        let estatusTexto = totalTareas > 0 ? "En Curso" : "Próximamente";
+        let estatusBg = totalTareas > 0 ? "#fef3c7" : "#f1f5f9";
+        let estatusColor = totalTareas > 0 ? "#b45309" : "#64748b";
+        
+        let avanceNum = totalTareas > 0 ? 50 : 0; // Se ajustará a fórmulas reales después
+        let badgeGrupo = grupoFiltro === "TODOS" ? "Todos" : `G-${grupoFiltro}`;
+        let ultimaFecha = totalTareas > 0 ? (tareasDelModulo[tareasDelModulo.length - 1].fecha || "Reciente") : "--";
+
+        filasHTML += `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;">
+                <td style="padding: 12px; font-weight: bold; color: var(--conalep-dark);">${bloque.unidad} (${bloque.modulo})</td>
+                <td style="padding: 12px; color: #334155; font-size: 0.95rem;">${bloque.tema}</td>
+                <td style="padding: 12px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85rem;">${badgeGrupo}</span></td>
+                <td style="padding: 12px; text-align: center; color: #475569; font-size: 0.9rem;">${bloque.periodo}</td>
+                <td style="padding: 12px; text-align: center; font-weight: bold; color: ${avanceNum > 0 ? '#10b981' : '#94a3b8'};">${avanceNum}%</td>
+                <td style="padding: 12px; text-align: center;">
+                    <span style="background: ${estatusBg}; color: ${estatusColor}; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">${estatusTexto}</span>
+                </td>
+                <td style="padding: 12px; text-align: center; color: #64748b; font-size: 0.85rem;">${ultimaFecha}</td>
+                <td style="padding: 12px; text-align: center; color: #334155; font-size: 0.9rem;"><strong>${totalTareas}</strong> Tareas activas</td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = filasHTML;
+};
