@@ -499,6 +499,9 @@ window.cargarDatosAdministrativos = function() {
 };
 
 window.poblarSelectoresGrupos = function(alumnos) {
+    // 🛡️ Candado: Si no hay alumnos, no hacemos nada y evitamos que se rompa
+    if (!alumnos || alumnos.length === 0) return; 
+
     const grupos = [...new Set(alumnos.map(a => a.grupo).filter(g => g && g !== "Grupo"))];
     const selectCatalogo = document.getElementById('filtro-catalogo-grupo');
     const selectAsistencia = document.getElementById('filtro-asistencia-grupo');
