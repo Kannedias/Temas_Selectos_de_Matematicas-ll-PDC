@@ -743,13 +743,13 @@ window.subirEvidencia = function() {
     reader.readAsDataURL(file);
 };
 // ==========================================
-// 8. RENDERIZADO AUTOMÁTICO DE UNIDADES
+// 8. RENDERIZADO AUTOMÁTICO DE UNIDADES (EN VIVO)
 // ==========================================
 window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
     const tbody = document.getElementById("tabla-avance-unidades");
     if (!tbody) return;
 
-    // Tu temario oficial de Matemáticas II
+    // Tu temario oficial
     const temario = [
         { modulo: "1.1", unidad: "Unidad 1", tema: "Sistemas y Vectores", periodo: "Sem 1 - 3" },
         { modulo: "1.2", unidad: "Unidad 1", tema: "La Línea Recta", periodo: "Sem 4 - 6" },
@@ -757,11 +757,15 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
         { modulo: "2.2", unidad: "Unidad 2", tema: "La Parábola", periodo: "Sem 10 - 12" }
     ];
 
-    // 🚀 CORRECCIÓN: Leemos la variable global correcta sin que el código truene
+    // Variables globales seguras
     const tareasActivas = (typeof catalogoGeneralTareas !== "undefined") ? catalogoGeneralTareas : [];
+    // Nota: Para una versión 100% real, aquí también leerías 'entregasGlobales' si tu backend las enviara.
+    // Por ahora, calcularemos un avance simulado basado en el número de tareas activas para demostrar la reactividad.
+    
     let filasHTML = "";
 
     temario.forEach(bloque => {
+        // 1. Filtramos tareas del módulo
         const tareasDelModulo = tareasActivas.filter(t => {
             const coincideModulo = t.id.includes(bloque.modulo) || (t.titulo && t.titulo.includes(bloque.modulo));
             const coincideGrupo = (grupoFiltro === "TODOS" || t.grupos === "Todos" || t.grupos.includes(grupoFiltro));
@@ -770,13 +774,26 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
 
         const totalTareas = tareasDelModulo.length;
         
-        let estatusTexto = totalTareas > 0 ? "En Curso" : "Próximamente";
-        let estatusBg = totalTareas > 0 ? "#fef3c7" : "#f1f5f9";
-        let estatusColor = totalTareas > 0 ? "#b45309" : "#64748b";
+        // 2. Cálculo Reactivo de Avance
+        // Si hay 1 tarea = 25%, 2 tareas = 50%, etc. (Hasta que conectemos las entregas reales de cada alumno)
+        let avanceNum = totalTareas > 0 ? Math.min(totalTareas * 25, 100) : 0; 
         
-        let avanceNum = totalTareas > 0 ? 50 : 0; 
+        let estatusTexto = "Próximamente";
+        let estatusBg = "#f1f5f9";
+        let estatusColor = "#64748b";
+
+        if (avanceNum === 100) {
+            estatusTexto = "Completada";
+            estatusBg = "#dcfce7";
+            estatusColor = "#166534";
+        } else if (avanceNum > 0) {
+            estatusTexto = "En Curso";
+            estatusBg = "#fef3c7";
+            estatusColor = "#b45309";
+        }
+        
         let badgeGrupo = grupoFiltro === "TODOS" ? "Todos" : `G-${grupoFiltro}`;
-        let ultimaFecha = totalTareas > 0 ? (tareasDelModulo[tareasDelModulo.length - 1].fecha || "Reciente") : "--";
+        let ultimaFecha = totalTareas > 0 ? (tareasDelModulo[tareasDelModulo.length - 1].fecha || "--") : "--";
 
         filasHTML += `
             <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;">
@@ -784,7 +801,7 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
                 <td style="padding: 12px; color: #334155; font-size: 0.95rem;">${bloque.tema}</td>
                 <td style="padding: 12px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85rem;">${badgeGrupo}</span></td>
                 <td style="padding: 12px; text-align: center; color: #475569; font-size: 0.9rem;">${bloque.periodo}</td>
-                <td style="padding: 12px; text-align: center; font-weight: bold; color: ${avanceNum > 0 ? '#10b981' : '#94a3b8'};">${avanceNum}%</td>
+                <td style="padding: 12px; text-align: center; font-weight: bold; color: ${avanceNum === 100 ? '#10b981' : (avanceNum > 0 ? '#d97706' : '#94a3b8')};">${avanceNum}%</td>
                 <td style="padding: 12px; text-align: center;">
                     <span style="background: ${estatusBg}; color: ${estatusColor}; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">${estatusTexto}</span>
                 </td>
