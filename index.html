@@ -298,6 +298,9 @@
       }
     </style>
 
+    <!-- =========================================================================
+         VISTA C - PANEL DE ADMINISTRADOR DOCENTE (PANORÁMICO FULL WIDTH)
+         ========================================================================= -->
     <section id="vista-admin" class="hidden">
       <div class="admin-layout-container">
         
@@ -310,15 +313,15 @@
             </div>
             
             <div class="sidebar-title" style="margin-top: 0;">Gestión de Aula</div>
-            <button class="sidebar-btn" onclick="window.cargarModuloMisGrupos('TODOS'); window.mostrarPanelGrupos();">👥 Mis Grupos</button>
-            <button class="sidebar-btn">🙋‍♂️ Asistencia Diaria</button>
+            <!-- CONECTADOS AL ENRUTADOR -->
+            <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('dashboard')">🏠 Inicio (KPIs)</button>
+            <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('mis-grupos')">👥 Mis Grupos</button>
+            <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('asistencia')">🙋‍♂️ Asistencia Diaria</button>
 
             <div class="sidebar-title">Módulo de Evaluación</div>
-            <button class="sidebar-btn">💯 Calificaciones</button>
-            <button class="sidebar-btn">📚 Catálogo de Tareas</button>
-            <button class="sidebar-btn">📥 Repositorio de Evidencias</button>
-            <button class="sidebar-btn">📝 Colocar Tarea Nueva</button>
-
+            <!-- CONECTADOS AL ENRUTADOR -->
+            <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('catalogo')">📚 Catálogo de Tareas</button>
+            
             <div class="sidebar-title">Seguridad y Sistema</div>
             <button class="sidebar-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1EKOZzb1Z0zNTyQaTuxkWdWK2dpsgXtH9XukPDdWDYE0/edit', '_blank')">
                 📊 Base de Datos
@@ -332,138 +335,121 @@
         <div style="flex-grow: 1; width: calc(100% - 290px); min-width: 0;">
             <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
                 
-                <!-- ENCABEZADO PRINCIPAL ESTILO CONALEP -->
-                <div class="banner-tabla-admin" style="text-align: center; padding: 1.1rem; border-radius: 6px 6px 0 0; position: relative; border-bottom: 3px solid #00806A;">
-                    <h2 style="margin: 0; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 1px;">PANEL ADMINISTRATIVO DOCENTE</h2>
-                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #a7f3d0;">Gestión Académica • Grupos Activos: 505 y 508 • Panel de Control Docente</p>
+                <!-- ==========================================
+                     VISTA 0: DASHBOARD PRINCIPAL (KPIs)
+                     ========================================== -->
+                <div id="panel-dashboard-admin" class="admin-panel-vista">
+                    <div class="banner-tabla-admin" style="text-align: center; padding: 1.1rem; border-radius: 6px 6px 0 0; border-bottom: 3px solid #00806A;">
+                        <h2 style="margin: 0; font-size: 1.35rem; text-transform: uppercase;">PANEL ADMINISTRATIVO DOCENTE</h2>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); background: #f8fafc; border: 1px solid #cbd5e1; border-top: none; margin-bottom: 2rem; border-radius: 0 0 6px 6px;">
+                        <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Grupos Activos</div>
+                            <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-grupos">--</div>
+                        </div>
+                        <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Total Estudiantes</div>
+                            <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-alumnos">--</div>
+                        </div>
+                        <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Tareas Activas</div>
+                            <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-tareas">--</div>
+                        </div>
+                        <div style="padding: 1rem; text-align: center;">
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Modalidad Mixta</div>
+                            <div style="font-size: 1.2rem; color: #00806A; font-weight: bold;" id="kpi-tasa">Activa</div>
+                        </div>
+                    </div>
+
+                    <!-- CONTROL DE UNIDADES -->
+                    <div style="background-color: var(--conalep-primary); padding: 12px 15px; border-radius: 6px 6px 0 0;">
+                        <h3 style="color: white; margin: 0; font-size: 1.1rem;">CONTROL DE UNIDADES Y AVANCE TEMÁTICO</h3>
+                    </div>
+                    <div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; color: #475569; font-size: 0.9rem;">
+                                    <th style="padding: 12px; text-align: left;">Unidad / Bloque</th>
+                                    <th style="padding: 12px; text-align: left;">Tema Principal</th>
+                                    <th style="padding: 12px; text-align: center;">Avance %</th>
+                                    <th style="padding: 12px; text-align: center;">Estatus de Unidad</th>
+                                    <th style="padding: 12px; text-align: center;">Evidencias Activas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-avance-unidades">
+                                <tr><td colspan="5" style="text-align: center; padding: 2rem;">⏳ Calculando avance...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- INDICADORES GLOBALES (KPIs) -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); background: #f8fafc; border: 1px solid #cbd5e1; border-top: none; margin-bottom: 2rem; border-radius: 0 0 6px 6px;">
-                    <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
-                        <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Grupos Activos</div>
-                        <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-grupos">2 (G-505 / G-508)</div>
-                    </div>
-                    <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
-                        <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Total Estudiantes</div>
-                        <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-alumnos">75 Alumnos</div>
-                    </div>
-                    <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
-                        <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Tareas en Curso</div>
-                        <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-tareas">12 Actividades</div>
-                    </div>
-                    <div style="padding: 1rem; text-align: center;">
-                        <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Tasa de Entrega</div>
-                        <div style="font-size: 1.2rem; color: #00806A; font-weight: bold;" id="kpi-tasa">88.5%</div>
+                <!-- ==========================================
+                     VISTA 1: MIS GRUPOS ACTIVOS
+                     ========================================== -->
+                <div id="panel-mis-grupos" class="admin-panel-vista hidden">
+                    <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">📂 Tus Grupos Activos</h3>
+                    <div id="contenedor-tarjetas-grupos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                        <!-- Aquí se inyectan las tarjetas azules -->
                     </div>
                 </div>
 
-                <!-- SECCIÓN 1: CONTROL DE UNIDADES Y AVANCE TEMÁTICO -->
-                <div style="background-color: var(--conalep-primary); padding: 12px 15px; border-radius: 6px 6px 0 0; margin-top: 2rem;">
-    <h3 style="color: white; margin: 0; font-size: 1.1rem; letter-spacing: 1px;">CONTROL DE UNIDADES Y AVANCE TEMÁTICO</h3>
-</div>
-<div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; overflow-x: auto; margin-bottom: 2rem;">
-    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
-        <thead>
-            <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; color: #475569; font-size: 0.9rem;">
-                <th style="padding: 12px; text-align: left;">Unidad / Bloque</th>
-                <th style="padding: 12px; text-align: left;">Tema Principal</th>
-                <th style="padding: 12px; text-align: center;">Grupo</th>
-                <th style="padding: 12px; text-align: center;">Periodo / Semanas</th>
-                <th style="padding: 12px; text-align: center;">Avance %</th>
-                <th style="padding: 12px; text-align: center;">Estatus de Unidad</th>
-                <th style="padding: 12px; text-align: center;">Última Modificación</th>
-                <th style="padding: 12px; text-align: center;">Evidencias Asociadas</th>
-            </tr>
-        </thead>
-        <tbody id="tabla-avance-unidades">
-            <tr>
-                <td colspan="8" style="text-align: center; padding: 2rem; color: #64748b;">⏳ Calculando avance curricular...</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                <!-- ==========================================
+                     VISTA INTERNA: GESTIÓN DE UN GRUPO (Alumnos)
+                     ========================================== -->
+                <div id="panel-gestion-interno" class="admin-panel-vista hidden">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        <h3 id="titulo-gestion-grupo" style="color: var(--conalep-dark); margin: 0;">👥 Panel de Gestión</h3>
+                        <button class="btn-conalep" style="background-color: #64748b; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="window.cambiarVistaAdmin('mis-grupos')">⬅️ Volver a Grupos</button>
+                    </div>
 
-                <!-- SECCIÓN 2: GESTIÓN Y CONTROL DE TAREAS -->
-                <h3 class="banner-tabla-admin" style="padding: 0.65rem 1rem; font-size: 0.92rem; margin: 0; border-radius: 4px 4px 0 0; text-transform: uppercase;">Gestión y Control de Tareas por Grupo</h3>
-                <div style="overflow-x: auto; margin-bottom: 2rem; border: 1px solid #cbd5e1; border-top: none;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: center;">
-                        <thead>
-                            <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                                <th style="padding: 10px;">ID Tarea</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Unidad</th>
-                                <th style="padding: 10px; text-align: left;">Título de la Actividad</th>
-                                <th style="padding: 10px;">Fecha Límite</th>
-                                <th style="padding: 10px;">Puntaje Máx</th>
-                                <th style="padding: 10px;">Estado de Tarea</th>
-                                <th style="padding: 10px;">Entregas Recibidas</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-tareas-maestra">
-                            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
-                                <td style="padding: 10px; font-weight: bold;">ACT-101</td>
-                                <td style="padding: 10px;"><span style="background: #ede9fe; color: #5b21b6; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
-                                <td style="padding: 10px;">Unidad 1</td>
-                                <td style="padding: 10px; text-align: left;">Configuración de Entorno y Repositorio</td>
-                                <td style="padding: 10px;">2026-09-08</td>
-                                <td style="padding: 10px;">10 pts</td>
-                                <td style="padding: 10px;"><span style="background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 12px;">Cerrada</span></td>
-                                <td style="padding: 10px; font-weight: bold;">38 / 38 (100%)</td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 10px; font-weight: bold;">ACT-203</td>
-                                <td style="padding: 10px;"><span style="background: #ede9fe; color: #5b21b6; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
-                                <td style="padding: 10px;">Unidad 2</td>
-                                <td style="padding: 10px; text-align: left;">Práctica de Consultas SQL Multitabla</td>
-                                <td style="padding: 10px;">2026-10-22</td>
-                                <td style="padding: 10px;">20 pts</td>
-                                <td style="padding: 10px;"><span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-weight: bold;">Activa</span></td>
-                                <td style="padding: 10px;">29 / 38 (76%)</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
+                        <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 700px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                    <th style="padding: 12px; text-align: left;">Matrícula</th>
+                                    <th style="padding: 12px; text-align: left;">Alumno</th>
+                                    <th style="padding: 12px; text-align: center;">Modalidad</th>
+                                    <th style="padding: 12px; text-align: center;">Evidencia</th>
+                                    <th style="padding: 12px; text-align: center;">Calificar</th>
+                                    <th style="padding: 12px; text-align: center;">Guardar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-gestion-entregas">
+                                <tr><td colspan="6" style="text-align: center; padding: 2rem;">Cargando entregas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- SECCIÓN 3: MONITOREO DE ALUMNOS (VENTANILLA) -->
-<div style="background-color: var(--conalep-primary); padding: 10px 15px; border-radius: 6px 6px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-    <h3 style="color: white; margin: 0; font-size: 1.1rem; letter-spacing: 1px;">MONITOREO DE ALUMNOS Y EVIDENCIAS</h3>
-    
-    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-        <!-- NUEVO: Buscador en vivo por texto -->
-        <input type="text" id="buscador-alumno" placeholder="🔍 Buscar por nombre o matrícula..." onkeyup="window.filtrarBusquedaAlumnos()" style="padding: 6px 12px; border-radius: 4px; border: none; font-size: 0.85rem; min-width: 250px; outline: none;">
-        
-        <!-- CORREGIDO: Selector de Grupo enlazado al backend -->
-        <select id="filtro-rapido-grupo" onchange="window.cargarModuloMisGrupos(this.value)" style="font-size: 0.85rem; padding: 6px 10px; color: #004d40; font-weight: bold; border-radius: 4px; border: none; outline: none; cursor: pointer;">
-            <option value="TODOS">Filtrar: Todos los Grupos</option>
-            <option value="505">Grupo 505</option>
-            <option value="508">Grupo 508</option>
-        </select>
-    </div>
-</div>
-                <div style="overflow-x: auto; border: 1px solid #cbd5e1; border-top: none;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: center;">
-                        <thead>
-                            <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                                <th style="padding: 12px;">Matrícula</th>
-                                <th style="padding: 12px; text-align: left;">Nombre Completo del Alumno</th>
-                                <th style="padding: 12px;">Grupo</th>
-                                <th style="padding: 12px; text-align: left;">Última Tarea</th>
-                                <th style="padding: 12px;">Calificación</th>
-                                <th style="padding: 12px;">Estatus</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-alumnos-maestra">
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 12px; font-family: monospace; color: #475569;">20240101</td>
-                                <td style="padding: 12px; text-align: left; font-weight: bold;">García Morales, Sofía</td>
-                                <td style="padding: 12px;"><span style="background: #ede9fe; color: #5b21b6; padding: 3px 8px; border-radius: 4px; font-weight: bold;">Grupo 505</span></td>
-                                <td style="padding: 12px; text-align: left;">ACT-201 Diagrama ER</td>
-                                <td style="padding: 12px; font-weight: bold;">10 / 10</td>
-                                <td style="padding: 12px;"><span style="color: #16a34a; font-weight: bold;">Aprobada</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- ==========================================
+                     VISTA 2: CATÁLOGO DE TAREAS
+                     ========================================== -->
+                <div id="panel-catalogo-tareas" class="admin-panel-vista hidden">
+                    <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">📚 Catálogo General de Tareas</h3>
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto; margin-top: 1.5rem;">
+                        <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                    <th style="padding: 12px; text-align: left;">ID / Título</th>
+                                    <th style="padding: 12px; text-align: center;">Grupos</th>
+                                    <th style="padding: 12px; text-align: center;">Estatus</th>
+                                    <th style="padding: 12px; text-align: center;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-catalogo-general">
+                                <tr><td colspan="4" style="text-align: center; padding: 2rem;">Cargando catálogo...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     VISTA 3: ASISTENCIA
+                     ========================================== -->
+                <div id="panel-asistencia" class="admin-panel-vista hidden">
+                    <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">🙋‍♂️ Asistencia Diaria</h3>
+                    <p style="color: var(--text-muted);">Módulo de asistencia en construcción.</p>
                 </div>
 
             </div>
@@ -471,7 +457,6 @@
 
       </div>
     </section>
-
     <!-- Script principal con rompe-cachés -->
 <script src="js/portal-dashboard.js?v=19"></script>
 </body>
