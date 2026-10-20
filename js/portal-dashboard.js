@@ -239,16 +239,21 @@ window.inicializarPanelAdmin = function() {
     const welcome = document.getElementById('welcome-name');
     if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
     
-    // Disparamos la carga de la vista panorámica nueva
-    window.cargarModuloMisGrupos("TODOS");
+    // 🚀 NUEVO: Despertamos la descarga de tareas en segundo plano
+    window.cargarDatosAdministrativos();
     
-    // Y mantenemos la original por si la usas en otro lado
+    // Disparamos la carga de la vista panorámica
+    window.cargarModuloMisGrupos("TODOS");
     window.cargarGruposDocente();
 };
 
 window.cargarModuloMisGrupos = function(grupoFiltro = "TODOS") {
+    // 🚀 NUEVO: Actualizamos la tabla de unidades al cambiar de grupo
+    if (typeof window.renderizarControlUnidades === "function") {
+        window.renderizarControlUnidades(grupoFiltro);
+    }
+
     const tbodyAlumnos = document.getElementById('tabla-alumnos-maestra');
-    
     if (tbodyAlumnos) {
         tbodyAlumnos.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">⏳ Sincronizando datos con Google Sheets...</td></tr>`;
     }
@@ -482,6 +487,12 @@ window.cargarDatosAdministrativos = function() {
             window.poblarSelectoresGrupos(data.listaAlumnos);
             window.filtrarCatalogoGeneral();
             window.filtrarAsistencia();
+            
+            // 🚀 NUEVO: Ya tenemos los datos, pintamos la tabla de Control de Unidades
+            const filtroActual = document.getElementById('filtro-rapido-grupo')?.value || "TODOS";
+            if (typeof window.renderizarControlUnidades === "function") {
+                window.renderizarControlUnidades(filtroActual);
+            }
         }
     })
     .catch(err => console.error("Error al cargar datos administrativos:", err));
@@ -735,7 +746,7 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
     const tbody = document.getElementById("tabla-avance-unidades");
     if (!tbody) return;
 
-    // Tu temario oficial de Matemáticas II (Base inamovible)
+    // Tu temario oficial de Matemáticas II
     const temario = [
         { modulo: "1.1", unidad: "Unidad 1", tema: "Sistemas y Vectores", periodo: "Sem 1 - 3" },
         { modulo: "1.2", unidad: "Unidad 1", tema: "La Línea Recta", periodo: "Sem 4 - 6" },
@@ -743,12 +754,11 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
         { modulo: "2.2", unidad: "Unidad 2", tema: "La Parábola", periodo: "Sem 10 - 12" }
     ];
 
-    // Leemos las tareas que ya descargamos de Google Sheets
-    const tareasActivas = window.catalogoGeneralTareas || [];
+    // 🚀 CORRECCIÓN: Leemos la variable global correcta sin que el código truene
+    const tareasActivas = (typeof catalogoGeneralTareas !== "undefined") ? catalogoGeneralTareas : [];
     let filasHTML = "";
 
     temario.forEach(bloque => {
-        // 1. Filtramos automáticamente cuántas tareas tienes para este submódulo y grupo
         const tareasDelModulo = tareasActivas.filter(t => {
             const coincideModulo = t.id.includes(bloque.modulo) || (t.titulo && t.titulo.includes(bloque.modulo));
             const coincideGrupo = (grupoFiltro === "TODOS" || t.grupos === "Todos" || t.grupos.includes(grupoFiltro));
@@ -757,12 +767,11 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
 
         const totalTareas = tareasDelModulo.length;
         
-        // 2. Lógica reactiva (Si hay tareas = En Curso, si no = Próximamente)
         let estatusTexto = totalTareas > 0 ? "En Curso" : "Próximamente";
         let estatusBg = totalTareas > 0 ? "#fef3c7" : "#f1f5f9";
         let estatusColor = totalTareas > 0 ? "#b45309" : "#64748b";
         
-        let avanceNum = totalTareas > 0 ? 50 : 0; // Se ajustará a fórmulas reales después
+        let avanceNum = totalTareas > 0 ? 50 : 0; 
         let badgeGrupo = grupoFiltro === "TODOS" ? "Todos" : `G-${grupoFiltro}`;
         let ultimaFecha = totalTareas > 0 ? (tareasDelModulo[tareasDelModulo.length - 1].fecha || "Reciente") : "--";
 
