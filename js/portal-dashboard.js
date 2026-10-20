@@ -475,6 +475,7 @@ let catalogoGeneralTareas = [];
 let listaCompletaAlumnos = [];
 
 window.cargarDatosAdministrativos = function() {
+    // Usamos la ruta "consultar" que YA EXISTE en tu servidor y nunca falla
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar", matricula: "ADMIN-JL" }) 
@@ -482,13 +483,11 @@ window.cargarDatosAdministrativos = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            catalogoGeneralTareas = data.catalogo || [];
-            listaCompletaAlumnos = data.listaAlumnos || [];
-            window.poblarSelectoresGrupos(data.listaAlumnos);
-            window.filtrarCatalogoGeneral();
-            window.filtrarAsistencia();
+            // 1. Guardamos el catálogo forzando la variable global
+            window.catalogoGeneralTareas = data.catalogo || [];
+            console.log("✅ Catálogo descargado con éxito (Bypass):", window.catalogoGeneralTareas);
             
-            // 🚀 NUEVO: Ya tenemos los datos, pintamos la tabla de Control de Unidades
+            // 2. Encendemos la Tabla de Unidades de inmediato
             const filtroActual = document.getElementById('filtro-rapido-grupo')?.value || "TODOS";
             if (typeof window.renderizarControlUnidades === "function") {
                 window.renderizarControlUnidades(filtroActual);
@@ -749,7 +748,6 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
     const tbody = document.getElementById("tabla-avance-unidades");
     if (!tbody) return;
 
-    // Tu temario oficial
     const temario = [
         { modulo: "1.1", unidad: "Unidad 1", tema: "Sistemas y Vectores", periodo: "Sem 1 - 3" },
         { modulo: "1.2", unidad: "Unidad 1", tema: "La Línea Recta", periodo: "Sem 4 - 6" },
@@ -757,30 +755,26 @@ window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
         { modulo: "2.2", unidad: "Unidad 2", tema: "La Parábola", periodo: "Sem 10 - 12" }
     ];
 
-    const tareasActivas = (typeof window.catalogoGeneralTareas !== "undefined") ? window.catalogoGeneralTareas : [];
+    const tareasActivas = window.catalogoGeneralTareas || [];
     let filasHTML = "";
 
     temario.forEach(bloque => {
-        // 1. Filtramos tareas con traductor inteligente de tus IDs (EV01, EV02, etc.)
+        // 1. Filtramos tareas con traductor inteligente de tus IDs
         const tareasDelModulo = tareasActivas.filter(t => {
             let idFiltro = (t.id || "").toUpperCase();
             let esDeEsteModulo = false;
 
-            // Traductor exacto para tus tareas actuales de Sheets
             if (bloque.modulo === "1.1" && (idFiltro === "EV01" || idFiltro === "EV02" || idFiltro.includes("1ER P"))) esDeEsteModulo = true;
             if (bloque.modulo === "1.2" && (idFiltro === "EV03" || idFiltro === "EV04" || idFiltro.includes("1ER P"))) esDeEsteModulo = true;
             if (bloque.modulo === "2.1" && (idFiltro === "EV05" || idFiltro === "EV06")) esDeEsteModulo = true;
             if (bloque.modulo === "2.2" && (idFiltro === "EV07" || idFiltro === "EV08")) esDeEsteModulo = true;
 
-            // Regla general por si en el futuro sí le escribes "1.1" al título de la tarea
-            if (t.titulo && t.titulo.includes(bloque.modulo)) esDeEsteModulo = true;
-
-            return esDeEsteModulo;
+            return esDeEsteModulo || (t.titulo && t.titulo.includes(bloque.modulo));
         });
 
         const totalTareas = tareasDelModulo.length;
         
-        // 2. Cálculo Reactivo de Avance (25% por cada tarea que tengas)
+        // 2. Cálculo Reactivo de Avance (25% por cada tarea activa detectada)
         let avanceNum = totalTareas > 0 ? Math.min(totalTareas * 25, 100) : 0; 
         
         let estatusTexto = "Próximamente";
