@@ -344,8 +344,25 @@
                         <button class="btn-conalep" style="background-color: #64748b; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="window.cambiarVistaAdmin('mis-grupos')">⬅️ Volver a Grupos</button>
                     </div>
                     
+                    <!-- NUEVO: BUSCADOR Y FILTRO DE MODALIDAD -->
+                    <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; flex-wrap: wrap;">
+                        <div style="flex-grow: 1; min-width: 250px;">
+                            <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">🔍 Buscar Alumno:</label>
+                            <input type="text" id="buscador-lista-alumnos" placeholder="Escribe nombre o matrícula..." onkeyup="window.renderizarListaAlumnosGrupo()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">🎓 Filtro de Modalidad:</label>
+                            <select id="filtro-modalidad-lista" onchange="window.renderizarListaAlumnosGrupo()" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none; cursor: pointer;">
+                                <option value="TODOS">Todas las modalidades</option>
+                                <option value="Presencial">Solo Presenciales</option>
+                                <option value="Dual">Solo Duales</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 500px;">
+                            <!-- Mismos encabezados y cuerpo de antes -->
                             <thead>
                                 <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
                                     <th style="padding: 12px; text-align: left;">Matrícula</th>
