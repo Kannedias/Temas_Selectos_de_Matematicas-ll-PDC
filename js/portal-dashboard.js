@@ -233,19 +233,53 @@ window.renderizarTarjetasGrupos = function() {
     }).join('');
 };
 
+// ==========================================
 // FLUJO 1: ABRIR GRUPO -> MOSTRAR ALUMNOS
+// ==========================================
 window.abrirGestionGrupo = function(grupoId) {
     window.grupoSeleccionadoAdmin = grupoId;
     window.cambiarVistaAdmin('lista-alumnos'); 
     
     document.getElementById('titulo-lista-alumnos').innerText = `👥 Lista de Alumnos: Grupo ${grupoId}`;
-    const tbody = document.getElementById('tabla-lista-alumnos-grupo');
     
-    const alumnosDelGrupo = window.listaGlobalAlumnos.filter(a => String(a.grupo).trim() === String(grupoId).trim());
+    // Limpiamos los filtros cada vez que entramos a un nuevo grupo
+    const buscador = document.getElementById('buscador-lista-alumnos');
+    const selectorMod = document.getElementById('filtro-modalidad-lista');
+    if (buscador) buscador.value = "";
+    if (selectorMod) selectorMod.value = "TODOS";
 
+    // Llamamos a la función que pinta y filtra
+    window.renderizarListaAlumnosGrupo();
+};
+
+window.renderizarListaAlumnosGrupo = function() {
+    const tbody = document.getElementById('tabla-lista-alumnos-grupo');
+    if (!tbody || !window.grupoSeleccionadoAdmin) return;
+
+    // Tomamos lo que dice el buscador y el selector
+    const textoBusqueda = (document.getElementById('buscador-lista-alumnos')?.value || "").toLowerCase();
+    const modalidadFiltro = document.getElementById('filtro-modalidad-lista')?.value || "TODOS";
+
+    // 1. Filtramos primero por el grupo exacto
+    let alumnosDelGrupo = window.listaGlobalAlumnos.filter(a => String(a.grupo).trim() === String(window.grupoSeleccionadoAdmin).trim());
+
+    // 2. Filtramos por Modalidad
+    if (modalidadFiltro !== "TODOS") {
+        alumnosDelGrupo = alumnosDelGrupo.filter(a => String(a.modalidad).includes(modalidadFiltro));
+    }
+
+    // 3. Filtramos por Texto (Nombre o Matrícula)
+    if (textoBusqueda !== "") {
+        alumnosDelGrupo = alumnosDelGrupo.filter(a => 
+            String(a.nombre).toLowerCase().includes(textoBusqueda) || 
+            String(a.matricula).toLowerCase().includes(textoBusqueda)
+        );
+    }
+
+    // Dibujamos el resultado final
     if (alumnosDelGrupo.length > 0) {
         tbody.innerHTML = alumnosDelGrupo.map(a => `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 10px; font-family: monospace; color: #475569;">${a.matricula}</td>
                 <td style="padding: 10px; font-weight: bold; color: var(--conalep-dark);">${a.nombre}</td>
                 <td style="padding: 10px; text-align: center;"><span style="background: ${a.modalidad==='Dual' ? '#fef3c7' : '#dcfce7'}; color: ${a.modalidad==='Dual' ? '#b45309' : '#166534'}; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${a.modalidad || 'Sin definir'}</span></td>
@@ -255,7 +289,7 @@ window.abrirGestionGrupo = function(grupoId) {
             </tr>
         `).join('');
     } else {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay alumnos en este grupo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">No se encontraron alumnos con esos filtros.</td></tr>`;
     }
 };
 
