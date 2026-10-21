@@ -83,99 +83,63 @@ window.iniciarSesion = function() {
 // ==========================================
 // 2. CONSULTA DE ALUMNO Y GRÁFICAS
 // ==========================================
-window.consultarAvanceReal = function(matricula) {
-    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "consultar", matricula: matricula }) })
-    .then(response => response.json())
-    .then(data => {
-        const badge1_1 = document.getElementById('status-mod-1.1');
-        if (badge1_1) {
-            if (data.modulo1_1 === "Concluido") {
-                badge1_1.className = "badge-status status-ok"; badge1_1.innerHTML = "🟢 Concluido";
-            } else {
-                badge1_1.className = "badge-status status-pend"; badge1_1.innerHTML = "🔴 Pendiente de Entrega";
-            }
-        }
-        if (data.parciales) { window.datosDesgloseParciales = data.parciales; window.dibujarGrafica(data.parciales); }
-
-        const tbodyHistorial = document.getElementById('tbody-historial');
-        if (tbodyHistorial && data.historial) {
-            tbodyHistorial.innerHTML = "";
-            if (data.historial.length === 0) {
-                tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">No hay entregas registradas.</td></tr>`;
-            } else {
-                tbodyHistorial.innerHTML = data.historial.map(item => `
-                    <tr>
-                        <td style="font-size: 0.9rem; padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.actividad}</td>
-                        <td style="font-size: 0.85rem; color: var(--text-muted); padding: 12px 10px; border-bottom: 1px solid var(--border-card);">${item.fecha}</td>
-                        <td style="padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><span class="badge-status ${item.estado.toLowerCase().includes('pendient') ? 'status-pend' : 'status-ok'}">${item.estado}</span></td>
-                        <td style="text-align: center; padding: 12px 10px; border-bottom: 1px solid var(--border-card);"><strong>${item.nota}</strong></td>
-                    </tr>
-                `).join('');
-            }
-        }
-
-        const selectTarea = document.getElementById('select-tarea');
-        if (selectTarea && data.catalogo) {
-            selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
-            data.catalogo.forEach(tarea => {
-                const opt = document.createElement('option');
-                opt.value = tarea.id + " - " + tarea.titulo;
-                opt.text = tarea.id + " | " + tarea.titulo;
-                selectTarea.appendChild(opt);
-            });
-        }
-    })
-    .catch(error => console.error("Error consultando avance:", error));
-};
-
 window.dibujarGrafica = function(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    
     if (window.miGrafica) window.miGrafica.destroy();
 
-    const p1 = parcialesData && parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
-    const p2 = parcialesData && parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
-    const p3 = parcialesData && parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
+    let p1 = parcialesData && parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
+    let p2 = parcialesData && parcialesData[1] ? parseFloat(parcialesData[1].total) || 0 : 0;
+    let p3 = parcialesData && parcialesData[2] ? parseFloat(parcialesData[2].total) || 0 : 0;
 
     window.datosDesgloseParciales = parcialesData;
+
+    // 🛡️ EL CANDADO VISUAL: Si el alumno tiene 0 en todo, pintamos la base en gris
+    let datosGrafica = [p1, p2, p3];
+    let coloresGrafica = ['#00806A', '#d97706', '#94a3b8']; // Verde, Ámbar, Azul Grisáceo
+
+    if (p1 === 0 && p2 === 0 && p3 === 0) {
+        datosGrafica = [25, 30, 45]; // La ponderación base que acordamos para rellenar el hueco
+        coloresGrafica = ['#e2e8f0', '#e2e8f0', '#e2e8f0']; // Todo en gris pálido (sin avance)
+    }
 
     window.miGrafica = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: ['Parcial 1', 'Parcial 2', 'Parcial 3'],
-            datasets: [{ data: [p1, p2, p3], backgroundColor: ['#00806A', '#d97706', '#94a3b8'], borderWidth: 2, borderColor: '#ffffff' }]
+            datasets: [{
+                data: datosGrafica,
+                backgroundColor: coloresGrafica,
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, cutout: '70%',
-            plugins: { legend: { position: 'right' }, tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        const index = context.dataIndex;
-                        if (!window.datosDesgloseParciales || !window.datosDesgloseParciales[index]) return "Sin datos";
-                        const calif10 = (parseFloat(window.datosDesgloseParciales[index].total) / 10).toFixed(1);
-                        return ` Calificación: ${calif10} / 10`;
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'right' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            if (!window.datosDesgloseParciales || !window.datosDesgloseParciales[index]) return "Sin datos";
+                            const calif10 = (parseFloat(window.datosDesgloseParciales[index].total) / 10).toFixed(1);
+                            return ` Calificación: ${calif10} / 10`;
+                        }
                     }
                 }
-            }},
-            onClick: (event, elements) => { if (elements.length > 0) window.mostrarDesglose(elements[0].index); }
+            },
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    window.mostrarDesglose(elements[0].index);
+                }
+            }
         }
     });
-};
-
-window.mostrarDesglose = function(indexParcial) {
-    if(!window.datosDesgloseParciales) return;
-    const datos = window.datosDesgloseParciales[indexParcial];
-    if(!datos) return;
-    const contenedorDesglose = document.getElementById('desglose-calificacion');
-    if(contenedorDesglose) contenedorDesglose.style.display = 'block';
-
-    const calif10 = (parseFloat(datos.total) / 10).toFixed(1);
-    document.getElementById('titulo-desglose').innerText = `Desglose ${datos.titulo} (Nota Final: ${calif10} / 10)`;
-    document.getElementById('val-tareas').innerText = datos.tareas || 0;
-    document.getElementById('val-part').innerText = datos.part || 0;
-    document.getElementById('val-asist').innerText = datos.asist || 0;
-    document.getElementById('val-exam').innerText = datos.exam || 0;
 };
 
 // ==========================================
