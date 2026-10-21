@@ -156,17 +156,32 @@ window.inicializarPanelAdmin = function() {
     window.cambiarVistaAdmin('dashboard'); // Vista por defecto
 };
 
+// ==========================================
+// 3. ENRUTADOR DE VISTAS (ADMINISTRADOR)
+// ==========================================
+window.inicializarPanelAdmin = function() {
+    document.getElementById('vista-login')?.classList.add('hidden');
+    document.getElementById('vista-admin')?.classList.remove('hidden');
+    document.getElementById('user-menu')?.classList.remove('hidden');
+    const welcome = document.getElementById('welcome-name');
+    if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
+    
+    window.cargarDatosAdministrativos();
+    window.cambiarVistaAdmin('dashboard'); 
+};
+
 window.cambiarVistaAdmin = function(vistaDestino) {
-    // 1. Ocultamos todos los paneles internos
     const paneles = document.querySelectorAll('.admin-panel-vista');
     paneles.forEach(panel => panel.classList.add('hidden'));
 
-    // 2. Mostramos la vista solicitada
     if (vistaDestino === 'dashboard') {
         document.getElementById('panel-dashboard-admin')?.classList.remove('hidden');
     } else if (vistaDestino === 'mis-grupos') {
         document.getElementById('panel-mis-grupos')?.classList.remove('hidden');
-        window.renderizarTarjetasGrupos(); // Dibujamos los grupos dinámicos
+        window.renderizarTarjetasGrupos(); 
+    } else if (vistaDestino === 'lista-alumnos') {
+        // NUEVA VISTA
+        document.getElementById('panel-lista-alumnos')?.classList.remove('hidden');
     } else if (vistaDestino === 'gestion-interno') {
         document.getElementById('panel-gestion-interno')?.classList.remove('hidden');
     } else if (vistaDestino === 'catalogo') {
@@ -178,7 +193,7 @@ window.cambiarVistaAdmin = function(vistaDestino) {
 };
 
 // ==========================================
-// 4. LÓGICA DE DIBUJADO DINÁMICO (ADMIN)
+// 4. LÓGICA DE DIBUJADO Y FLUJOS (ADMIN)
 // ==========================================
 window.cargarDatosAdministrativos = function() {
     fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "consultar", matricula: "ADMIN-JL" }) })
@@ -186,29 +201,22 @@ window.cargarDatosAdministrativos = function() {
     .then(data => {
         if (data.status === "éxito") {
             window.catalogoGeneralTareas = data.catalogo || [];
-            window.listaGlobalAlumnos = data.listaAlumnos || []; // Guardamos la lista para generar tarjetas
-            
-            if (typeof window.renderizarControlUnidades === "function") {
-                window.renderizarControlUnidades("TODOS");
-            }
+            window.listaGlobalAlumnos = data.listaAlumnos || []; 
+            if (typeof window.renderizarControlUnidades === "function") window.renderizarControlUnidades("TODOS");
         }
-    })
-    .catch(err => console.error("Error al cargar datos administrativos:", err));
+    }).catch(err => console.error(err));
 };
 
 window.renderizarTarjetasGrupos = function() {
     const contenedor = document.getElementById('contenedor-tarjetas-grupos');
     if (!contenedor || !window.listaGlobalAlumnos) return;
-
-    // Extraemos los grupos únicos
     const gruposUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
 
     if (gruposUnicos.length === 0) {
-        contenedor.innerHTML = `<div style="padding: 2rem; text-align: center; color: #64748b; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; grid-column: 1 / -1;">No se detectaron grupos en la base de datos de alumnos.</div>`;
+        contenedor.innerHTML = `<div style="padding: 2rem; text-align: center; color: #64748b; background: #f8fafc; border-radius: 8px;">No se detectaron grupos.</div>`;
         return;
     }
 
-    // Dibujamos las tarjetas
     contenedor.innerHTML = gruposUnicos.sort().map(grupo => {
         const totalAlumnos = window.listaGlobalAlumnos.filter(a => String(a.grupo).trim() === grupo).length;
         return `
@@ -225,56 +233,92 @@ window.renderizarTarjetasGrupos = function() {
     }).join('');
 };
 
+// FLUJO 1: ABRIR GRUPO -> MOSTRAR ALUMNOS
 window.abrirGestionGrupo = function(grupoId) {
     window.grupoSeleccionadoAdmin = grupoId;
-    window.cambiarVistaAdmin('gestion-interno'); // Enrutador abre el panel
+    window.cambiarVistaAdmin('lista-alumnos'); 
     
-    const titulo = document.getElementById('titulo-gestion-grupo');
-    if (titulo) titulo.innerText = `👥 Panel de Gestión: Grupo ${grupoId}`;
+    document.getElementById('titulo-lista-alumnos').innerText = `👥 Lista de Alumnos: Grupo ${grupoId}`;
+    const tbody = document.getElementById('tabla-lista-alumnos-grupo');
     
-    if(typeof window.cargarEntregasGrupo === "function") {
-        window.cargarEntregasGrupo(grupoId);
+    const alumnosDelGrupo = window.listaGlobalAlumnos.filter(a => String(a.grupo).trim() === String(grupoId).trim());
+
+    if (alumnosDelGrupo.length > 0) {
+        tbody.innerHTML = alumnosDelGrupo.map(a => `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 10px; font-family: monospace; color: #475569;">${a.matricula}</td>
+                <td style="padding: 10px; font-weight: bold; color: var(--conalep-dark);">${a.nombre}</td>
+                <td style="padding: 10px; text-align: center;"><span style="background: ${a.modalidad==='Dual' ? '#fef3c7' : '#dcfce7'}; color: ${a.modalidad==='Dual' ? '#b45309' : '#166534'}; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${a.modalidad || 'Sin definir'}</span></td>
+                <td style="padding: 10px; text-align: center;">
+                    <button class="btn-conalep" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="window.abrirPanelAlumno('${a.matricula}', '${a.nombre}')">📝 Calificar</button>
+                </td>
+            </tr>
+        `).join('');
+    } else {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay alumnos en este grupo.</td></tr>`;
     }
 };
 
-window.cargarEntregasGrupo = function(grupoId) {
+// FLUJO 2: ABRIR ALUMNO -> MOSTRAR SUS TAREAS Y CALIFICAR
+window.abrirPanelAlumno = function(matricula, nombre) {
+    window.alumnoSeleccionadoAdmin = matricula; 
+    window.cambiarVistaAdmin('gestion-interno'); 
+    
+    document.getElementById('titulo-gestion-grupo').innerText = `📝 Calificando a: ${nombre}`;
     const tbody = document.getElementById('tabla-gestion-entregas');
-    if (!tbody) return;
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem;">Cargando entregas del grupo ${grupoId}...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem;">⏳ Consultando entregas en Google Sheets...</td></tr>`;
 
-    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "obtener_entregas_grupo", grupo: grupoId }) })
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "obtener_entregas_grupo", grupo: window.grupoSeleccionadoAdmin }) })
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito" && data.entregas.length > 0) {
-            tbody.innerHTML = data.entregas.map(e => `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 10px;">${e.matricula}</td>
-                    <td style="padding: 10px;"><strong>${e.nombre}</strong></td>
-                    <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">G-${grupoId}</span></td>
-                    <td style="padding: 10px;">${e.actividad} <br><a href="${e.archivoUrl}" target="_blank" style="color: var(--conalep-accent); font-weight: bold; text-decoration: none; font-size: 0.8rem;">📎 Ver Archivo</a></td>
-                    <td style="padding: 10px; text-align: center;"><input type="number" id="nota-${e.filaFisica}" value="${e.calificacion}" min="0" max="100" style="width: 60px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px;"></td>
-                    <td style="padding: 10px; text-align: center;"><button class="btn-conalep" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="window.guardarCalificacionFila(${e.filaFisica})">💾 Guardar</button></td>
-                </tr>
-            `).join('');
+            const entregasAlumno = data.entregas.filter(e => String(e.matricula).trim() === String(matricula).trim());
+            
+            if (entregasAlumno.length > 0) {
+                tbody.innerHTML = entregasAlumno.map(e => {
+                    const estPendiente = e.estado === 'Pendiente' ? 'selected' : '';
+                    const estRevisando = e.estado === 'Revisando' ? 'selected' : '';
+                    const estCumplido = (e.estado === 'Cumplido' || e.estado === 'Revisado') ? 'selected' : '';
+
+                    return `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 10px; font-weight: bold; color: var(--text-main);">${e.actividad}</td>
+                        <td style="padding: 10px; text-align: center;"><a href="${e.archivoUrl}" target="_blank" style="color: var(--conalep-accent); font-weight: bold; text-decoration: none; font-size: 0.85rem;">📎 Ver Archivo</a></td>
+                        <td style="padding: 10px; text-align: center;"><span class="badge-status ${e.estado === 'Cumplido' || e.estado === 'Revisado' ? 'status-ok' : 'status-pend'}">${e.estado}</span></td>
+                        <td style="padding: 10px; text-align: center;">
+                            <select id="estado-${e.filaFisica}" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem;">
+                                <option value="Pendiente" ${estPendiente}>Pendiente</option>
+                                <option value="Revisando" ${estRevisando}>Revisando</option>
+                                <option value="Cumplido" ${estCumplido}>Cumplido</option>
+                            </select>
+                        </td>
+                        <td style="padding: 10px; text-align: center;"><input type="number" id="nota-${e.filaFisica}" value="${e.calificacion}" min="0" max="100" style="width: 60px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px;"></td>
+                        <td style="padding: 10px; text-align: center;"><button class="btn-conalep" style="background-color: #0284c7; padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="window.guardarCalificacionFila(${e.filaFisica})">💾 Guardar</button></td>
+                    </tr>
+                    `
+                }).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">El alumno aún no ha subido evidencias.</td></tr>`;
+            }
         } else {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay evidencias registradas para el Grupo ${grupoId}.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay evidencias registradas en la base de datos.</td></tr>`;
         }
-    })
-    .catch(() => { tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error al consultar entregas.</td></tr>`; });
+    }).catch(err => { console.error(err); tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error al consultar servidor.</td></tr>`; });
 };
 
 window.guardarCalificacionFila = function(filaFisica) {
     const inputNota = document.getElementById(`nota-${filaFisica}`);
+    const selectEstado = document.getElementById(`estado-${filaFisica}`);
     const nota = inputNota ? inputNota.value : "";
-    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "calificar_entrega", fila: filaFisica, calificacion: nota, estado: "Revisado" }) })
+    const estadoNuevo = selectEstado ? selectEstado.value : "Revisado";
+    
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "calificar_entrega", fila: filaFisica, calificacion: nota, estado: estadoNuevo }) })
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert("✅ Calificación guardada exitosamente.");
-            if (window.grupoSeleccionadoAdmin) window.cargarEntregasGrupo(window.grupoSeleccionadoAdmin);
+            alert(`✅ Tarea guardada con estado: ${estadoNuevo}`);
         } else { alert("❌ Error: " + data.mensaje); }
-    })
-    .catch(() => alert("⚠️ Error de comunicación con el servidor."));
+    }).catch(() => alert("⚠️ Error de comunicación con el servidor."));
 };
 
 // ==========================================
