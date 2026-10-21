@@ -335,26 +335,55 @@
                     </div>
                 </div>
 
-                <!-- VISTA INTERNA: GESTIÓN DE UN GRUPO (Alumnos) -->
-                <div id="panel-gestion-interno" class="admin-panel-vista hidden">
+                <!-- ==========================================
+                     VISTA 1.5: LISTADO DE ALUMNOS DEL GRUPO
+                     ========================================== -->
+                <div id="panel-lista-alumnos" class="admin-panel-vista hidden">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                        <h3 id="titulo-gestion-grupo" style="color: var(--conalep-dark); margin: 0;">👥 Panel de Gestión</h3>
+                        <h3 id="titulo-lista-alumnos" style="color: var(--conalep-dark); margin: 0;">👥 Lista de Alumnos: Grupo --</h3>
                         <button class="btn-conalep" style="background-color: #64748b; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="window.cambiarVistaAdmin('mis-grupos')">⬅️ Volver a Grupos</button>
                     </div>
+                    
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 500px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                    <th style="padding: 12px; text-align: left;">Matrícula</th>
+                                    <th style="padding: 12px; text-align: left;">Nombre del Alumno</th>
+                                    <th style="padding: 12px; text-align: center;">Modalidad</th>
+                                    <th style="padding: 12px; text-align: center;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-lista-alumnos-grupo">
+                                <tr><td colspan="4" style="text-align: center; padding: 2rem;">Cargando alumnos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     VISTA INTERNA: PANEL DE CALIFICACIÓN INDIVIDUAL
+                     ========================================== -->
+                <div id="panel-gestion-interno" class="admin-panel-vista hidden">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        <h3 id="titulo-gestion-grupo" style="color: var(--conalep-dark); margin: 0;">📝 Calificando a: --</h3>
+                        <button class="btn-conalep" style="background-color: #64748b; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="window.cambiarVistaAdmin('lista-alumnos')">⬅️ Volver a Lista</button>
+                    </div>
+
                     <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
                         <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 700px;">
                             <thead>
                                 <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                                    <th style="padding: 12px; text-align: left;">Matrícula</th>
-                                    <th style="padding: 12px; text-align: left;">Alumno</th>
-                                    <th style="padding: 12px; text-align: center;">Modalidad</th>
-                                    <th style="padding: 12px; text-align: center;">Evidencia</th>
-                                    <th style="padding: 12px; text-align: center;">Calificar</th>
+                                    <th style="padding: 12px; text-align: left;">Actividad</th>
+                                    <th style="padding: 12px; text-align: center;">Evidencia Adjunta</th>
+                                    <th style="padding: 12px; text-align: center;">Estado Actual</th>
+                                    <th style="padding: 12px; text-align: center;">Cambiar Estado</th>
+                                    <th style="padding: 12px; text-align: center;">Calificar (0-100)</th>
                                     <th style="padding: 12px; text-align: center;">Guardar</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-gestion-entregas">
-                                <tr><td colspan="6" style="text-align: center; padding: 2rem;">Cargando entregas...</td></tr>
+                                <tr><td colspan="6" style="text-align: center; padding: 2rem;">Cargando entregas del alumno...</td></tr>
                             </tbody>
                         </table>
                     </div>
