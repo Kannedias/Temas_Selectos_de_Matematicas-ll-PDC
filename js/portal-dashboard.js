@@ -361,63 +361,53 @@ window.guardarCalificacionFila = function(filaFisica) {
 window.filtrarCatalogoGeneral = function() {
     const tbody = document.getElementById('tabla-catalogo-general');
     if (!tbody) return;
-    if (window.catalogoGeneralTareas.length > 0) {
-        tbody.innerHTML = window.catalogoGeneralTareas.map(t => `
+
+    if (window.catalogoGeneralTareas && window.catalogoGeneralTareas.length > 0) {
+        tbody.innerHTML = window.catalogoGeneralTareas.map(t => {
+            // Lógica inteligente de botones
+            let colorEstatus = t.estatus === 'SÍ' ? '#16a34a' : '#64748b'; // Verde si activa, gris si no
+            let btnAccion = '';
+
+            if (t.estatus === 'SÍ') {
+                btnAccion = `<button class="btn-conalep" style="background-color: #d97706; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusTarea('${t.id}', 'CONCLUIDA')">🔒 Cerrar Evaluación</button>`;
+            } else {
+                btnAccion = `<button class="btn-conalep" style="background-color: #10b981; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusTarea('${t.id}', 'SÍ')">🔓 Reabrir Evaluación</button>`;
+            }
+
+            return `
             <tr style="border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 10px;"><strong>${t.id}</strong><br><small>${t.titulo}</small></td>
-                <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${t.grupos}</span></td>
-                <td style="padding: 10px; text-align: center; font-weight: bold; color: ${t.estatus === 'SÍ' ? '#16a34a' : (t.estatus === 'CONCLUIDA' ? '#64748b' : '#dc2626')}">${t.estatus}</td>
-                <td style="padding: 10px; text-align: center;"><button class="btn-conalep" style="background-color: #d97706; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="alert('Función concluir pendiente')">🏁 Concluir</button></td>
+                <td style="padding: 10px;"><strong>${t.id}</strong><br><small style="color: var(--text-muted);">${t.titulo}</small></td>
+                <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${t.grupos || 'Todos'}</span></td>
+                <td style="padding: 10px; text-align: center; font-weight: bold; color: ${colorEstatus}">${t.estatus}</td>
+                <td style="padding: 10px; text-align: center;">${btnAccion}</td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
     } else {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas en el catálogo.</td></tr>`;
     }
 };
 
-window.renderizarControlUnidades = function(grupoFiltro = "TODOS") {
-    const tbody = document.getElementById("tabla-avance-unidades");
-    if (!tbody) return;
+window.cambiarEstatusTarea = function(idTarea, nuevoEstatus) {
+    if (!confirm(`¿Estás seguro de marcar la tarea ${idTarea} como ${nuevoEstatus}?`)) return;
 
-    const temario = [
-        { modulo: "1.1", unidad: "Unidad 1", tema: "Sistemas y Vectores" },
-        { modulo: "1.2", unidad: "Unidad 1", tema: "La Línea Recta" },
-        { modulo: "2.1", unidad: "Unidad 2", tema: "La Circunferencia" },
-        { modulo: "2.2", unidad: "Unidad 2", tema: "La Parábola" }
-    ];
-
-    const tareasActivas = window.catalogoGeneralTareas || [];
-    let filasHTML = "";
-
-    temario.forEach(bloque => {
-        const tareasDelModulo = tareasActivas.filter(t => {
-            let idFiltro = (t.id || "").toUpperCase();
-            let esDeEsteModulo = false;
-            if (bloque.modulo === "1.1" && (idFiltro === "EV01" || idFiltro === "EV02" || idFiltro.includes("1ER P"))) esDeEsteModulo = true;
-            if (bloque.modulo === "1.2" && (idFiltro === "EV03" || idFiltro === "EV04" || idFiltro.includes("1ER P"))) esDeEsteModulo = true;
-            return esDeEsteModulo || (t.titulo && t.titulo.includes(bloque.modulo));
-        });
-
-        const totalTareas = tareasDelModulo.length;
-        let avanceNum = totalTareas > 0 ? Math.min(totalTareas * 25, 100) : 0; 
-        
-        let estatusTexto = "Próximamente"; let estatusBg = "#f1f5f9"; let estatusColor = "#64748b";
-        if (avanceNum === 100) { estatusTexto = "Completada"; estatusBg = "#dcfce7"; estatusColor = "#166534"; }
-        else if (avanceNum > 0) { estatusTexto = "En Curso"; estatusBg = "#fef3c7"; estatusColor = "#b45309"; }
-        
-        filasHTML += `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 12px; font-weight: bold; color: var(--conalep-dark);">${bloque.unidad} (${bloque.modulo})</td>
-                <td style="padding: 12px; color: #334155;">${bloque.tema}</td>
-                <td style="padding: 12px; text-align: center; font-weight: bold; color: ${avanceNum === 100 ? '#10b981' : (avanceNum > 0 ? '#d97706' : '#94a3b8')};">${avanceNum}%</td>
-                <td style="padding: 12px; text-align: center;"><span style="background: ${estatusBg}; color: ${estatusColor}; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">${estatusTexto}</span></td>
-                <td style="padding: 12px; text-align: center; color: #334155;"><strong>${totalTareas}</strong> Activas</td>
-            </tr>
-        `;
-    });
-    tbody.innerHTML = filasHTML;
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "actualizar_estatus_tarea", idTarea: idTarea, nuevoEstatus: nuevoEstatus })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert(`✅ La tarea ${idTarea} ahora está: ${nuevoEstatus}`);
+            // Refrescar el catálogo bajando los datos de nuevo
+            window.cargarDatosAdministrativos();
+            setTimeout(() => window.filtrarCatalogoGeneral(), 1500); 
+        } else {
+            alert("❌ Error: " + data.mensaje);
+        }
+    })
+    .catch(() => alert("⚠️ Error de comunicación con el servidor."));
 };
-
 // ==========================================
 // 6. VENTANILLA ALUMNOS (FOTO Y ARCHIVOS)
 // ==========================================
