@@ -207,8 +207,7 @@
             </div>
             
         </section>
-
-    </main> <!-- CIERRE DE CONTENEDOR PRINCIPAL: Libera al admin del límite de 1100px -->
+    </main>
 
     <!-- =========================================================================
          VISTA C - PANEL DE ADMINISTRADOR DOCENTE (PANORÁMICO FULL WIDTH)
@@ -222,19 +221,17 @@
         padding: 0 1rem !important;
         box-sizing: border-box !important;
       }
-
       .admin-layout-container {
         display: flex;
         gap: 1.25rem;
         align-items: flex-start;
         width: 100%;
       }
-
-      /* Sidebar en tono gris claro mate (contraste limpio con el blanco) */
+      /* Sidebar */
       .sidebar-menu {
         width: 270px;
         min-width: 270px;
-        background-color: #f1f5f9; /* Gris suave neutral */
+        background-color: #f1f5f9;
         border: 1px solid #cbd5e1;
         border-radius: 8px;
         padding: 1.25rem 1rem;
@@ -245,66 +242,21 @@
         height: fit-content;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
       }
-
-      .sidebar-header-box {
-        border-bottom: 1px solid #cbd5e1;
-        padding-bottom: 0.85rem;
-        margin-bottom: 1rem;
-      }
-
-      .sidebar-title {
-        font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #64748b; /* Gris medio formal */
-        margin: 1.25rem 0 0.45rem 0.5rem;
-        font-weight: 700;
-      }
-
-      /* Botones homogéneos y en armonía */
+      .sidebar-header-box { border-bottom: 1px solid #cbd5e1; padding-bottom: 0.85rem; margin-bottom: 1rem; }
+      .sidebar-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin: 1.25rem 0 0.45rem 0.5rem; font-weight: 700; }
       .sidebar-btn {
-        width: 100%;
-        text-align: left;
-        background: transparent;
-        color: #334155;
-        border: none;
-        padding: 9px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.88rem;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 3px;
-        transition: background-color 0.2s ease, color 0.2s ease;
+        width: 100%; text-align: left; background: transparent; color: #334155; border: none; padding: 9px 12px;
+        border-radius: 6px; cursor: pointer; font-size: 0.88rem; display: flex; align-items: center; gap: 10px;
+        margin-bottom: 3px; transition: background-color 0.2s ease, color 0.2s ease;
       }
-
-      .sidebar-btn:hover {
-        background-color: #e2e8f0; /* Sombreado gris sutil */
-        color: #0f172a;
-      }
-
-      .sidebar-btn.active {
-        background-color: #ffffff;
-        color: #004d40;
-        font-weight: 700;
-        border: 1px solid #cbd5e1;
-        border-left: 4px solid #00806A; /* Distintivo verde Conalep */
-      }
-
-      .banner-tabla-admin {
-        background: linear-gradient(135deg, #004d40 0%, #00594C 100%);
-        color: #ffffff;
-      }
+      .sidebar-btn:hover { background-color: #e2e8f0; color: #0f172a; }
+      .banner-tabla-admin { background: linear-gradient(135deg, #004d40 0%, #00594C 100%); color: #ffffff; }
     </style>
 
-    <!-- =========================================================================
-         VISTA C - PANEL DE ADMINISTRADOR DOCENTE (PANORÁMICO FULL WIDTH)
-         ========================================================================= -->
     <section id="vista-admin" class="hidden">
       <div class="admin-layout-container">
         
-        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL EN GRIS NEUTRO -->
+        <!-- COLUMNA IZQUIERDA: MENÚ LATERAL -->
         <aside class="sidebar-menu">
             <div class="sidebar-header-box">
                 <h3 style="color: #004d40; margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
@@ -313,80 +265,69 @@
             </div>
             
             <div class="sidebar-title" style="margin-top: 0;">Gestión de Aula</div>
-            <!-- CONECTADOS AL ENRUTADOR -->
             <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('dashboard')">🏠 Inicio (KPIs)</button>
             <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('mis-grupos')">👥 Mis Grupos</button>
-            <button class="sidebar-btn">🙋‍♂️ Asistencia Diaria</button>
+            <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('asistencia')">🙋‍♂️ Asistencia Diaria</button>
 
             <div class="sidebar-title">Módulo de Evaluación</div>
-            <!-- CONECTADOS AL ENRUTADOR -->
             <button class="sidebar-btn" onclick="window.cambiarVistaAdmin('catalogo')">📚 Catálogo de Tareas</button>
-            <button class="sidebar-btn">📥 Repositorio de Evidencias</button>
             
             <div class="sidebar-title">Seguridad y Sistema</div>
-            <button class="sidebar-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/TU_ID_AQUI/edit', '_blank')">
-                📊 Base de Datos
-            </button>
-            <button class="sidebar-btn" style="color: #dc2626;" onclick="location.reload()">
-                🚪 Cerrar Sesión
-            </button>
+            <button class="sidebar-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/TU_ID_AQUI/edit', '_blank')">📊 Base de Datos</button>
+            <button class="sidebar-btn" style="color: #dc2626;" onclick="location.reload()">🚪 Cerrar Sesión</button>
         </aside>
 
-        <!-- COLUMNA DERECHA: ÁREA DE TRABAJO PANORÁMICA -->
+        <!-- COLUMNA DERECHA: ÁREA DE TRABAJO (PANEL DINÁMICO) -->
         <div style="flex-grow: 1; width: calc(100% - 290px); min-width: 0;">
             <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
                 
-                <!-- ==========================================
-                     VISTA 0: DASHBOARD PRINCIPAL (KPIs y Unidades)
-                     ========================================== -->
+                <!-- VISTA 0: DASHBOARD PRINCIPAL -->
                 <div id="panel-dashboard-admin" class="admin-panel-vista">
-                    <div class="banner-tabla-admin" style="text-align: center; padding: 1.1rem; border-radius: 6px 6px 0 0; position: relative; border-bottom: 3px solid #00806A;">
-                        <h2 style="margin: 0; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 1px;">PANEL ADMINISTRATIVO DOCENTE</h2>
-                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #a7f3d0;">Gestión Académica • Panel de Control Docente</p>
+                    <div class="banner-tabla-admin" style="text-align: center; padding: 1.1rem; border-radius: 6px 6px 0 0; border-bottom: 3px solid #00806A;">
+                        <h2 style="margin: 0; font-size: 1.35rem; text-transform: uppercase;">PANEL ADMINISTRATIVO DOCENTE</h2>
                     </div>
 
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); background: #f8fafc; border: 1px solid #cbd5e1; border-top: none; margin-bottom: 2rem; border-radius: 0 0 6px 6px;">
                         <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
-                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Grupos Activos</div>
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Grupos Activos</div>
                             <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-grupos">--</div>
                         </div>
                         <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
-                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Total Estudiantes</div>
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Total Estudiantes</div>
                             <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-alumnos">--</div>
                         </div>
                         <div style="padding: 1rem; text-align: center; border-right: 1px solid #cbd5e1;">
-                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Tareas Activas</div>
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Tareas Activas</div>
                             <div style="font-size: 1.2rem; color: #004d40; font-weight: bold;" id="kpi-tareas">--</div>
                         </div>
                         <div style="padding: 1rem; text-align: center;">
-                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold; margin-bottom: 5px;">Tasa de Entrega</div>
+                            <div style="font-size: 0.8rem; color: #475569; font-weight: bold;">Tasa de Entrega</div>
                             <div style="font-size: 1.2rem; color: #00806A; font-weight: bold;" id="kpi-tasa">--</div>
                         </div>
                     </div>
 
                     <div style="background-color: var(--conalep-primary); padding: 12px 15px; border-radius: 6px 6px 0 0;">
-                        <h3 style="color: white; margin: 0; font-size: 1.1rem; letter-spacing: 1px;">CONTROL DE UNIDADES Y AVANCE TEMÁTICO</h3>
+                        <h3 style="color: white; margin: 0; font-size: 1.1rem;">CONTROL DE UNIDADES Y AVANCE TEMÁTICO</h3>
                     </div>
-                    <div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; overflow-x: auto; margin-bottom: 2rem;">
-                        <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+                    <div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; color: #475569; font-size: 0.9rem;">
                                     <th style="padding: 12px; text-align: left;">Unidad / Bloque</th>
                                     <th style="padding: 12px; text-align: left;">Tema Principal</th>
                                     <th style="padding: 12px; text-align: center;">Avance %</th>
                                     <th style="padding: 12px; text-align: center;">Estatus de Unidad</th>
+                                    <th style="padding: 12px; text-align: center;">Evidencias Asociadas</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-avance-unidades">
-                                <tr><td colspan="4" style="text-align: center; padding: 2rem;">⏳ Calculando avance...</td></tr>
+                                <tr><td colspan="5" style="text-align: center; padding: 2rem;">⏳ Calculando avance curricular...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- ==========================================
-                     VISTA 1: MIS GRUPOS ACTIVOS (Tarjetas)
-                     ========================================== -->
+                <!-- VISTA 1: MIS GRUPOS (Tarjetas) -->
                 <div id="panel-mis-grupos" class="admin-panel-vista hidden">
                     <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">📂 Tus Grupos Activos</h3>
                     <div id="contenedor-tarjetas-grupos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
@@ -394,15 +335,12 @@
                     </div>
                 </div>
 
-                <!-- ==========================================
-                     VISTA INTERNA: GESTIÓN DE UN GRUPO (Alumnos)
-                     ========================================== -->
+                <!-- VISTA INTERNA: GESTIÓN DE UN GRUPO (Alumnos) -->
                 <div id="panel-gestion-interno" class="admin-panel-vista hidden">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem;">
                         <h3 id="titulo-gestion-grupo" style="color: var(--conalep-dark); margin: 0;">👥 Panel de Gestión</h3>
                         <button class="btn-conalep" style="background-color: #64748b; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="window.cambiarVistaAdmin('mis-grupos')">⬅️ Volver a Grupos</button>
                     </div>
-
                     <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
                         <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 700px;">
                             <thead>
@@ -422,9 +360,7 @@
                     </div>
                 </div>
 
-                <!-- ==========================================
-                     VISTA 2: CATÁLOGO DE TAREAS
-                     ========================================== -->
+                <!-- VISTA 2: CATÁLOGO DE TAREAS -->
                 <div id="panel-catalogo-tareas" class="admin-panel-vista hidden">
                     <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">📚 Catálogo General de Tareas</h3>
                     <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto; margin-top: 1.5rem;">
@@ -444,11 +380,19 @@
                     </div>
                 </div>
 
+                <!-- VISTA 3: ASISTENCIA -->
+                <div id="panel-asistencia" class="admin-panel-vista hidden">
+                    <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">🙋‍♂️ Asistencia Diaria</h3>
+                    <p style="color: var(--text-muted); margin-top: 1rem;">Módulo de asistencia en construcción.</p>
+                </div>
+
             </div>
         </div>
 
       </div>
-    </section>    <!-- Script principal con rompe-cachés -->
-<script src="js/portal-dashboard.js?v=19"></script>
+    </section>
+
+    <!-- ROMPE-CACHÉ V20 PARA FORZAR LA DESCARGA DEL NUEVO JS -->
+    <script src="js/portal-dashboard.js?v=20"></script>
 </body>
 </html>
