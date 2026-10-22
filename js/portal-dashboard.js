@@ -585,49 +585,81 @@ window.cargarAsistenciasDia = function() {
 
 window.filtrarTablaAsistencia = function() {
     const tbody = document.getElementById('tabla-asistencia-dia');
-    const filtroG = document.getElementById('filtro-grupo-asis')?.value || "TODOS";
-    const filtroM = document.getElementById('filtro-mod-asis')?.value || "TODOS";
+    if (!tbody) return;
 
-    let datosFiltrados = window.datosAsistenciaDia;
+    const fGrupo = document.getElementById('filtro-grupo-asis')?.value || "TODOS";
+    const fMod = document.getElementById('filtro-mod-asis')?.value || "TODOS";
 
-    if (filtroG !== "TODOS") datosFiltrados = datosFiltrados.filter(d => String(d.grupo) === filtroG);
-    if (filtroM !== "TODOS") datosFiltrados = datosFiltrados.filter(d => String(d.mod) === filtroM);
+    let html = '';
+    let countHoy = 0, countPres = 0, countDual = 0, countFuera = 0;
 
-    // Calcular KPIs
-    let total = datosFiltrados.length;
-    let pres = datosFiltrados.filter(d => d.estatus.includes("Plantel")).length;
-    let dual = datosFiltrados.filter(d => d.estatus.includes("Remoto")).length;
-    let fuera = datosFiltrados.filter(d => d.estatus.includes("Fuera")).length;
+    const datos = window.datosAsistenciaDia || [];
+    
+    // DEBUG: Imprimir en consola qué datos estamos recibiendo del Sheets
+    console.log("Datos para renderizar en tabla:", datos);
 
-    document.getElementById('kpi-asis-hoy').innerText = total;
-    document.getElementById('kpi-asis-pres').innerText = pres;
-    document.getElementById('kpi-asis-dual').innerText = dual;
-    document.getElementById('kpi-asis-fuera').innerText = fuera;
+    datos.forEach(asis => {
+        // Limpiamos los textos por si vienen con espacios extra del Sheets
+        const grupoAsis = String(asis.grupo).replace('Grupo ', '').trim();
+        const modAsis = String(asis.modalidad || asis.mod || "Presencial").trim(); 
+        const estatus = String(asis.estatus).trim();
 
-    if (datosFiltrados.length > 0) {
-        tbody.innerHTML = datosFiltrados.map(d => {
-            let colorSt = d.estatus.includes("Plantel") ? "#16a34a" : (d.estatus.includes("Remoto") ? "#0284c7" : "#dc2626");
-            let bgSt = d.estatus.includes("Plantel") ? "#dcfce7" : (d.estatus.includes("Remoto") ? "#e0f2fe" : "#fee2e2");
-            
-            return `
-            <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                <td style="padding: 10px;"><strong>${d.nombre}</strong><br><small style="color: var(--text-muted);">${d.matricula}</small></td>
-                <td style="padding: 10px; text-align: center; font-weight: bold; color: var(--conalep-dark);">G-${d.grupo}</td>
-                <td style="padding: 10px; text-align: center;"><span style="background: ${d.mod==='Dual' ? '#fef3c7' : '#f1f5f9'}; color: ${d.mod==='Dual' ? '#b45309' : '#475569'}; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${d.mod}</span></td>
-                <td style="padding: 10px; text-align: center; font-family: monospace; color: #475569;">${d.hora}</td>
-                <td style="padding: 10px; text-align: center;"><span style="background: ${bgSt}; color: ${colorSt}; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">${d.estatus}</span></td>
-                <td style="padding: 10px; text-align: center;">
-                    <div style="background: #e2e8f0; border-radius: 8px; width: 100%; height: 8px; margin-bottom: 4px; overflow: hidden;">
-                        <div style="background: ${d.global >= 80 ? '#16a34a' : '#d97706'}; width: ${d.global}%; height: 100%;"></div>
-                    </div>
-                    <span style="font-size: 0.8rem; font-weight: bold; color: #334155;">${d.global}%</span>
-                </td>
-            </tr>
+        // Evaluamos si el alumno pasa los filtros de la barra superior
+        const pasaGrupo = (fGrupo === "TODOS" || fGrupo === grupoAsis);
+        const pasaMod = (fMod === "TODOS" || fMod === modAsis);
+
+        if (pasaGrupo && pasaMod) {
+            countHoy++;
+            if (modAsis === "Presencial") countPres++;
+            if (modAsis === "Dual") countDual++;
+            if (estatus.includes("Fuera") || estatus.includes("⚠️")) countFuera++;
+
+            // Asignar colores según el estatus
+            let badgeEstatus = `<span style="background: #e2e8f0; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">${estatus}</span>`;
+            if (estatus.includes("Plantel") || estatus.includes("✅")) {
+                badgeEstatus = `<span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
+            } else if (estatus.includes("Remoto") || estatus.includes("App")) {
+                badgeEstatus = `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
+            } else if (estatus.includes("Fuera") || estatus.includes("⚠️")) {
+                badgeEstatus = `<span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
+            }
+
+            html += `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 12px;">
+                        <strong style="color: var(--conalep-dark);">${asis.nombre}</strong><br>
+                        <small style="color: var(--text-muted);">${asis.matricula}</small>
+                    </td>
+                    <td style="padding: 12px; text-align: center; font-weight: bold; color: var(--conalep-accent);">G-${grupoAsis}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        <span style="background: ${modAsis === 'Dual' ? '#fef9c3' : '#f1f5f9'}; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">${modAsis}</span>
+                    </td>
+                    <td style="padding: 12px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">${asis.hora}</td>
+                    <td style="padding: 12px; text-align: center;">${badgeEstatus}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <div style="background: #e2e8f0; width: 60px; height: 6px; border-radius: 3px; overflow: hidden;">
+                                <div style="background: var(--conalep-primary); height: 100%; width: ${asis.global}%;"></div>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: bold;">${asis.global}%</span>
+                        </div>
+                    </td>
+                </tr>
             `;
-        }).join('');
-    } else {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay check-ins para este grupo/modalidad en la fecha seleccionada.</td></tr>`;
+        }
+    });
+
+    if (html === '') {
+        html = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay check-ins para este grupo/modalidad en la fecha seleccionada.</td></tr>`;
     }
+
+    tbody.innerHTML = html;
+
+    // Actualizamos los numeritos de arriba
+    document.getElementById('kpi-asis-hoy').innerText = countHoy;
+    document.getElementById('kpi-asis-pres').innerText = countPres;
+    document.getElementById('kpi-asis-dual').innerText = countDual;
+    document.getElementById('kpi-asis-fuera').innerText = countFuera;
 };
 // ==========================================
 // SECCIÓN 7.1: EXPORTACIÓN DE REPORTE A PDF
