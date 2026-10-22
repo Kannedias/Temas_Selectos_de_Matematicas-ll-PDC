@@ -549,16 +549,15 @@ window.cargarAsistenciasDia = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            // Mapeamos los datos reales del servidor
+            // Reemplazamos los datos simulados por los reales
             window.datosAsistenciaDia = data.asistencias.map(asis => ({
                 matricula: asis.matricula,
                 nombre: asis.nombre,
                 grupo: asis.grupo,
-                mod: asis.mod,
+                modalidad: asis.modalidad, // 👈 Se llama modalidad, no mod
                 hora: asis.hora,
                 estatus: asis.estatus,
-                // Nota: Por ahora simulamos el KPI global en lo que tienes meses de historial para cruzarlo
-                global: Math.floor(Math.random() * (100 - 80 + 1)) + 80 
+                global: Math.floor(Math.random() * (100 - 80 + 1)) + 80 // Dato global aún en simulación temporal
             }));
 
             // Llenar dinámicamente los grupos en el selector si no están llenos
