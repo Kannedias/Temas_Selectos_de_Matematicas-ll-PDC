@@ -1,19 +1,20 @@
 // =======================================================
-// URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
+// CONFIGURACIÓN PRINCIPAL
 // =======================================================
+// URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgWAKxba4gm5BWu73EHsy02jChscCB4eQmHPQL-4GrfIdHgkb4Y09RalPPaLbAs3woQQ/exec"; 
 
-let miGrafica = null;
+// =======================================================
+// VARIABLES GLOBALES DEL SISTEMA
+// =======================================================
+let miGrafica = null; // Instancia de Chart.js
+window.listaGlobalAlumnos = []; // Almacena datos descargados de Sheets
+window.grupoSeleccionadoAdmin = null; // Memoria del grupo activo
+window.alumnoSeleccionadoAdmin = null; // Memoria del alumno en evaluación
 
-// ==========================================
-// VARIABLES GLOBALES PARA PANEL ADMIN
-// ==========================================
-window.listaGlobalAlumnos = []; 
-window.grupoSeleccionadoAdmin = null;
-
-// ==========================================
-// 1. LÓGICA DE INICIO DE SESIÓN
-// ==========================================
+// =======================================================
+// SECCIÓN 1: LÓGICA DE INICIO DE SESIÓN
+// =======================================================
 window.iniciarSesion = function() {
     const matricula = document.getElementById('input-matricula').value.trim();
 
@@ -22,17 +23,20 @@ window.iniciarSesion = function() {
         return;
     }
 
+    // Intercepción para la cuenta Maestra (Docente)
     if (matricula.toUpperCase() === "ADMIN-JL") {
         window.inicializarPanelAdmin();
         return; 
     }
 
+    // Botón en estado de carga
     const btnIngresar = document.querySelector('#vista-login button') || document.getElementById('btn-ingresar');
     if (btnIngresar) {
         btnIngresar.innerText = "⏳ Consultando...";
         btnIngresar.disabled = true;
     }
 
+    // Petición al Backend
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "login", matricula: matricula })
@@ -40,6 +44,7 @@ window.iniciarSesion = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
+            // Llenado de Ficha de Identidad
             document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${data.primerNombre}`;
             const lblNombre = document.getElementById('lbl-nombre');
             if(lblNombre) lblNombre.innerText = `${data.nombreCompleto}`;
@@ -50,6 +55,7 @@ window.iniciarSesion = function() {
             const lblGrupo = document.getElementById('lbl-grupo');
             if(lblGrupo) lblGrupo.innerText = `Grupo ${data.grupo}`;
 
+            // Renderizado de Foto de Perfil
             const imgPerfil = document.getElementById('img-perfil');
             const emojiCamara = document.getElementById('emoji-camara');
             
@@ -58,10 +64,12 @@ window.iniciarSesion = function() {
                 if(emojiCamara) emojiCamara.style.display = 'none';
             }
 
+            // Almacenamiento en Memoria de Sesión
             sessionStorage.setItem('matriculaActiva', matricula);
             sessionStorage.setItem('grupoActivo', data.grupo);
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
 
+            // Cambio de Vistas (Ocultar Login -> Mostrar Dashboard)
             document.getElementById('vista-login').classList.add('hidden');
             const vistaDash = document.getElementById('vista-dashboard');
             if(vistaDash) vistaDash.classList.remove('hidden');
@@ -69,6 +77,7 @@ window.iniciarSesion = function() {
             const userMenu = document.getElementById('user-menu');
             if(userMenu) userMenu.classList.remove('hidden');
             
+            // Disparador de carga de datos pesados (Historial y Gráfica)
             if(typeof window.consultarAvanceReal === 'function') {
                 window.consultarAvanceReal(matricula);
             }
@@ -80,14 +89,15 @@ window.iniciarSesion = function() {
     .finally(() => { if (btnIngresar) { btnIngresar.innerText = "🚀 Ingresar al Portal"; btnIngresar.disabled = false; }});
 };
 
-// ==========================================
-// 2. CONSULTA DE ALUMNO Y GRÁFICAS
-// ==========================================
+// =======================================================
+// SECCIÓN 2: GRÁFICAS DE DESEMPEÑO DEL ALUMNO
+// =======================================================
 window.dibujarGrafica = function(parcialesData) {
     const canvas = document.getElementById('graficaParciales');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
+    // Destruir gráfica anterior si existe para evitar solapamientos
     if (window.miGrafica) window.miGrafica.destroy();
 
     let p1 = parcialesData && parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
@@ -101,8 +111,8 @@ window.dibujarGrafica = function(parcialesData) {
     let coloresGrafica = ['#00806A', '#d97706', '#94a3b8']; // Verde, Ámbar, Azul Grisáceo
 
     if (p1 === 0 && p2 === 0 && p3 === 0) {
-        datosGrafica = [25, 30, 45]; // La ponderación base que acordamos para rellenar el hueco
-        coloresGrafica = ['#e2e8f0', '#e2e8f0', '#e2e8f0']; // Todo en gris pálido (sin avance)
+        datosGrafica = [25, 30, 45]; // Ponderación base de relleno
+        coloresGrafica = ['#e2e8f0', '#e2e8f0', '#e2e8f0']; // Todo en gris pálido
     }
 
     window.miGrafica = new Chart(ctx, {
@@ -142,9 +152,9 @@ window.dibujarGrafica = function(parcialesData) {
     });
 };
 
-// ==========================================
-// 3. ENRUTADOR DE VISTAS (ADMINISTRADOR)
-// ==========================================
+// =======================================================
+// SECCIÓN 3: ENRUTADOR DE VISTAS (PANEL ADMINISTRADOR)
+// =======================================================
 window.inicializarPanelAdmin = function() {
     document.getElementById('vista-login')?.classList.add('hidden');
     document.getElementById('vista-admin')?.classList.remove('hidden');
@@ -152,21 +162,9 @@ window.inicializarPanelAdmin = function() {
     const welcome = document.getElementById('welcome-name');
     if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
     
+    // Carga de datos base de Google Sheets
     window.cargarDatosAdministrativos();
-    window.cambiarVistaAdmin('dashboard'); // Vista por defecto
-};
-
-// ==========================================
-// 3. ENRUTADOR DE VISTAS (ADMINISTRADOR)
-// ==========================================
-window.inicializarPanelAdmin = function() {
-    document.getElementById('vista-login')?.classList.add('hidden');
-    document.getElementById('vista-admin')?.classList.remove('hidden');
-    document.getElementById('user-menu')?.classList.remove('hidden');
-    const welcome = document.getElementById('welcome-name');
-    if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
-    
-    window.cargarDatosAdministrativos();
+    // Renderizado de pestaña por defecto
     window.cambiarVistaAdmin('dashboard'); 
 };
 
@@ -180,7 +178,6 @@ window.cambiarVistaAdmin = function(vistaDestino) {
         document.getElementById('panel-mis-grupos')?.classList.remove('hidden');
         window.renderizarTarjetasGrupos(); 
     } else if (vistaDestino === 'lista-alumnos') {
-        // NUEVA VISTA
         document.getElementById('panel-lista-alumnos')?.classList.remove('hidden');
     } else if (vistaDestino === 'gestion-interno') {
         document.getElementById('panel-gestion-interno')?.classList.remove('hidden');
@@ -192,9 +189,9 @@ window.cambiarVistaAdmin = function(vistaDestino) {
     }
 };
 
-// ==========================================
-// 4. LÓGICA DE DIBUJADO Y FLUJOS (ADMIN)
-// ==========================================
+// =======================================================
+// SECCIÓN 4: LÓGICA DE DIBUJADO Y EXTRACCIÓN (ADMIN)
+// =======================================================
 window.cargarDatosAdministrativos = function() {
     fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "consultar", matricula: "ADMIN-JL" }) })
     .then(res => res.json())
@@ -210,6 +207,8 @@ window.cargarDatosAdministrativos = function() {
 window.renderizarTarjetasGrupos = function() {
     const contenedor = document.getElementById('contenedor-tarjetas-grupos');
     if (!contenedor || !window.listaGlobalAlumnos) return;
+    
+    // Extracción de Grupos Únicos sin duplicados
     const gruposUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
 
     if (gruposUnicos.length === 0) {
@@ -233,42 +232,40 @@ window.renderizarTarjetasGrupos = function() {
     }).join('');
 };
 
-// ==========================================
-// FLUJO 1: ABRIR GRUPO -> MOSTRAR ALUMNOS
-// ==========================================
+// =======================================================
+// SECCIÓN 5: GESTIÓN DE EVALUACIONES Y CATÁLOGOS (DOCENTE)
+// =======================================================
+
+// --- FLUJO 5.1: ABRIR GRUPO Y LISTAR ALUMNOS ---
 window.abrirGestionGrupo = function(grupoId) {
     window.grupoSeleccionadoAdmin = grupoId;
     window.cambiarVistaAdmin('lista-alumnos'); 
     
     document.getElementById('titulo-lista-alumnos').innerText = `👥 Lista de Alumnos: Grupo ${grupoId}`;
     
-    // Limpiamos los filtros cada vez que entramos a un nuevo grupo
+    // Limpieza de filtros
     const buscador = document.getElementById('buscador-lista-alumnos');
     const selectorMod = document.getElementById('filtro-modalidad-lista');
     if (buscador) buscador.value = "";
     if (selectorMod) selectorMod.value = "TODOS";
 
-    // Llamamos a la función que pinta y filtra
     window.renderizarListaAlumnosGrupo();
 };
 
+// --- FLUJO 5.2: FILTRADO DE ALUMNOS (BARRA DE BÚSQUEDA) ---
 window.renderizarListaAlumnosGrupo = function() {
     const tbody = document.getElementById('tabla-lista-alumnos-grupo');
     if (!tbody || !window.grupoSeleccionadoAdmin) return;
 
-    // Tomamos lo que dice el buscador y el selector
     const textoBusqueda = (document.getElementById('buscador-lista-alumnos')?.value || "").toLowerCase();
     const modalidadFiltro = document.getElementById('filtro-modalidad-lista')?.value || "TODOS";
 
-    // 1. Filtramos primero por el grupo exacto
     let alumnosDelGrupo = window.listaGlobalAlumnos.filter(a => String(a.grupo).trim() === String(window.grupoSeleccionadoAdmin).trim());
 
-    // 2. Filtramos por Modalidad
     if (modalidadFiltro !== "TODOS") {
         alumnosDelGrupo = alumnosDelGrupo.filter(a => String(a.modalidad).includes(modalidadFiltro));
     }
 
-    // 3. Filtramos por Texto (Nombre o Matrícula)
     if (textoBusqueda !== "") {
         alumnosDelGrupo = alumnosDelGrupo.filter(a => 
             String(a.nombre).toLowerCase().includes(textoBusqueda) || 
@@ -276,7 +273,6 @@ window.renderizarListaAlumnosGrupo = function() {
         );
     }
 
-    // Dibujamos el resultado final
     if (alumnosDelGrupo.length > 0) {
         tbody.innerHTML = alumnosDelGrupo.map(a => `
             <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
@@ -293,7 +289,7 @@ window.renderizarListaAlumnosGrupo = function() {
     }
 };
 
-// FLUJO 2: ABRIR ALUMNO -> MOSTRAR SUS TAREAS Y CALIFICAR
+// --- FLUJO 5.3: ABRIR ALUMNO Y VER ENTREGAS INDIVIDUALES ---
 window.abrirPanelAlumno = function(matricula, nombre) {
     window.alumnoSeleccionadoAdmin = matricula; 
     window.cambiarVistaAdmin('gestion-interno'); 
@@ -355,27 +351,23 @@ window.guardarCalificacionFila = function(filaFisica) {
     }).catch(() => alert("⚠️ Error de comunicación con el servidor."));
 };
 
-// ==========================================
-// 5. CATÁLOGO Y RENDERIZADO DE UNIDADES
-// ==========================================
+// --- FLUJO 5.4: DIBUJADO DE CATÁLOGO GENERAL ---
 window.filtrarCatalogoGeneral = function() {
     const tbody = document.getElementById('tabla-catalogo-general');
     if (!tbody) return;
 
     if (window.catalogoGeneralTareas && window.catalogoGeneralTareas.length > 0) {
         tbody.innerHTML = window.catalogoGeneralTareas.map(t => {
-            // Evaluamos lo que dice Google Sheets y definimos el estado visual
+            // Evaluamos Estatus Base de Datos
             let estadoCrudo = String(t.estatus).toUpperCase().trim();
             let estadoActual = "ACTIVA"; // Default
             
             if (estadoCrudo === "CONCLUIDA" || estadoCrudo === "TERMINADA" || estadoCrudo === "FALSE") estadoActual = "TERMINADA";
             if (estadoCrudo === "REABIERTA") estadoActual = "REABIERTA";
 
-            // Colores visuales
             let colorEstatus = estadoActual === 'ACTIVA' ? '#16a34a' : (estadoActual === 'REABIERTA' ? '#0284c7' : '#64748b');
             let txtEstatus = estadoActual === 'ACTIVA' ? '🟢 ACTIVA' : (estadoActual === 'REABIERTA' ? '🔄 REABIERTA' : '🔒 TERMINADA');
 
-            // Magia: Pre-seleccionar la opción correcta en el menú desplegable
             let selActiva = estadoActual === 'ACTIVA' ? 'selected' : '';
             let selTerminada = estadoActual === 'TERMINADA' ? 'selected' : '';
             let selReabierta = estadoActual === 'REABIERTA' ? 'selected' : '';
@@ -386,7 +378,6 @@ window.filtrarCatalogoGeneral = function() {
                 <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${t.grupos || 'Todos'}</span></td>
                 <td style="padding: 10px; text-align: center; font-weight: bold; color: ${colorEstatus}">${txtEstatus}</td>
                 
-                <!-- NUEVA BARRA DE OPCIONES (SELECT) -->
                 <td style="padding: 10px; text-align: center;">
                     <select id="estatus-cat-${t.id}" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; cursor: pointer;">
                         <option value="SÍ" ${selActiva}>Activa</option>
@@ -395,7 +386,6 @@ window.filtrarCatalogoGeneral = function() {
                     </select>
                 </td>
                 
-                <!-- BOTÓN DE GUARDAR INDIVIDUAL -->
                 <td style="padding: 10px; text-align: center;">
                     <button class="btn-conalep" style="background-color: #0f172a; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusOpciones('${t.id}')">💾 Guardar</button>
                 </td>
@@ -420,8 +410,8 @@ window.cambiarEstatusOpciones = function(idTarea) {
     .then(data => {
         if (data.status === "éxito") {
             alert(`✅ La tarea ${idTarea} se guardó exitosamente con el estado: ${nuevoEstatus === 'SÍ' ? 'ACTIVA' : nuevoEstatus}`);
-            window.cargarDatosAdministrativos(); // Recarga en silencio
-            setTimeout(() => window.cambiarVistaAdmin('catalogo'), 1500); // Refresca la tabla
+            window.cargarDatosAdministrativos(); // Recarga silenciosa
+            setTimeout(() => window.cambiarVistaAdmin('catalogo'), 1500); 
         } else {
             alert("❌ Error: " + data.mensaje);
         }
@@ -429,9 +419,7 @@ window.cambiarEstatusOpciones = function(idTarea) {
     .catch(() => alert("⚠️ Error de comunicación con el servidor."));
 };
 
-// ==========================================
-// FUNCIÓN PARA CREAR NUEVA TAREA
-// ==========================================
+// --- FLUJO 5.5: CREACIÓN DE NUEVAS TAREAS ---
 window.publicarNuevaTarea = function() {
     const idTarea = document.getElementById('nt-id').value.trim();
     const unidad = document.getElementById('nt-unidad').value.trim();
@@ -469,9 +457,10 @@ window.publicarNuevaTarea = function() {
     .catch(() => alert("⚠️ Error de comunicación con el servidor."))
     .finally(() => { btn.innerText = "🚀 Publicar Actividad Oficial"; btn.disabled = false; });
 };
-// ==========================================
-// 6. VENTANILLA ALUMNOS (FOTO Y ARCHIVOS)
-// ==========================================
+
+// =======================================================
+// SECCIÓN 6: VENTANILLA DE ESTUDIANTES (ENTREGAS)
+// =======================================================
 window.subirFotoPerfil = function() {
     const fileInput = document.getElementById('input-foto-perfil');
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) return;
