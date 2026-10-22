@@ -459,10 +459,67 @@
                     </div>
                 </div>
 
-                <!-- VISTA 3: ASISTENCIA -->
+                <!-- ==========================================
+                     VISTA 3: PANEL DE ASISTENCIA DIARIA
+                     ========================================== -->
                 <div id="panel-asistencia" class="admin-panel-vista hidden">
-                    <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">🙋‍♂️ Asistencia Diaria</h3>
-                    <p style="color: var(--text-muted); margin-top: 1rem;">Módulo de asistencia en construcción.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                        <h3 style="color: var(--conalep-dark); margin: 0;">📅 Control de Asistencia y Check-In</h3>
+                        <button class="btn-conalep" style="background-color: var(--conalep-accent);" onclick="window.cargarAsistenciasDia()">🔄 Actualizar Hoy</button>
+                    </div>
+
+                    <!-- TARJETAS DE MÉTRICAS RÁPIDAS -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center;">
+                            <span style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">Check-ins de Hoy</span>
+                            <strong id="kpi-asis-hoy" style="font-size: 1.5rem; color: var(--conalep-dark);">--</strong>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center;">
+                            <span style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">En Plantel (Presenciales)</span>
+                            <strong id="kpi-asis-pres" style="font-size: 1.5rem; color: #16a34a;">--</strong>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center;">
+                            <span style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">Remotos (Duales)</span>
+                            <strong id="kpi-asis-dual" style="font-size: 1.5rem; color: #0284c7;">--</strong>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center;">
+                            <span style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">Fuera de Rango ⚠️</span>
+                            <strong id="kpi-asis-fuera" style="font-size: 1.5rem; color: #dc2626;">--</strong>
+                        </div>
+                    </div>
+
+                    <!-- CONTROLES DE FILTRO -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <select id="filtro-grupo-asis" onchange="window.filtrarTablaAsistencia()" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            <option value="TODOS">Todos los Grupos</option>
+                            <!-- Los grupos se llenarán solos -->
+                        </select>
+                        <select id="filtro-mod-asis" onchange="window.filtrarTablaAsistencia()" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            <option value="TODOS">Todas las Modalidades</option>
+                            <option value="Presencial">Solo Presencial</option>
+                            <option value="Dual">Solo Dual</option>
+                        </select>
+                        <input type="date" id="filtro-fecha-asis" onchange="window.cargarAsistenciasDia()" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;" title="Selecciona un día anterior">
+                    </div>
+
+                    <!-- TABLA PRINCIPAL DE ASISTENCIA -->
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto;">
+                        <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 700px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                    <th style="padding: 12px; text-align: left;">Alumno / Matrícula</th>
+                                    <th style="padding: 12px; text-align: center;">Grupo</th>
+                                    <th style="padding: 12px; text-align: center;">Modalidad</th>
+                                    <th style="padding: 12px; text-align: center;">Hora Check-In</th>
+                                    <th style="padding: 12px; text-align: center;">Estatus Radar GPS</th>
+                                    <th style="padding: 12px; text-align: center;">Asistencia Global</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-asistencia-dia">
+                                <tr><td colspan="6" style="text-align: center; padding: 2rem;">Selecciona una fecha para consultar el radar...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>
