@@ -549,19 +549,15 @@ window.cargarAsistenciasDia = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            .then(data => {
-            if (data.status === "éxito") {
             // 🕵️‍♂️ IMPRIMIR EL REPORTE DEL ESPÍA
             console.log("🔍 REPORTE DEL ESCÁNER DE SHEETS:", data.escaner);
 
             // Reemplazamos los datos simulados por los reales
             window.datosAsistenciaDia = data.asistencias.map(asis => ({
-            // Reemplazamos los datos simulados por los reales
-            window.datosAsistenciaDia = data.asistencias.map(asis => ({
                 matricula: asis.matricula,
                 nombre: asis.nombre,
                 grupo: asis.grupo,
-                modalidad: asis.modalidad, // 👈 Se llama modalidad, no mod
+                modalidad: asis.modalidad, 
                 hora: asis.hora,
                 estatus: asis.estatus,
                 global: Math.floor(Math.random() * (100 - 80 + 1)) + 80 // Dato global aún en simulación temporal
