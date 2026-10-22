@@ -562,7 +562,6 @@ window.cargarAsistenciasDia = function() {
                 estatus: asis.estatus,
                 global: Math.floor(Math.random() * (100 - 80 + 1)) + 80 // Dato global aún en simulación temporal
             }));
-
             // Llenar dinámicamente los grupos en el selector si no están llenos
             const selectorGrupos = document.getElementById('filtro-grupo-asis');
             if (selectorGrupos && selectorGrupos.options.length <= 1 && window.listaGlobalAlumnos) {
