@@ -81,6 +81,12 @@
                     <h3 id="lbl-nombre" style="color: var(--conalep-dark); margin: 0; font-size: 1.1rem;">Nombre del Alumno</h3>
                     <p style="color: var(--text-muted); font-size: 0.85rem; margin: 5px 0;">Matrícula: <strong id="lbl-matricula">--</strong></p>
                     <span id="lbl-grupo" style="background: var(--conalep-primary); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 5px; display: inline-block;">Grupo --</span>
+                    
+                    <!-- NUEVO BOTÓN DE CHECK-IN -->
+                    <button id="btn-checkin" onclick="window.marcarAsistencia()" style="width: 100%; margin-top: 15px; background: #0f172a; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                        📍 Registrar Asistencia (Hoy)
+                    </button>
+                    <div id="msg-checkin" style="font-size: 0.75rem; margin-top: 5px; font-weight: bold;"></div>
                 </div>
 
                 <!-- 2. Gráfica de Avance y Desglose -->
