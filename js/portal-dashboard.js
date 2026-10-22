@@ -71,6 +71,7 @@ window.iniciarSesion = function() {
 
             // Cambio de Vistas (Ocultar Login -> Mostrar Dashboard)
             document.getElementById('vista-login').classList.add('hidden');
+            window.verificarCheckinPrevio(matricula);
             const vistaDash = document.getElementById('vista-dashboard');
             if(vistaDash) vistaDash.classList.remove('hidden');
             
@@ -809,21 +810,7 @@ window.marcarAsistencia = function() {
     }
 };
 
-window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
-    const btn = document.getElementById('btn-checkin');
-    const msg = document.getElementById('msg-checkin');
-
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            accion: "registrar_asistencia",
-            matricula: mat,
-            nombre: nom,
-            grupo: gru,
-            modalidad: mod,
-            estatus: estatus
-        })
-    })
+window.enviarRegistroAsistencia
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
