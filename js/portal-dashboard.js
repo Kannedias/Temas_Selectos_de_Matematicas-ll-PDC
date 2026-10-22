@@ -518,3 +518,97 @@ window.subirEvidencia = function() {
     };
     reader.readAsDataURL(file);
 };
+// ==========================================
+// SECCIÓN 7: PANEL DE ASISTENCIA Y RADAR (ADMIN)
+// ==========================================
+window.datosAsistenciaDia = []; 
+
+window.cargarAsistenciasDia = function() {
+    const tbody = document.getElementById('tabla-asistencia-dia');
+    if (!tbody) return;
+
+    // Ponemos la fecha de hoy por defecto si el input está vacío
+    const inputFecha = document.getElementById('filtro-fecha-asis');
+    if (inputFecha && !inputFecha.value) {
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        inputFecha.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    const fechaSeleccionada = inputFecha.value;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem;">📡 Escaneando registros del ${fechaSeleccionada}...</td></tr>`;
+
+    // 🚀 AQUÍ: Haremos la petición fetch() hacia una nueva acción en tu backend.gs ("consultar_asistencia")
+    // Por ahora, simularemos que descargamos los datos para probar la interfaz visual interactiva.
+    
+    // Simulación de respuesta del servidor (Reemplazaremos esto en el siguiente paso)
+    setTimeout(() => {
+        window.datosAsistenciaDia = [
+            { matricula: "242970437-8", nombre: "Jhannia Sayeli Álvarez", grupo: "505", mod: "Presencial", hora: "07:15 AM", estatus: "📍 En Plantel", global: 92 },
+            { matricula: "242970030-1", nombre: "Jesús Israel Acevedo", grupo: "505", mod: "Dual", hora: "07:18 AM", estatus: "💻 App Activa (Remoto)", global: 100 },
+            { matricula: "230910452-3", nombre: "Carlos Mendoza Pech", grupo: "508", mod: "Presencial", hora: "07:25 AM", estatus: "⚠️ Fuera de Rango", global: 85 }
+        ];
+        
+        // Llenar dinámicamente los grupos en el filtro
+        const selectorGrupos = document.getElementById('filtro-grupo-asis');
+        if (selectorGrupos && selectorGrupos.options.length <= 1 && window.listaGlobalAlumnos) {
+             const gUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
+             gUnicos.sort().forEach(g => {
+                 let opt = document.createElement("option");
+                 opt.value = g; opt.text = "Grupo " + g;
+                 selectorGrupos.add(opt);
+             });
+        }
+        
+        window.filtrarTablaAsistencia();
+    }, 1000);
+};
+
+window.filtrarTablaAsistencia = function() {
+    const tbody = document.getElementById('tabla-asistencia-dia');
+    const filtroG = document.getElementById('filtro-grupo-asis')?.value || "TODOS";
+    const filtroM = document.getElementById('filtro-mod-asis')?.value || "TODOS";
+
+    let datosFiltrados = window.datosAsistenciaDia;
+
+    if (filtroG !== "TODOS") datosFiltrados = datosFiltrados.filter(d => String(d.grupo) === filtroG);
+    if (filtroM !== "TODOS") datosFiltrados = datosFiltrados.filter(d => String(d.mod) === filtroM);
+
+    // Calcular KPIs
+    let total = datosFiltrados.length;
+    let pres = datosFiltrados.filter(d => d.estatus.includes("Plantel")).length;
+    let dual = datosFiltrados.filter(d => d.estatus.includes("Remoto")).length;
+    let fuera = datosFiltrados.filter(d => d.estatus.includes("Fuera")).length;
+
+    document.getElementById('kpi-asis-hoy').innerText = total;
+    document.getElementById('kpi-asis-pres').innerText = pres;
+    document.getElementById('kpi-asis-dual').innerText = dual;
+    document.getElementById('kpi-asis-fuera').innerText = fuera;
+
+    if (datosFiltrados.length > 0) {
+        tbody.innerHTML = datosFiltrados.map(d => {
+            let colorSt = d.estatus.includes("Plantel") ? "#16a34a" : (d.estatus.includes("Remoto") ? "#0284c7" : "#dc2626");
+            let bgSt = d.estatus.includes("Plantel") ? "#dcfce7" : (d.estatus.includes("Remoto") ? "#e0f2fe" : "#fee2e2");
+            
+            return `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 10px;"><strong>${d.nombre}</strong><br><small style="color: var(--text-muted);">${d.matricula}</small></td>
+                <td style="padding: 10px; text-align: center; font-weight: bold; color: var(--conalep-dark);">G-${d.grupo}</td>
+                <td style="padding: 10px; text-align: center;"><span style="background: ${d.mod==='Dual' ? '#fef3c7' : '#f1f5f9'}; color: ${d.mod==='Dual' ? '#b45309' : '#475569'}; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem;">${d.mod}</span></td>
+                <td style="padding: 10px; text-align: center; font-family: monospace; color: #475569;">${d.hora}</td>
+                <td style="padding: 10px; text-align: center;"><span style="background: ${bgSt}; color: ${colorSt}; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">${d.estatus}</span></td>
+                <td style="padding: 10px; text-align: center;">
+                    <div style="background: #e2e8f0; border-radius: 8px; width: 100%; height: 8px; margin-bottom: 4px; overflow: hidden;">
+                        <div style="background: ${d.global >= 80 ? '#16a34a' : '#d97706'}; width: ${d.global}%; height: 100%;"></div>
+                    </div>
+                    <span style="font-size: 0.8rem; font-weight: bold; color: #334155;">${d.global}%</span>
+                </td>
+            </tr>
+            `;
+        }).join('');
+    } else {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay check-ins para este grupo/modalidad en la fecha seleccionada.</td></tr>`;
+    }
+};
