@@ -364,32 +364,53 @@ window.filtrarCatalogoGeneral = function() {
 
     if (window.catalogoGeneralTareas && window.catalogoGeneralTareas.length > 0) {
         tbody.innerHTML = window.catalogoGeneralTareas.map(t => {
-            // Lógica inteligente de botones
-            let colorEstatus = t.estatus === 'SÍ' ? '#16a34a' : '#64748b'; // Verde si activa, gris si no
-            let btnAccion = '';
+            // Evaluamos lo que dice Google Sheets y definimos el estado visual
+            let estadoCrudo = String(t.estatus).toUpperCase().trim();
+            let estadoActual = "ACTIVA"; // Default
+            
+            if (estadoCrudo === "CONCLUIDA" || estadoCrudo === "TERMINADA" || estadoCrudo === "FALSE") estadoActual = "TERMINADA";
+            if (estadoCrudo === "REABIERTA") estadoActual = "REABIERTA";
 
-            if (t.estatus === 'SÍ') {
-                btnAccion = `<button class="btn-conalep" style="background-color: #d97706; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusTarea('${t.id}', 'CONCLUIDA')">🔒 Cerrar Evaluación</button>`;
-            } else {
-                btnAccion = `<button class="btn-conalep" style="background-color: #10b981; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusTarea('${t.id}', 'SÍ')">🔓 Reabrir Evaluación</button>`;
-            }
+            // Colores visuales
+            let colorEstatus = estadoActual === 'ACTIVA' ? '#16a34a' : (estadoActual === 'REABIERTA' ? '#0284c7' : '#64748b');
+            let txtEstatus = estadoActual === 'ACTIVA' ? '🟢 ACTIVA' : (estadoActual === 'REABIERTA' ? '🔄 REABIERTA' : '🔒 TERMINADA');
+
+            // Magia: Pre-seleccionar la opción correcta en el menú desplegable
+            let selActiva = estadoActual === 'ACTIVA' ? 'selected' : '';
+            let selTerminada = estadoActual === 'TERMINADA' ? 'selected' : '';
+            let selReabierta = estadoActual === 'REABIERTA' ? 'selected' : '';
 
             return `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 10px;"><strong>${t.id}</strong><br><small style="color: var(--text-muted);">${t.titulo}</small></td>
                 <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${t.grupos || 'Todos'}</span></td>
-                <td style="padding: 10px; text-align: center; font-weight: bold; color: ${colorEstatus}">${t.estatus}</td>
-                <td style="padding: 10px; text-align: center;">${btnAccion}</td>
+                <td style="padding: 10px; text-align: center; font-weight: bold; color: ${colorEstatus}">${txtEstatus}</td>
+                
+                <!-- NUEVA BARRA DE OPCIONES (SELECT) -->
+                <td style="padding: 10px; text-align: center;">
+                    <select id="estatus-cat-${t.id}" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; cursor: pointer;">
+                        <option value="SÍ" ${selActiva}>Activa</option>
+                        <option value="CONCLUIDA" ${selTerminada}>Terminada</option>
+                        <option value="REABIERTA" ${selReabierta}>Reabierta</option>
+                    </select>
+                </td>
+                
+                <!-- BOTÓN DE GUARDAR INDIVIDUAL -->
+                <td style="padding: 10px; text-align: center;">
+                    <button class="btn-conalep" style="background-color: #0f172a; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusOpciones('${t.id}')">💾 Guardar</button>
+                </td>
             </tr>
             `;
         }).join('');
     } else {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas en el catálogo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas registradas en el catálogo.</td></tr>`;
     }
 };
 
-window.cambiarEstatusTarea = function(idTarea, nuevoEstatus) {
-    if (!confirm(`¿Estás seguro de marcar la tarea ${idTarea} como ${nuevoEstatus}?`)) return;
+window.cambiarEstatusOpciones = function(idTarea) {
+    const select = document.getElementById(`estatus-cat-${idTarea}`);
+    if (!select) return;
+    const nuevoEstatus = select.value;
 
     fetch(SCRIPT_URL, {
         method: 'POST',
@@ -398,15 +419,55 @@ window.cambiarEstatusTarea = function(idTarea, nuevoEstatus) {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert(`✅ La tarea ${idTarea} ahora está: ${nuevoEstatus}`);
-            // Refrescar el catálogo bajando los datos de nuevo
-            window.cargarDatosAdministrativos();
-            setTimeout(() => window.filtrarCatalogoGeneral(), 1500); 
+            alert(`✅ La tarea ${idTarea} se guardó exitosamente con el estado: ${nuevoEstatus === 'SÍ' ? 'ACTIVA' : nuevoEstatus}`);
+            window.cargarDatosAdministrativos(); // Recarga en silencio
+            setTimeout(() => window.cambiarVistaAdmin('catalogo'), 1500); // Refresca la tabla
         } else {
             alert("❌ Error: " + data.mensaje);
         }
     })
     .catch(() => alert("⚠️ Error de comunicación con el servidor."));
+};
+
+// ==========================================
+// FUNCIÓN PARA CREAR NUEVA TAREA
+// ==========================================
+window.publicarNuevaTarea = function() {
+    const idTarea = document.getElementById('nt-id').value.trim();
+    const unidad = document.getElementById('nt-unidad').value.trim();
+    const titulo = document.getElementById('nt-titulo').value.trim();
+    const desc = document.getElementById('nt-desc').value.trim();
+    const fecha = document.getElementById('nt-fecha').value;
+    const puntos = document.getElementById('nt-puntos').value;
+    const grupo = document.getElementById('nt-grupo').value;
+
+    if (!idTarea || !titulo || !unidad) {
+        alert("⚠️ Por favor, llena al menos el ID, el Módulo y el Título de la actividad.");
+        return;
+    }
+
+    const btn = document.getElementById('btn-guardar-tarea');
+    btn.innerText = "⏳ Publicando en la base de datos..."; 
+    btn.disabled = true;
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "nueva_tarea", idTarea: idTarea, unidad: unidad, titulo: titulo, desc: desc, fecha: fecha, puntos: puntos, grupo: grupo })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert("✅ ¡La nueva tarea ha sido publicada!");
+            document.querySelectorAll('#form-nueva-tarea input, #form-nueva-tarea textarea').forEach(el => el.value = '');
+            document.getElementById('form-nueva-tarea').classList.add('hidden'); 
+            window.cargarDatosAdministrativos();
+            setTimeout(() => window.cambiarVistaAdmin('catalogo'), 1500);
+        } else {
+            alert("❌ Error al publicar: " + data.mensaje);
+        }
+    })
+    .catch(() => alert("⚠️ Error de comunicación con el servidor."))
+    .finally(() => { btn.innerText = "🚀 Publicar Actividad Oficial"; btn.disabled = false; });
 };
 // ==========================================
 // 6. VENTANILLA ALUMNOS (FOTO Y ARCHIVOS)
