@@ -406,21 +406,54 @@
                     </div>
                 </div>
 
-                <!-- VISTA 2: CATÁLOGO DE TAREAS -->
+                <!-- ==========================================
+                     VISTA 2: CATÁLOGO DE TAREAS
+                     ========================================== -->
                 <div id="panel-catalogo-tareas" class="admin-panel-vista hidden">
-                    <h3 style="color: var(--conalep-dark); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">📚 Catálogo General de Tareas</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
+                        <h3 style="color: var(--conalep-dark); margin: 0;">📚 Catálogo General de Tareas</h3>
+                        <button class="btn-conalep" style="background-color: var(--conalep-dark);" onclick="document.getElementById('form-nueva-tarea').classList.toggle('hidden')">➕ Crear Nueva Tarea</button>
+                    </div>
+
+                    <!-- FORMULARIO OCULTO PARA NUEVA TAREA -->
+                    <div id="form-nueva-tarea" class="hidden" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-left: 4px solid var(--conalep-gold); border-radius: 8px; padding: 1.5rem; margin-top: 1.5rem;">
+                        <h4 style="margin-top: 0; color: var(--conalep-dark); margin-bottom: 1rem;">Configurar Nueva Actividad</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <input type="text" id="nt-id" placeholder="ID Tarea (Ej. EV05)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            <input type="text" id="nt-unidad" placeholder="Módulo (Ej. 1.2)" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            <input type="text" id="nt-titulo" placeholder="Título de la Actividad" style="grid-column: 1 / -1; padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            <textarea id="nt-desc" placeholder="Descripción detallada o instrucciones para el alumno..." style="grid-column: 1 / -1; padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none; min-height: 60px; font-family: inherit;"></textarea>
+                            <div style="display: flex; flex-direction: column;">
+                                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; margin-bottom: 3px;">Fecha Límite:</label>
+                                <input type="date" id="nt-fecha" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            </div>
+                            <div style="display: flex; flex-direction: column;">
+                                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; margin-bottom: 3px;">Puntos Máximos:</label>
+                                <input type="number" id="nt-puntos" placeholder="Ej. 100" style="padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none;">
+                            </div>
+                            <select id="nt-grupo" style="grid-column: 1 / -1; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1; outline: none; cursor: pointer;">
+                                <option value="Todos">🌐 Publicar para todos los grupos</option>
+                                <option value="505">📘 Publicar solo para Grupo 505</option>
+                                <option value="508">📗 Publicar solo para Grupo 508</option>
+                            </select>
+                        </div>
+                        <button id="btn-guardar-tarea" class="btn-conalep" style="margin-top: 1.5rem; width: 100%; font-size: 1rem;" onclick="window.publicarNuevaTarea()">🚀 Publicar Actividad Oficial</button>
+                    </div>
+
+                    <!-- TABLA CON TU NUEVA BARRA DE OPCIONES -->
                     <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow-x: auto; margin-top: 1.5rem;">
-                        <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                        <table class="table-evidencias" style="width: 100%; border-collapse: collapse; min-width: 700px;">
                             <thead>
                                 <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
                                     <th style="padding: 12px; text-align: left;">ID / Título</th>
-                                    <th style="padding: 12px; text-align: center;">Grupos</th>
-                                    <th style="padding: 12px; text-align: center;">Estatus</th>
-                                    <th style="padding: 12px; text-align: center;">Acciones</th>
+                                    <th style="padding: 12px; text-align: center;">Grupos Destino</th>
+                                    <th style="padding: 12px; text-align: center;">Estado Actual</th>
+                                    <th style="padding: 12px; text-align: center;">Modificar Estado</th>
+                                    <th style="padding: 12px; text-align: center;">Guardar Cambios</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-catalogo-general">
-                                <tr><td colspan="4" style="text-align: center; padding: 2rem;">Cargando catálogo...</td></tr>
+                                <tr><td colspan="5" style="text-align: center; padding: 2rem;">Cargando catálogo...</td></tr>
                             </tbody>
                         </table>
                     </div>
