@@ -527,7 +527,7 @@ window.cargarAsistenciasDia = function() {
     const tbody = document.getElementById('tabla-asistencia-dia');
     if (!tbody) return;
 
-    // Ponemos la fecha de hoy por defecto si el input está vacío
+    // 1. Validar la fecha
     const inputFecha = document.getElementById('filtro-fecha-asis');
     if (inputFecha && !inputFecha.value) {
         const hoy = new Date();
@@ -538,32 +538,49 @@ window.cargarAsistenciasDia = function() {
     }
 
     const fechaSeleccionada = inputFecha.value;
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem;">📡 Escaneando registros del ${fechaSeleccionada}...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem;">📡 Escaneando registros del ${fechaSeleccionada} en la Base de Datos...</td></tr>`;
 
-    // 🚀 AQUÍ: Haremos la petición fetch() hacia una nueva acción en tu backend.gs ("consultar_asistencia")
-    // Por ahora, simularemos que descargamos los datos para probar la interfaz visual interactiva.
-    
-    // Simulación de respuesta del servidor (Reemplazaremos esto en el siguiente paso)
-    setTimeout(() => {
-        window.datosAsistenciaDia = [
-            { matricula: "242970437-8", nombre: "Jhannia Sayeli Álvarez", grupo: "505", mod: "Presencial", hora: "07:15 AM", estatus: "📍 En Plantel", global: 92 },
-            { matricula: "242970030-1", nombre: "Jesús Israel Acevedo", grupo: "505", mod: "Dual", hora: "07:18 AM", estatus: "💻 App Activa (Remoto)", global: 100 },
-            { matricula: "230910452-3", nombre: "Carlos Mendoza Pech", grupo: "508", mod: "Presencial", hora: "07:25 AM", estatus: "⚠️ Fuera de Rango", global: 85 }
-        ];
-        
-        // Llenar dinámicamente los grupos en el filtro
-        const selectorGrupos = document.getElementById('filtro-grupo-asis');
-        if (selectorGrupos && selectorGrupos.options.length <= 1 && window.listaGlobalAlumnos) {
-             const gUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
-             gUnicos.sort().forEach(g => {
-                 let opt = document.createElement("option");
-                 opt.value = g; opt.text = "Grupo " + g;
-                 selectorGrupos.add(opt);
-             });
+    // 2. Hacer la petición REAL al backend
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "consultar_asistencia", fecha: fechaSeleccionada })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            // Mapeamos los datos reales del servidor
+            window.datosAsistenciaDia = data.asistencias.map(asis => ({
+                matricula: asis.matricula,
+                nombre: asis.nombre,
+                grupo: asis.grupo,
+                mod: asis.mod,
+                hora: asis.hora,
+                estatus: asis.estatus,
+                // Nota: Por ahora simulamos el KPI global en lo que tienes meses de historial para cruzarlo
+                global: Math.floor(Math.random() * (100 - 80 + 1)) + 80 
+            }));
+
+            // Llenar dinámicamente los grupos en el selector si no están llenos
+            const selectorGrupos = document.getElementById('filtro-grupo-asis');
+            if (selectorGrupos && selectorGrupos.options.length <= 1 && window.listaGlobalAlumnos) {
+                 const gUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
+                 gUnicos.sort().forEach(g => {
+                     let opt = document.createElement("option");
+                     opt.value = g; opt.text = "Grupo " + g;
+                     selectorGrupos.add(opt);
+                 });
+            }
+            
+            // Dibujar la tabla
+            window.filtrarTablaAsistencia();
+        } else {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: red;">❌ Error al consultar: ${data.mensaje}</td></tr>`;
         }
-        
-        window.filtrarTablaAsistencia();
-    }, 1000);
+    })
+    .catch(err => {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: red;">⚠️ Error de conexión con el servidor.</td></tr>`;
+    });
 };
 
 window.filtrarTablaAsistencia = function() {
