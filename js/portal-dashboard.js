@@ -549,6 +549,13 @@ window.cargarAsistenciasDia = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
+            .then(data => {
+            if (data.status === "éxito") {
+            // 🕵️‍♂️ IMPRIMIR EL REPORTE DEL ESPÍA
+            console.log("🔍 REPORTE DEL ESCÁNER DE SHEETS:", data.escaner);
+
+            // Reemplazamos los datos simulados por los reales
+            window.datosAsistenciaDia = data.asistencias.map(asis => ({
             // Reemplazamos los datos simulados por los reales
             window.datosAsistenciaDia = data.asistencias.map(asis => ({
                 matricula: asis.matricula,
