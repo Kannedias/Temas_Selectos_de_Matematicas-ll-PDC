@@ -755,12 +755,9 @@ window.marcarAsistencia = function() {
     const btn = document.getElementById('btn-checkin');
     const msg = document.getElementById('msg-checkin');
     
-    // Obtenemos los datos del alumno que inició sesión
     const matricula = window.datosAlumno?.matricula || document.getElementById('lbl-matricula').innerText;
     const nombre = window.datosAlumno?.nombre || document.getElementById('lbl-nombre').innerText;
     const grupo = window.datosAlumno?.grupo || document.getElementById('lbl-grupo').innerText.replace('Grupo ', '');
-    
-    // Si tu login ya guarda la modalidad, la usamos. Si no, le preguntamos una vez para registro
     const modalidad = window.datosAlumno?.modalidad || (confirm("¿Eres alumno DUAL? (Acepta si eres Dual, Cancela si eres Presencial)") ? "Dual" : "Presencial");
 
     btn.disabled = true;
@@ -769,10 +766,8 @@ window.marcarAsistencia = function() {
     msg.innerText = "Conectando al radar...";
 
     if (modalidad === "Dual") {
-        // Los duales no requieren GPS, es Check-in de Actividad
         window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "💻 App Activa (Remoto)");
     } else {
-        // Los presenciales requieren validación GPS
         if (!navigator.geolocation) {
             msg.innerText = "⚠️ Tu navegador no soporta GPS.";
             window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "⚠️ Sin GPS");
@@ -783,12 +778,10 @@ window.marcarAsistencia = function() {
             (pos) => {
                 const latAlumno = pos.coords.latitude;
                 const lonAlumno = pos.coords.longitude;
-                // Coordenadas de CONALEP Playa del Carmen
                 const latConalep = 20.685056; 
                 const lonConalep = -87.058308;
                 
-                // Cálculo de distancia (Haversine)
-                const R = 6371e3; // Radio de la tierra en metros
+                const R = 6371e3; 
                 const φ1 = latAlumno * Math.PI/180;
                 const φ2 = latConalep * Math.PI/180;
                 const Δφ = (latConalep - latAlumno) * Math.PI/180;
@@ -796,7 +789,7 @@ window.marcarAsistencia = function() {
 
                 const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
                 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                const distancia = R * c; // Metros
+                const distancia = R * c; 
 
                 let estatus = (distancia <= 150) ? "📍 En Plantel" : "⚠️ Fuera de Rango";
                 window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, estatus);
@@ -810,14 +803,35 @@ window.marcarAsistencia = function() {
     }
 };
 
-window.enviarRegistroAsistencia
+window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
+    const btn = document.getElementById('btn-checkin');
+    const msg = document.getElementById('msg-checkin');
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "registrar_asistencia", matricula: mat, nombre: nom, grupo: gru, modalidad: mod, estatus: estatus })
+    })
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
             btn.style.background = "#16a34a";
-            btn.innerText = "✅ Asistencia Registrada";
+            btn.innerText = "✅ Asistencia de Hoy Registrada";
+            btn.disabled = true; 
             msg.style.color = estatus.includes("Fuera") || estatus.includes("⚠️") ? "#dc2626" : "#16a34a";
             msg.innerText = `Estatus: ${estatus}`;
+            
+            const hoyStr = new Date().toLocaleDateString('en-CA'); 
+            localStorage.setItem(`checkin_${mat}`, hoyStr);
+            
+        } else if (data.status === "duplicado") {
+            btn.style.background = "#16a34a";
+            btn.innerText = "✅ Asistencia de Hoy Registrada";
+            btn.disabled = true;
+            msg.style.color = "#16a34a";
+            msg.innerText = "Tu asistencia ya estaba registrada en el sistema.";
+            
+            const hoyStr = new Date().toLocaleDateString('en-CA');
+            localStorage.setItem(`checkin_${mat}`, hoyStr);
         } else {
             btn.disabled = false;
             btn.innerText = "📍 Reintentar Check-In";
@@ -829,4 +843,23 @@ window.enviarRegistroAsistencia
         btn.innerText = "📍 Reintentar Check-In";
         msg.innerText = "Error de red.";
     });
+};
+
+window.verificarCheckinPrevio = function(mat) {
+    const hoyStr = new Date().toLocaleDateString('en-CA');
+    const btn = document.getElementById('btn-checkin');
+    const msg = document.getElementById('msg-checkin');
+    
+    if (localStorage.getItem(`checkin_${mat}`) === hoyStr && btn && msg) {
+        btn.disabled = true;
+        btn.style.background = "#16a34a";
+        btn.innerText = "✅ Asistencia de Hoy Lista";
+        msg.style.color = "#16a34a";
+        msg.innerText = "Ya registraste tu check-in exitosamente el día de hoy.";
+    } else if (btn) {
+        btn.disabled = false;
+        btn.style.background = "#0f172a";
+        btn.innerText = "📍 Registrar Asistencia (Hoy)";
+        msg.innerText = "";
+    }
 };
