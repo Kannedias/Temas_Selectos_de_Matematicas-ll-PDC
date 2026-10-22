@@ -747,3 +747,99 @@ window.generarReporteAsistenciaPDF = function() {
         // Opcional: ventanaImpresion.close(); // Si quieres que se cierre sola tras imprimir
     }, 500);
 };
+// ==========================================
+// SECCIÓN 8: CHECK-IN Y RADAR GPS (ALUMNOS)
+// ==========================================
+window.marcarAsistencia = function() {
+    const btn = document.getElementById('btn-checkin');
+    const msg = document.getElementById('msg-checkin');
+    
+    // Obtenemos los datos del alumno que inició sesión
+    const matricula = window.datosAlumno?.matricula || document.getElementById('lbl-matricula').innerText;
+    const nombre = window.datosAlumno?.nombre || document.getElementById('lbl-nombre').innerText;
+    const grupo = window.datosAlumno?.grupo || document.getElementById('lbl-grupo').innerText.replace('Grupo ', '');
+    
+    // Si tu login ya guarda la modalidad, la usamos. Si no, le preguntamos una vez para registro
+    const modalidad = window.datosAlumno?.modalidad || (confirm("¿Eres alumno DUAL? (Acepta si eres Dual, Cancela si eres Presencial)") ? "Dual" : "Presencial");
+
+    btn.disabled = true;
+    btn.innerText = "📡 Detectando...";
+    msg.style.color = "#64748b";
+    msg.innerText = "Conectando al radar...";
+
+    if (modalidad === "Dual") {
+        // Los duales no requieren GPS, es Check-in de Actividad
+        window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "💻 App Activa (Remoto)");
+    } else {
+        // Los presenciales requieren validación GPS
+        if (!navigator.geolocation) {
+            msg.innerText = "⚠️ Tu navegador no soporta GPS.";
+            window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "⚠️ Sin GPS");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const latAlumno = pos.coords.latitude;
+                const lonAlumno = pos.coords.longitude;
+                // Coordenadas de CONALEP Playa del Carmen
+                const latConalep = 20.685056; 
+                const lonConalep = -87.058308;
+                
+                // Cálculo de distancia (Haversine)
+                const R = 6371e3; // Radio de la tierra en metros
+                const φ1 = latAlumno * Math.PI/180;
+                const φ2 = latConalep * Math.PI/180;
+                const Δφ = (latConalep - latAlumno) * Math.PI/180;
+                const Δλ = (lonConalep - lonAlumno) * Math.PI/180;
+
+                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const distancia = R * c; // Metros
+
+                let estatus = (distancia <= 150) ? "📍 En Plantel" : "⚠️ Fuera de Rango";
+                window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, estatus);
+            },
+            (err) => {
+                msg.innerText = "❌ GPS Denegado o Inactivo.";
+                window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "⚠️ GPS Bloqueado");
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+};
+
+window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
+    const btn = document.getElementById('btn-checkin');
+    const msg = document.getElementById('msg-checkin');
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            accion: "registrar_asistencia",
+            matricula: mat,
+            nombre: nom,
+            grupo: gru,
+            modalidad: mod,
+            estatus: estatus
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            btn.style.background = "#16a34a";
+            btn.innerText = "✅ Asistencia Registrada";
+            msg.style.color = estatus.includes("Fuera") || estatus.includes("⚠️") ? "#dc2626" : "#16a34a";
+            msg.innerText = `Estatus: ${estatus}`;
+        } else {
+            btn.disabled = false;
+            btn.innerText = "📍 Reintentar Check-In";
+            msg.style.color = "red";
+            msg.innerText = "Error: " + data.mensaje;
+        }
+    }).catch(err => {
+        btn.disabled = false;
+        btn.innerText = "📍 Reintentar Check-In";
+        msg.innerText = "Error de red.";
+    });
+};
