@@ -295,6 +295,9 @@ window.abrirPanelAlumno = function(matricula, nombre) {
     window.alumnoSeleccionadoAdmin = matricula; 
     window.cambiarVistaAdmin('gestion-interno'); 
     
+    // Guardamos el nombre en una variable global temporal para poder recargar la vista después
+    window.nombreSeleccionadoAdmin = nombre;
+    
     document.getElementById('titulo-gestion-grupo').innerText = `📝 Calificando a: ${nombre}`;
     const tbody = document.getElementById('tabla-gestion-entregas');
     tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem;">⏳ Consultando entregas en Google Sheets...</td></tr>`;
@@ -307,26 +310,50 @@ window.abrirPanelAlumno = function(matricula, nombre) {
             
             if (entregasAlumno.length > 0) {
                 tbody.innerHTML = entregasAlumno.map(e => {
-                    const estPendiente = e.estado === 'Pendiente' ? 'selected' : '';
-                    const estRevisando = e.estado === 'Revisando' ? 'selected' : '';
-                    const estCumplido = (e.estado === 'Cumplido' || e.estado === 'Revisado') ? 'selected' : '';
+                    
+                    // Semáforo inteligente con los 5 estados
+                    let estadoActual = e.estado ? e.estado.trim() : "Pendiente de Entrega";
+                    let statusColor, statusBg, statusIcon;
+                    
+                    if (estadoActual === "Cumplida") {
+                        statusColor = "#166534"; statusBg = "#dcfce7"; statusIcon = "🌟";
+                    } else if (estadoActual === "Requiere Corrección") {
+                        statusColor = "#c2410c"; statusBg = "#ffedd5"; statusIcon = "⚠️";
+                    } else if (estadoActual === "No Entregada") {
+                        statusColor = "#be123c"; statusBg = "#ffe4e6"; statusIcon = "❌";
+                    } else if (estadoActual === "Pendiente de Revisión") {
+                        statusColor = "#b45309"; statusBg = "#fef3c7"; statusIcon = "⏳";
+                    } else {
+                        estadoActual = "Pendiente de Entrega";
+                        statusColor = "#1e3a8a"; statusBg = "#dbeafe"; statusIcon = "📅";
+                    }
+
+                    let btnArchivo = e.archivoUrl 
+                        ? `<a href="${e.archivoUrl}" target="_blank" style="color: #0369a1; font-weight: bold; text-decoration: none; font-size: 0.85rem;">📎 Ver Archivo</a>` 
+                        : `<span style="color: #94a3b8;">- Sin archivo -</span>`;
 
                     return `
                     <tr style="border-bottom: 1px solid #e2e8f0;">
                         <td style="padding: 10px; font-weight: bold; color: var(--text-main);">${e.actividad}</td>
-                        <td style="padding: 10px; text-align: center;"><a href="${e.archivoUrl}" target="_blank" style="color: var(--conalep-accent); font-weight: bold; text-decoration: none; font-size: 0.85rem;">📎 Ver Archivo</a></td>
-                        <td style="padding: 10px; text-align: center;"><span class="badge-status ${e.estado === 'Cumplido' || e.estado === 'Revisado' ? 'status-ok' : 'status-pend'}">${e.estado}</span></td>
+                        <td style="padding: 10px; text-align: center;">${btnArchivo}</td>
+                        <td style="padding: 10px; text-align: center;">
+                            <span style="background: ${statusBg}; color: ${statusColor}; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
+                                ${statusIcon} ${estadoActual}
+                            </span>
+                        </td>
                         <td style="padding: 10px; text-align: center;">
                             <select id="estado-${e.filaFisica}" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem;">
-                                <option value="Pendiente" ${estPendiente}>Pendiente</option>
-                                <option value="Revisando" ${estRevisando}>Revisando</option>
-                                <option value="Cumplido" ${estCumplido}>Cumplido</option>
+                                <option value="Pendiente de Entrega" ${estadoActual === 'Pendiente de Entrega' ? 'selected' : ''}>Pendiente de Entrega</option>
+                                <option value="Pendiente de Revisión" ${estadoActual === 'Pendiente de Revisión' ? 'selected' : ''}>Pendiente de Revisión</option>
+                                <option value="Requiere Corrección" ${estadoActual === 'Requiere Corrección' ? 'selected' : ''}>Requiere Corrección</option>
+                                <option value="Cumplida" ${estadoActual === 'Cumplida' ? 'selected' : ''}>Cumplida</option>
+                                <option value="No Entregada" ${estadoActual === 'No Entregada' ? 'selected' : ''}>No Entregada</option>
                             </select>
                         </td>
                         <td style="padding: 10px; text-align: center;"><input type="number" id="nota-${e.filaFisica}" value="${e.calificacion}" min="0" max="100" style="width: 60px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px;"></td>
-                        <td style="padding: 10px; text-align: center;"><button class="btn-conalep" style="background-color: #0284c7; padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="window.guardarCalificacionFila(${e.filaFisica})">💾 Guardar</button></td>
+                        <td style="padding: 10px; text-align: center;"><button class="btn-conalep" style="background-color: #0284c7; padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="window.guardarCalificacionFila(${e.filaFisica}, this)">💾 Guardar</button></td>
                     </tr>
-                    `
+                    `;
                 }).join('');
             } else {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">El alumno aún no ha subido evidencias.</td></tr>`;
@@ -337,19 +364,45 @@ window.abrirPanelAlumno = function(matricula, nombre) {
     }).catch(err => { console.error(err); tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error al consultar servidor.</td></tr>`; });
 };
 
-window.guardarCalificacionFila = function(filaFisica) {
+window.guardarCalificacionFila = function(filaFisica, btnTarget) {
     const inputNota = document.getElementById(`nota-${filaFisica}`);
     const selectEstado = document.getElementById(`estado-${filaFisica}`);
     const nota = inputNota ? inputNota.value : "";
-    const estadoNuevo = selectEstado ? selectEstado.value : "Revisado";
+    const estadoNuevo = selectEstado ? selectEstado.value : "Pendiente de Entrega";
+    let observacionTexto = "";
+
+    // 👈 Disparador de Observaciones
+    if (estadoNuevo === "Requiere Corrección") {
+        observacionTexto = prompt("Observaciones (¿Qué ajuste debe realizar el estudiante?):");
+        if (observacionTexto === null) return; 
+    }
     
-    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "calificar_entrega", fila: filaFisica, calificacion: nota, estado: estadoNuevo }) })
+    const textoOriginal = btnTarget.innerText;
+    btnTarget.innerText = "⏳...";
+    btnTarget.disabled = true;
+
+    fetch(SCRIPT_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ 
+            accion: "calificar_entrega", 
+            fila: filaFisica, 
+            calificacion: nota, 
+            estado: estadoNuevo,
+            observacion: observacionTexto // 👈 Se envía a Columna I
+        }) 
+    })
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
             alert(`✅ Tarea guardada con estado: ${estadoNuevo}`);
+            // Recargar la vista de este mismo alumno
+            window.abrirPanelAlumno(window.alumnoSeleccionadoAdmin, window.nombreSeleccionadoAdmin);
         } else { alert("❌ Error: " + data.mensaje); }
-    }).catch(() => alert("⚠️ Error de comunicación con el servidor."));
+    }).catch(() => alert("⚠️ Error de comunicación con el servidor."))
+    .finally(() => {
+        btnTarget.innerText = textoOriginal;
+        btnTarget.disabled = false;
+    });
 };
 
 // --- FLUJO 5.4: DIBUJADO DE CATÁLOGO GENERAL ---
