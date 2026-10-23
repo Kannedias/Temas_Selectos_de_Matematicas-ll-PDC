@@ -2,7 +2,7 @@
 // CONFIGURACIÓN PRINCIPAL
 // =======================================================
 // URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgWAKxba4gm5BWu73EHsy02jChscCB4eQmHPQL-4GrfIdHgkb4Y09RalPPaLbAs3woQQ/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCO1FHOxVxUSi1Z6QgMjttLXZ1WrNgBLBkjUNw5Lq0wK8UkdLJu68eVXp9qyNJoioa/exec"; 
 
 // =======================================================
 // VARIABLES GLOBALES DEL SISTEMA
