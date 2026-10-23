@@ -971,3 +971,72 @@ window.verificarCheckinPrevio = function(mat) {
         msg.innerText = "";
     }
 };
+// ==========================================
+// SECCIÓN 9: MOTOR DE RETOS INTERACTIVOS
+// ==========================================
+let tiempoInicio = null;
+
+// Disparador del cronómetro cuando entran a la vista de retos
+// Llama a esta función o a 'tiempoInicio = Date.now();' cuando el alumno presione "Iniciar Reto"
+window.iniciarCronometroReto = function() {
+    tiempoInicio = Date.now();
+};
+
+window.comprobarRespuesta = function(btnTarget) {
+    if (!tiempoInicio) {
+        alert("⚠️ El reto no ha sido iniciado correctamente.");
+        return;
+    }
+
+    // 1. Detener el cronómetro y calcular el tiempo
+    const tiempoFin = Date.now();
+    const segundosTardados = Math.floor((tiempoFin - tiempoInicio) / 1000);
+    const minutos = String(Math.floor(segundosTardados / 60)).padStart(2, '0');
+    const segundos = String(segundosTardados % 60).padStart(2, '0');
+    const tiempoFormateado = `${minutos}:${segundos}`;
+    
+    // 2. Obtener datos del alumno activo y el nivel (Ajusta los IDs de tus inputs si es necesario)
+    const nivel = document.getElementById('nivel-reto')?.value || "1";
+    const matricula = sessionStorage.getItem('matriculaActiva');
+    const nombre = sessionStorage.getItem('nombreActivo');
+    const grupo = sessionStorage.getItem('grupoActivo');
+
+    if (!matricula) {
+        alert("⚠️ Sesión no detectada. Inicia sesión para guardar tu récord.");
+        return;
+    }
+
+    const textoOriginal = btnTarget.innerText;
+    btnTarget.innerText = "⏳ Validando y guardando récord...";
+    btnTarget.disabled = true;
+
+    // 3. Enviar los datos a la nueva pestaña "Retos" en Google Sheets
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            accion: "registrar_reto",
+            matricula: matricula,
+            nombre: nombre,
+            grupo: grupo,
+            nivel: nivel,
+            tiempo: tiempoFormateado
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            alert(`✅ ¡Felicidades! Reto Nivel ${nivel} superado.\n⏱️ Tiempo registrado: ${tiempoFormateado}`);
+            // Aquí puedes reiniciar el reto, limpiar la pantalla, etc.
+        } else {
+            alert(`⚠️ Respuesta correcta, pero error al guardar récord: ${data.mensaje}`);
+        }
+    })
+    .catch(err => {
+        alert(`⚠️ Respuesta correcta, pero falló la conexión al guardar el tiempo.`);
+    })
+    .finally(() => {
+        btnTarget.innerText = textoOriginal;
+        btnTarget.disabled = false;
+        tiempoInicio = null; // Reseteamos el cronómetro
+    });
+};
