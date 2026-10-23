@@ -788,52 +788,74 @@ window.marcarAsistencia = function() {
     const btn = document.getElementById('btn-checkin');
     const msg = document.getElementById('msg-checkin');
     
-    const matricula = window.datosAlumno?.matricula || document.getElementById('lbl-matricula').innerText;
-    const nombre = window.datosAlumno?.nombre || document.getElementById('lbl-nombre').innerText;
-    const grupo = window.datosAlumno?.grupo || document.getElementById('lbl-grupo').innerText.replace('Grupo ', '');
-    const modalidad = window.datosAlumno?.modalidad || (confirm("¿Eres alumno DUAL? (Acepta si eres Dual, Cancela si eres Presencial)") ? "Dual" : "Presencial");
+    // Obtenemos los datos base de la memoria o pantalla
+    const matricula = sessionStorage.getItem('matriculaActiva') || document.getElementById('lbl-matricula').innerText;
+    const nombre = sessionStorage.getItem('nombreActivo') || document.getElementById('lbl-nombre').innerText;
+    const grupo = sessionStorage.getItem('grupoActivo') || document.getElementById('lbl-grupo').innerText.replace('Grupo ', '');
 
     btn.disabled = true;
-    btn.innerText = "📡 Detectando...";
+    btn.innerText = "🔍 Verificando perfil...";
     msg.style.color = "#64748b";
-    msg.innerText = "Conectando al radar...";
+    msg.innerText = "Consultando permisos en servidor...";
 
-    if (modalidad === "Dual") {
-        window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "💻 App Activa (Remoto)");
-    } else {
-        if (!navigator.geolocation) {
-            msg.innerText = "⚠️ Tu navegador no soporta GPS.";
-            window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "⚠️ Sin GPS");
-            return;
+    // 🔒 CANDADO MAESTRO: Consultamos la modalidad real internamente
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "consultar_modalidad", matricula: matricula })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const modalidadReal = data.modalidad || "Presencial";
+
+        if (modalidadReal === "Dual" || modalidadReal.toLowerCase().includes("dual")) {
+            // Es dual legítimo en tu base de datos, pase directo sin GPS
+            btn.innerText = "📡 Registrando...";
+            window.enviarRegistroAsistencia(matricula, nombre, grupo, "Dual", "💻 App Activa (Remoto)");
+        } else {
+            // Es presencial, encendemos el radar a la fuerza
+            btn.innerText = "📡 Detectando GPS...";
+            msg.innerText = "Calculando distancia al plantel...";
+
+            if (!navigator.geolocation) {
+                msg.innerText = "⚠️ Tu navegador no soporta GPS.";
+                window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", "⚠️ Sin GPS");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const latAlumno = pos.coords.latitude;
+                    const lonAlumno = pos.coords.longitude;
+                    const latConalep = 20.685056; 
+                    const lonConalep = -87.058308;
+                    
+                    const R = 6371e3; 
+                    const φ1 = latAlumno * Math.PI/180;
+                    const φ2 = latConalep * Math.PI/180;
+                    const Δφ = (latConalep - latAlumno) * Math.PI/180;
+                    const Δλ = (lonConalep - lonAlumno) * Math.PI/180;
+
+                    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    const distancia = R * c; 
+
+                    let estatus = (distancia <= 150) ? "📍 En Plantel" : "⚠️ Fuera de Rango";
+                    window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", estatus);
+                },
+                (err) => {
+                    msg.innerText = "❌ GPS Denegado o Inactivo.";
+                    window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", "⚠️ GPS Bloqueado");
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
         }
-
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const latAlumno = pos.coords.latitude;
-                const lonAlumno = pos.coords.longitude;
-                const latConalep = 20.685056; 
-                const lonConalep = -87.058308;
-                
-                const R = 6371e3; 
-                const φ1 = latAlumno * Math.PI/180;
-                const φ2 = latConalep * Math.PI/180;
-                const Δφ = (latConalep - latAlumno) * Math.PI/180;
-                const Δλ = (lonConalep - lonAlumno) * Math.PI/180;
-
-                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                const distancia = R * c; 
-
-                let estatus = (distancia <= 150) ? "📍 En Plantel" : "⚠️ Fuera de Rango";
-                window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, estatus);
-            },
-            (err) => {
-                msg.innerText = "❌ GPS Denegado o Inactivo.";
-                window.enviarRegistroAsistencia(matricula, nombre, grupo, modalidad, "⚠️ GPS Bloqueado");
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-    }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.innerText = "📍 Reintentar Check-In";
+        msg.style.color = "red";
+        msg.innerText = "Error de red al verificar tu perfil.";
+    });
 };
 
 window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
