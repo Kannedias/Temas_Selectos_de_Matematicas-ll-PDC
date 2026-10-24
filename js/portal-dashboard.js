@@ -1,16 +1,12 @@
 // =======================================================
 // CONFIGURACIÓN PRINCIPAL
 // =======================================================
-// URL DE TU BACKEND EN GOOGLE APPS SCRIPT (SICAL)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCO1FHOxVxUSi1Z6QgMjttLXZ1WrNgBLBkjUNw5Lq0wK8UkdLJu68eVXp9qyNJoioa/exec"; 
 
-// =======================================================
-// VARIABLES GLOBALES DEL SISTEMA
-// =======================================================
-let miGrafica = null; // Instancia de Chart.js
-window.listaGlobalAlumnos = []; // Almacena datos descargados de Sheets
-window.grupoSeleccionadoAdmin = null; // Memoria del grupo activo
-window.alumnoSeleccionadoAdmin = null; // Memoria del alumno en evaluación
+let miGrafica = null; 
+window.listaGlobalAlumnos = []; 
+window.grupoSeleccionadoAdmin = null; 
+window.alumnoSeleccionadoAdmin = null; 
 
 // =======================================================
 // SECCIÓN 1: LÓGICA DE INICIO DE SESIÓN
@@ -23,20 +19,17 @@ window.iniciarSesion = function() {
         return;
     }
 
-    // Intercepción para la cuenta Maestra (Docente)
     if (matricula.toUpperCase() === "ADMIN-JL") {
         window.inicializarPanelAdmin();
         return; 
     }
 
-    // Botón en estado de carga
     const btnIngresar = document.querySelector('#vista-login button') || document.getElementById('btn-ingresar');
     if (btnIngresar) {
         btnIngresar.innerText = "⏳ Consultando...";
         btnIngresar.disabled = true;
     }
 
-    // Petición al Backend
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "login", matricula: matricula })
@@ -44,32 +37,25 @@ window.iniciarSesion = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            // Llenado de Ficha de Identidad
             document.getElementById('welcome-name').innerText = `👤 Bienvenido, ${data.primerNombre}`;
             const lblNombre = document.getElementById('lbl-nombre');
             if(lblNombre) lblNombre.innerText = `${data.nombreCompleto}`;
-            
             const lblMatricula = document.getElementById('lbl-matricula');
             if(lblMatricula) lblMatricula.innerText = matricula;
-            
             const lblGrupo = document.getElementById('lbl-grupo');
             if(lblGrupo) lblGrupo.innerText = `Grupo ${data.grupo}`;
 
-            // Renderizado de Foto de Perfil
             const imgPerfil = document.getElementById('img-perfil');
             const emojiCamara = document.getElementById('emoji-camara');
-            
             if (data.fotoPerfilUrl && data.fotoPerfilUrl !== "") {
                 if(imgPerfil) { imgPerfil.src = data.fotoPerfilUrl; imgPerfil.style.display = 'block'; }
                 if(emojiCamara) emojiCamara.style.display = 'none';
             }
 
-            // Almacenamiento en Memoria de Sesión
             sessionStorage.setItem('matriculaActiva', matricula);
             sessionStorage.setItem('grupoActivo', data.grupo);
             sessionStorage.setItem('nombreActivo', data.nombreCompleto);
 
-            // Cambio de Vistas (Ocultar Login -> Mostrar Dashboard)
             document.getElementById('vista-login').classList.add('hidden');
             window.verificarCheckinPrevio(matricula);
             const vistaDash = document.getElementById('vista-dashboard');
@@ -78,7 +64,6 @@ window.iniciarSesion = function() {
             const userMenu = document.getElementById('user-menu');
             if(userMenu) userMenu.classList.remove('hidden');
             
-            // Disparador de carga de datos pesados (Historial y Gráfica)
             if(typeof window.consultarAvanceReal === 'function') {
                 window.consultarAvanceReal(matricula);
             }
@@ -98,7 +83,6 @@ window.dibujarGrafica = function(parcialesData) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    // Destruir gráfica anterior si existe para evitar solapamientos
     if (window.miGrafica) window.miGrafica.destroy();
 
     let p1 = parcialesData && parcialesData[0] ? parseFloat(parcialesData[0].total) || 0 : 0;
@@ -107,13 +91,12 @@ window.dibujarGrafica = function(parcialesData) {
 
     window.datosDesgloseParciales = parcialesData;
 
-    // 🛡️ EL CANDADO VISUAL: Si el alumno tiene 0 en todo, pintamos la base en gris
     let datosGrafica = [p1, p2, p3];
-    let coloresGrafica = ['#00806A', '#d97706', '#94a3b8']; // Verde, Ámbar, Azul Grisáceo
+    let coloresGrafica = ['#00806A', '#d97706', '#94a3b8']; 
 
     if (p1 === 0 && p2 === 0 && p3 === 0) {
-        datosGrafica = [25, 30, 45]; // Ponderación base de relleno
-        coloresGrafica = ['#e2e8f0', '#e2e8f0', '#e2e8f0']; // Todo en gris pálido
+        datosGrafica = [25, 30, 45]; 
+        coloresGrafica = ['#e2e8f0', '#e2e8f0', '#e2e8f0']; 
     }
 
     window.miGrafica = new Chart(ctx, {
@@ -154,7 +137,94 @@ window.dibujarGrafica = function(parcialesData) {
 };
 
 // =======================================================
-// SECCIÓN 3: ENRUTADOR DE VISTAS (PANEL ADMINISTRADOR)
+// SECCIÓN 3: MOTOR DE AVANCE DINÁMICO E HISTORIAL
+// =======================================================
+window.consultarAvanceReal = function(matricula) {
+    // 1. Carga de Gráficas e Historial de Ventanilla
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "consultar", matricula: matricula })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.parciales && typeof window.dibujarGrafica === 'function') {
+            window.datosDesgloseParciales = data.parciales;
+            window.dibujarGrafica(data.parciales);
+        }
+        
+        const tbodyHistorial = document.getElementById('tbody-historial');
+        if (tbodyHistorial && data.historial) {
+            tbodyHistorial.innerHTML = ""; 
+            if (data.historial.length === 0) {
+                tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay entregas registradas.</td></tr>`;
+            } else {
+                data.historial.forEach(item => {
+                    let estadoStr = String(item.estado || "").toLowerCase();
+                    let estadoEmoji = estadoStr.includes("revisad") || estadoStr.includes("cumplid") ? "✅" : (estadoStr.includes("corrección") ? "⚠️" : "⏳");
+                    let colorBadge = (estadoStr.includes("revisad") || estadoStr.includes("cumplid")) ? "status-ok" : (estadoStr.includes("corrección") ? "status-act" : "status-pend");
+                    
+                    let row = `<tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${item.actividad}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${item.fecha}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><span class="badge-status ${colorBadge}">${estadoEmoji} ${item.estado}</span></td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;"><strong>${item.nota}</strong></td>
+                    </tr>`;
+                    tbodyHistorial.innerHTML += row;
+                });
+            }
+        }
+        
+        const selectTarea = document.getElementById('select-tarea');
+        if (selectTarea && data.catalogo) {
+            selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
+            data.catalogo.forEach(tarea => {
+                let option = document.createElement('option');
+                option.value = tarea.id + " - " + tarea.titulo; 
+                option.text = tarea.id + " | " + tarea.titulo;
+                selectTarea.appendChild(option);
+            });
+        }
+    });
+
+    // 2. Consulta al Motor Dinámico de Unidad 1
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ accion: "consultar_avance_motor", matricula: matricula })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "éxito") {
+            const badge1_1 = document.getElementById('status-mod-1.1');
+            const barraAvance = document.getElementById('barra-avance');
+            const lblPorcentaje = document.getElementById('lbl-porcentaje');
+            
+            if (badge1_1) {
+                if (data.unidadCompletada) {
+                    badge1_1.className = "badge-status status-ok";
+                    badge1_1.innerHTML = "🟢 Concluido";
+                } else if (data.tareasCumplidas > 0 || data.retosNivel1 > 0 || data.retosNivel2 > 0) {
+                    badge1_1.className = "badge-status status-act";
+                    badge1_1.innerHTML = "🟡 En Curso";
+                } else {
+                    badge1_1.className = "badge-status status-pend";
+                    badge1_1.innerHTML = "🔴 Pendiente";
+                }
+            }
+
+            if (barraAvance && lblPorcentaje) {
+                let porcentaje = 0;
+                if (data.unidadCompletada) porcentaje = 100;
+                else if (data.tareasCumplidas > 0) porcentaje = 50;
+                
+                barraAvance.style.width = porcentaje + "%";
+                lblPorcentaje.innerText = porcentaje + "%";
+            }
+        }
+    }).catch(err => console.error("Error motor avance:", err));
+};
+
+// =======================================================
+// SECCIÓN 4: ENRUTADOR DE VISTAS (PANEL ADMINISTRADOR)
 // =======================================================
 window.inicializarPanelAdmin = function() {
     document.getElementById('vista-login')?.classList.add('hidden');
@@ -163,9 +233,7 @@ window.inicializarPanelAdmin = function() {
     const welcome = document.getElementById('welcome-name');
     if (welcome) welcome.innerText = "👨‍🏫 Bienvenido, Prof. Juan Luis";
     
-    // Carga de datos base de Google Sheets
     window.cargarDatosAdministrativos();
-    // Renderizado de pestaña por defecto
     window.cambiarVistaAdmin('dashboard'); 
 };
 
@@ -191,7 +259,7 @@ window.cambiarVistaAdmin = function(vistaDestino) {
 };
 
 // =======================================================
-// SECCIÓN 4: LÓGICA DE DIBUJADO Y EXTRACCIÓN (ADMIN)
+// SECCIÓN 5: EXTRACCIÓN DE DATOS Y TARJETAS (ADMIN)
 // =======================================================
 window.cargarDatosAdministrativos = function() {
     fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "consultar", matricula: "ADMIN-JL" }) })
@@ -209,7 +277,6 @@ window.renderizarTarjetasGrupos = function() {
     const contenedor = document.getElementById('contenedor-tarjetas-grupos');
     if (!contenedor || !window.listaGlobalAlumnos) return;
     
-    // Extracción de Grupos Únicos sin duplicados
     const gruposUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
 
     if (gruposUnicos.length === 0) {
@@ -234,17 +301,14 @@ window.renderizarTarjetasGrupos = function() {
 };
 
 // =======================================================
-// SECCIÓN 5: GESTIÓN DE EVALUACIONES Y CATÁLOGOS (DOCENTE)
+// SECCIÓN 6: GESTIÓN DE EVALUACIONES (DOCENTE)
 // =======================================================
-
-// --- FLUJO 5.1: ABRIR GRUPO Y LISTAR ALUMNOS ---
 window.abrirGestionGrupo = function(grupoId) {
     window.grupoSeleccionadoAdmin = grupoId;
     window.cambiarVistaAdmin('lista-alumnos'); 
     
     document.getElementById('titulo-lista-alumnos').innerText = `👥 Lista de Alumnos: Grupo ${grupoId}`;
     
-    // Limpieza de filtros
     const buscador = document.getElementById('buscador-lista-alumnos');
     const selectorMod = document.getElementById('filtro-modalidad-lista');
     if (buscador) buscador.value = "";
@@ -253,7 +317,6 @@ window.abrirGestionGrupo = function(grupoId) {
     window.renderizarListaAlumnosGrupo();
 };
 
-// --- FLUJO 5.2: FILTRADO DE ALUMNOS (BARRA DE BÚSQUEDA) ---
 window.renderizarListaAlumnosGrupo = function() {
     const tbody = document.getElementById('tabla-lista-alumnos-grupo');
     if (!tbody || !window.grupoSeleccionadoAdmin) return;
@@ -290,12 +353,9 @@ window.renderizarListaAlumnosGrupo = function() {
     }
 };
 
-// --- FLUJO 5.3: ABRIR ALUMNO Y VER ENTREGAS INDIVIDUALES ---
 window.abrirPanelAlumno = function(matricula, nombre) {
     window.alumnoSeleccionadoAdmin = matricula; 
     window.cambiarVistaAdmin('gestion-interno'); 
-    
-    // Guardamos el nombre en una variable global temporal para poder recargar la vista después
     window.nombreSeleccionadoAdmin = nombre;
     
     document.getElementById('titulo-gestion-grupo').innerText = `📝 Calificando a: ${nombre}`;
@@ -310,8 +370,6 @@ window.abrirPanelAlumno = function(matricula, nombre) {
             
             if (entregasAlumno.length > 0) {
                 tbody.innerHTML = entregasAlumno.map(e => {
-                    
-                    // Semáforo inteligente con los 5 estados
                     let estadoActual = e.estado ? e.estado.trim() : "Pendiente de Entrega";
                     let statusColor, statusBg, statusIcon;
                     
@@ -359,9 +417,9 @@ window.abrirPanelAlumno = function(matricula, nombre) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">El alumno aún no ha subido evidencias.</td></tr>`;
             }
         } else {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay evidencias registradas en la base de datos.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay evidencias registradas.</td></tr>`;
         }
-    }).catch(err => { console.error(err); tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error al consultar servidor.</td></tr>`; });
+    }).catch(err => { console.error(err); tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1rem; color: red;">Error servidor.</td></tr>`; });
 };
 
 window.guardarCalificacionFila = function(filaFisica, btnTarget) {
@@ -371,7 +429,6 @@ window.guardarCalificacionFila = function(filaFisica, btnTarget) {
     const estadoNuevo = selectEstado ? selectEstado.value : "Pendiente de Entrega";
     let observacionTexto = "";
 
-    // 👈 Disparador de Observaciones
     if (estadoNuevo === "Requiere Corrección") {
         observacionTexto = prompt("Observaciones (¿Qué ajuste debe realizar el estudiante?):");
         if (observacionTexto === null) return; 
@@ -388,14 +445,13 @@ window.guardarCalificacionFila = function(filaFisica, btnTarget) {
             fila: filaFisica, 
             calificacion: nota, 
             estado: estadoNuevo,
-            observacion: observacionTexto // 👈 Se envía a Columna I
+            observacion: observacionTexto 
         }) 
     })
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
             alert(`✅ Tarea guardada con estado: ${estadoNuevo}`);
-            // Recargar la vista de este mismo alumno
             window.abrirPanelAlumno(window.alumnoSeleccionadoAdmin, window.nombreSeleccionadoAdmin);
         } else { alert("❌ Error: " + data.mensaje); }
     }).catch(() => alert("⚠️ Error de comunicación con el servidor."))
@@ -405,16 +461,14 @@ window.guardarCalificacionFila = function(filaFisica, btnTarget) {
     });
 };
 
-// --- FLUJO 5.4: DIBUJADO DE CATÁLOGO GENERAL ---
 window.filtrarCatalogoGeneral = function() {
     const tbody = document.getElementById('tabla-catalogo-general');
     if (!tbody) return;
 
     if (window.catalogoGeneralTareas && window.catalogoGeneralTareas.length > 0) {
         tbody.innerHTML = window.catalogoGeneralTareas.map(t => {
-            // Evaluamos Estatus Base de Datos
             let estadoCrudo = String(t.estatus).toUpperCase().trim();
-            let estadoActual = "ACTIVA"; // Default
+            let estadoActual = "ACTIVA"; 
             
             if (estadoCrudo === "CONCLUIDA" || estadoCrudo === "TERMINADA" || estadoCrudo === "FALSE") estadoActual = "TERMINADA";
             if (estadoCrudo === "REABIERTA") estadoActual = "REABIERTA";
@@ -431,15 +485,13 @@ window.filtrarCatalogoGeneral = function() {
                 <td style="padding: 10px;"><strong>${t.id}</strong><br><small style="color: var(--text-muted);">${t.titulo}</small></td>
                 <td style="padding: 10px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${t.grupos || 'Todos'}</span></td>
                 <td style="padding: 10px; text-align: center; font-weight: bold; color: ${colorEstatus}">${txtEstatus}</td>
-                
                 <td style="padding: 10px; text-align: center;">
-                    <select id="estatus-cat-${t.id}" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; cursor: pointer;">
+                    <select id="estatus-cat-${t.id}" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem;">
                         <option value="SÍ" ${selActiva}>Activa</option>
                         <option value="CONCLUIDA" ${selTerminada}>Terminada</option>
                         <option value="REABIERTA" ${selReabierta}>Reabierta</option>
                     </select>
                 </td>
-                
                 <td style="padding: 10px; text-align: center;">
                     <button class="btn-conalep" style="background-color: #0f172a; padding: 0.35rem 0.8rem; font-size: 0.8rem;" onclick="window.cambiarEstatusOpciones('${t.id}')">💾 Guardar</button>
                 </td>
@@ -447,7 +499,7 @@ window.filtrarCatalogoGeneral = function() {
             `;
         }).join('');
     } else {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas registradas en el catálogo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No hay tareas.</td></tr>`;
     }
 };
 
@@ -463,8 +515,8 @@ window.cambiarEstatusOpciones = function(idTarea) {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert(`✅ La tarea ${idTarea} se guardó exitosamente con el estado: ${nuevoEstatus === 'SÍ' ? 'ACTIVA' : nuevoEstatus}`);
-            window.cargarDatosAdministrativos(); // Recarga silenciosa
+            alert(`✅ Tarea guardada con estado: ${nuevoEstatus}`);
+            window.cargarDatosAdministrativos(); 
             setTimeout(() => window.cambiarVistaAdmin('catalogo'), 1500); 
         } else {
             alert("❌ Error: " + data.mensaje);
@@ -473,7 +525,6 @@ window.cambiarEstatusOpciones = function(idTarea) {
     .catch(() => alert("⚠️ Error de comunicación con el servidor."));
 };
 
-// --- FLUJO 5.5: CREACIÓN DE NUEVAS TAREAS ---
 window.publicarNuevaTarea = function() {
     const idTarea = document.getElementById('nt-id').value.trim();
     const unidad = document.getElementById('nt-unidad').value.trim();
@@ -484,12 +535,12 @@ window.publicarNuevaTarea = function() {
     const grupo = document.getElementById('nt-grupo').value;
 
     if (!idTarea || !titulo || !unidad) {
-        alert("⚠️ Por favor, llena al menos el ID, el Módulo y el Título de la actividad.");
+        alert("⚠️ Llena al menos ID, Módulo y Título.");
         return;
     }
 
     const btn = document.getElementById('btn-guardar-tarea');
-    btn.innerText = "⏳ Publicando en la base de datos..."; 
+    btn.innerText = "⏳ Publicando..."; 
     btn.disabled = true;
 
     fetch(SCRIPT_URL, {
@@ -499,13 +550,13 @@ window.publicarNuevaTarea = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            alert("✅ ¡La nueva tarea ha sido publicada!");
+            alert("✅ Tarea publicada.");
             document.querySelectorAll('#form-nueva-tarea input, #form-nueva-tarea textarea').forEach(el => el.value = '');
             document.getElementById('form-nueva-tarea').classList.add('hidden'); 
             window.cargarDatosAdministrativos();
             setTimeout(() => window.cambiarVistaAdmin('catalogo'), 1500);
         } else {
-            alert("❌ Error al publicar: " + data.mensaje);
+            alert("❌ Error: " + data.mensaje);
         }
     })
     .catch(() => alert("⚠️ Error de comunicación con el servidor."))
@@ -513,7 +564,7 @@ window.publicarNuevaTarea = function() {
 };
 
 // =======================================================
-// SECCIÓN 6: VENTANILLA DE ESTUDIANTES (ENTREGAS)
+// SECCIÓN 7: VENTANILLA DE ESTUDIANTES (ENTREGAS)
 // =======================================================
 window.subirFotoPerfil = function() {
     const fileInput = document.getElementById('input-foto-perfil');
@@ -523,7 +574,7 @@ window.subirFotoPerfil = function() {
     const nombre = sessionStorage.getItem('nombreActivo');
     const grupo = sessionStorage.getItem('grupoActivo');
 
-    if (!matricula) { alert("⚠️ Inicia sesión para subir fotos."); return; }
+    if (!matricula) return alert("⚠️ Inicia sesión para subir fotos.");
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -534,9 +585,7 @@ window.subirFotoPerfil = function() {
 
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "subir_foto_perfil", matricula: matricula, nombre: nombre, grupo: grupo, nombreArchivo: file.name, mimeType: file.type, archivoBase64: base64Data }) })
         .then(res => res.json())
-        .then(data => {
-            if (data.status === "éxito") alert("✅ ¡Foto guardada!"); else alert("❌ Error: " + data.mensaje);
-        })
+        .then(data => { if (data.status === "éxito") alert("✅ ¡Foto guardada!"); else alert("❌ Error: " + data.mensaje); })
         .catch(err => { console.error(err); alert("⚠️ Error de conexión."); });
     };
     reader.readAsDataURL(file);
@@ -549,12 +598,12 @@ window.subirEvidencia = function() {
     const grupo = sessionStorage.getItem('grupoActivo');
     const nombre = sessionStorage.getItem('nombreActivo');
 
-    if (!matricula) { alert("⚠️ Inicia sesión para subir evidencias."); return; }
-    if (!actividadCompleta || actividadCompleta.includes("--")) { alert("⚠️ Selecciona la tarea correspondiente."); return; }
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) { alert("⚠️ Selecciona al menos un archivo."); return; }
+    if (!matricula) return alert("⚠️ Inicia sesión.");
+    if (!actividadCompleta || actividadCompleta.includes("--")) return alert("⚠️ Selecciona la tarea.");
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) return alert("⚠️ Selecciona un archivo.");
     
     const file = fileInput.files[0];
-    if (file.size > 26214400) { alert("⚠️ Archivo muy pesado (máx 25MB)."); return; }
+    if (file.size > 26214400) return alert("⚠️ Archivo muy pesado (máx 25MB).");
 
     const btn = document.getElementById('btn-enviar');
     if (btn) { btn.innerText = "⏳ Subiendo..."; btn.disabled = true; }
@@ -564,16 +613,15 @@ window.subirEvidencia = function() {
         const base64Data = e.target.result.split(',')[1];
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "subir", matricula: matricula, nombreArchivo: file.name, mimeType: file.type, archivoBase64: base64Data, grupo: grupo, nombre: nombre, actividad: actividadCompleta }) })
         .then(res => res.json())
-        .then(data => {
-            if (data.status === "éxito") { alert("✅ Evidencia enviada."); fileInput.value = ""; } else { alert("❌ Error: " + data.mensaje); }
-        })
+        .then(data => { if (data.status === "éxito") { alert("✅ Evidencia enviada."); fileInput.value = ""; } else { alert("❌ Error: " + data.mensaje); }})
         .catch(err => { console.error(err); alert("⚠️ Error de conexión."); })
         .finally(() => { if (btn) { btn.innerText = "📤 Enviar Evidencia a Revisión"; btn.disabled = false; }});
     };
     reader.readAsDataURL(file);
 };
+
 // ==========================================
-// SECCIÓN 7: PANEL DE ASISTENCIA Y RADAR (ADMIN)
+// SECCIÓN 8: PANEL DE ASISTENCIA Y RADAR (ADMIN)
 // ==========================================
 window.datosAsistenciaDia = []; 
 
@@ -581,7 +629,6 @@ window.cargarAsistenciasDia = function() {
     const tbody = document.getElementById('tabla-asistencia-dia');
     if (!tbody) return;
 
-    // 1. Validar la fecha
     const inputFecha = document.getElementById('filtro-fecha-asis');
     if (inputFecha && !inputFecha.value) {
         const hoy = new Date();
@@ -592,9 +639,8 @@ window.cargarAsistenciasDia = function() {
     }
 
     const fechaSeleccionada = inputFecha.value;
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem;">📡 Escaneando registros del ${fechaSeleccionada} en la Base de Datos...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem;">📡 Escaneando registros...</td></tr>`;
 
-    // 2. Hacer la petición REAL al backend
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar_asistencia", fecha: fechaSeleccionada })
@@ -602,40 +648,22 @@ window.cargarAsistenciasDia = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            // 🕵️‍♂️ IMPRIMIR EL REPORTE DEL ESPÍA
-            console.log("🔍 REPORTE DEL ESCÁNER DE SHEETS:", data.escaner);
-
-            // Reemplazamos los datos simulados por los reales
             window.datosAsistenciaDia = data.asistencias.map(asis => ({
-                matricula: asis.matricula,
-                nombre: asis.nombre,
-                grupo: asis.grupo,
-                modalidad: asis.modalidad, 
-                hora: asis.hora,
-                estatus: asis.estatus,
-                global: Math.floor(Math.random() * (100 - 80 + 1)) + 80 // Dato global aún en simulación temporal
+                matricula: asis.matricula, nombre: asis.nombre, grupo: asis.grupo, modalidad: asis.modalidad, 
+                hora: asis.hora, estatus: asis.estatus, global: asis.global 
             }));
-            // Llenar dinámicamente los grupos en el selector si no están llenos
             const selectorGrupos = document.getElementById('filtro-grupo-asis');
             if (selectorGrupos && selectorGrupos.options.length <= 1 && window.listaGlobalAlumnos) {
                  const gUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
                  gUnicos.sort().forEach(g => {
-                     let opt = document.createElement("option");
-                     opt.value = g; opt.text = "Grupo " + g;
-                     selectorGrupos.add(opt);
+                     let opt = document.createElement("option"); opt.value = g; opt.text = "Grupo " + g; selectorGrupos.add(opt);
                  });
             }
-            
-            // Dibujar la tabla
             window.filtrarTablaAsistencia();
         } else {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: red;">❌ Error al consultar: ${data.mensaje}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: red;">❌ Error: ${data.mensaje}</td></tr>`;
         }
-    })
-    .catch(err => {
-        console.error(err);
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: red;">⚠️ Error de conexión con el servidor.</td></tr>`;
-    });
+    }).catch(err => { tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: red;">⚠️ Error de conexión.</td></tr>`; });
 };
 
 window.filtrarTablaAsistencia = function() {
@@ -647,310 +675,115 @@ window.filtrarTablaAsistencia = function() {
 
     let html = '';
     let countHoy = 0, countPres = 0, countDual = 0, countFuera = 0;
-
     const datos = window.datosAsistenciaDia || [];
-    
-    // DEBUG: Imprimir en consola qué datos estamos recibiendo del Sheets
-    console.log("Datos para renderizar en tabla:", datos);
 
     datos.forEach(asis => {
-        // Limpiamos los textos por si vienen con espacios extra del Sheets
         const grupoAsis = String(asis.grupo).replace('Grupo ', '').trim();
         const modAsis = String(asis.modalidad || asis.mod || "Presencial").trim(); 
         const estatus = String(asis.estatus).trim();
 
-        // Evaluamos si el alumno pasa los filtros de la barra superior
-        const pasaGrupo = (fGrupo === "TODOS" || fGrupo === grupoAsis);
-        const pasaMod = (fMod === "TODOS" || fMod === modAsis);
-
-        if (pasaGrupo && pasaMod) {
+        if ((fGrupo === "TODOS" || fGrupo === grupoAsis) && (fMod === "TODOS" || fMod === modAsis)) {
             countHoy++;
             if (modAsis === "Presencial") countPres++;
             if (modAsis === "Dual") countDual++;
             if (estatus.includes("Fuera") || estatus.includes("⚠️")) countFuera++;
 
-            // Asignar colores según el estatus
             let badgeEstatus = `<span style="background: #e2e8f0; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">${estatus}</span>`;
-            if (estatus.includes("Plantel") || estatus.includes("✅")) {
-                badgeEstatus = `<span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
-            } else if (estatus.includes("Remoto") || estatus.includes("App")) {
-                badgeEstatus = `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
-            } else if (estatus.includes("Fuera") || estatus.includes("⚠️")) {
-                badgeEstatus = `<span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
-            }
+            if (estatus.includes("Plantel") || estatus.includes("✅")) badgeEstatus = `<span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
+            else if (estatus.includes("Remoto") || estatus.includes("App")) badgeEstatus = `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
+            else if (estatus.includes("Fuera") || estatus.includes("⚠️")) badgeEstatus = `<span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${estatus}</span>`;
 
             html += `
                 <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 12px;">
-                        <strong style="color: var(--conalep-dark);">${asis.nombre}</strong><br>
-                        <small style="color: var(--text-muted);">${asis.matricula}</small>
-                    </td>
+                    <td style="padding: 12px;"><strong style="color: var(--conalep-dark);">${asis.nombre}</strong><br><small style="color: var(--text-muted);">${asis.matricula}</small></td>
                     <td style="padding: 12px; text-align: center; font-weight: bold; color: var(--conalep-accent);">G-${grupoAsis}</td>
-                    <td style="padding: 12px; text-align: center;">
-                        <span style="background: ${modAsis === 'Dual' ? '#fef9c3' : '#f1f5f9'}; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">${modAsis}</span>
-                    </td>
+                    <td style="padding: 12px; text-align: center;"><span style="background: ${modAsis === 'Dual' ? '#fef9c3' : '#f1f5f9'}; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">${modAsis}</span></td>
                     <td style="padding: 12px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">${asis.hora}</td>
                     <td style="padding: 12px; text-align: center;">${badgeEstatus}</td>
                     <td style="padding: 12px; text-align: center;">
                         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <div style="background: #e2e8f0; width: 60px; height: 6px; border-radius: 3px; overflow: hidden;">
-                                <div style="background: var(--conalep-primary); height: 100%; width: ${asis.global}%;"></div>
-                            </div>
+                            <div style="background: #e2e8f0; width: 60px; height: 6px; border-radius: 3px; overflow: hidden;"><div style="background: var(--conalep-primary); height: 100%; width: ${asis.global}%;"></div></div>
                             <span style="font-size: 0.75rem; font-weight: bold;">${asis.global}%</span>
                         </div>
                     </td>
-                </tr>
-            `;
+                </tr>`;
         }
     });
 
-    if (html === '') {
-        html = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay check-ins para este grupo/modalidad en la fecha seleccionada.</td></tr>`;
-    }
-
-    tbody.innerHTML = html;
-
-    // Actualizamos los numeritos de arriba
+    tbody.innerHTML = html === '' ? `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay check-ins para este grupo/modalidad.</td></tr>` : html;
     document.getElementById('kpi-asis-hoy').innerText = countHoy;
     document.getElementById('kpi-asis-pres').innerText = countPres;
     document.getElementById('kpi-asis-dual').innerText = countDual;
     document.getElementById('kpi-asis-fuera').innerText = countFuera;
 };
+
 // ==========================================
-// SECCIÓN 7.1: EXPORTACIÓN DE REPORTE A PDF
-// ==========================================
-window.generarReporteAsistenciaPDF = function() {
-    // 1. Recolectar datos actuales de la tabla y filtros
-    const fechaSeleccionada = document.getElementById('filtro-fecha-asis')?.value || "Fecha No Definida";
-    const grupoSeleccionado = document.getElementById('filtro-grupo-asis')?.value || "TODOS";
-    const modSeleccionada = document.getElementById('filtro-mod-asis')?.value || "TODOS";
-    const kpiPres = document.getElementById('kpi-asis-pres')?.innerText || "0";
-    const kpiDual = document.getElementById('kpi-asis-dual')?.innerText || "0";
-    const kpiFuera = document.getElementById('kpi-asis-fuera')?.innerText || "0";
-
-    const tbody = document.getElementById('tabla-asistencia-dia');
-    if (!tbody || tbody.innerText.includes("escaneando") || tbody.innerText.includes("No hay check-ins")) {
-        alert("⚠️ No hay datos de asistencia válidos para generar el reporte.");
-        return;
-    }
-
-    // 2. Extraer las filas de la tabla visible
-    const filas = tbody.querySelectorAll('tr');
-    let htmlTablaReporte = '';
-    
-    filas.forEach(tr => {
-        const celdas = tr.querySelectorAll('td');
-        if (celdas.length >= 6) {
-            const nombre = celdas[0].querySelector('strong').innerText;
-            const matricula = celdas[0].querySelector('small').innerText;
-            const grupo = celdas[1].innerText;
-            const modalidad = celdas[2].innerText;
-            const hora = celdas[3].innerText;
-            const estatus = celdas[4].innerText;
-            
-            htmlTablaReporte += `
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #1e293b;"><strong>${nombre}</strong><br><span style="color: #64748b;">${matricula}</span></td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px; font-weight: bold;">${grupo}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px;">${modalidad}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px;">${hora}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px; font-weight: bold;">${estatus}</td>
-                </tr>
-            `;
-        }
-    });
-
-    // 3. Ensamblar la plantilla HTML del documento oficial
-    const documentoElegante = `
-    <html>
-    <head>
-        <title>Reporte Asistencia_${grupoSeleccionado}_${fechaSeleccionada}</title>
-        <style>
-            body { font-family: 'Arial', sans-serif; padding: 40px; color: #0f172a; }
-            .header-oficial { border-bottom: 3px solid #00806A; padding-bottom: 15px; margin-bottom: 30px; }
-            .titulo-reporte { font-size: 24px; color: #00806A; margin: 0; text-transform: uppercase; }
-            .subtitulo { font-size: 14px; color: #475569; margin-top: 5px; }
-            .kpi-container { display: flex; gap: 20px; margin-bottom: 30px; }
-            .kpi-box { border: 1px solid #cbd5e1; padding: 10px 15px; border-radius: 6px; background: #f8fafc; flex: 1; text-align: center; }
-            .kpi-titulo { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 5px; }
-            .kpi-valor { font-size: 18px; font-weight: bold; color: #0f172a; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th { background-color: #00806A; color: white; padding: 12px; text-align: center; font-size: 13px; text-transform: uppercase; }
-            .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-            .firma-box { margin-top: 60px; text-align: center; width: 300px; margin-left: auto; margin-right: auto; }
-            .firma-linea { border-bottom: 1px solid #0f172a; margin-bottom: 5px; }
-        </style>
-    </head>
-    <body>
-        <div class="header-oficial">
-            <h1 class="titulo-reporte">Reporte Diario de Asistencia</h1>
-            <div class="subtitulo"><strong>Módulo:</strong> Matemáticas II (SICAL) | <strong>Fecha del Reporte:</strong> ${fechaSeleccionada}</div>
-            <div class="subtitulo"><strong>Docente:</strong> Prof. Juan Luis | <strong>Grupo Filtrado:</strong> ${grupoSeleccionado} | <strong>Modalidad:</strong> ${modSeleccionada}</div>
-        </div>
-
-        <div class="kpi-container">
-            <div class="kpi-box"><span class="kpi-titulo">Total en Plantel (Presenciales)</span><span class="kpi-valor" style="color: #16a34a;">${kpiPres}</span></div>
-            <div class="kpi-box"><span class="kpi-titulo">Total Remotos (Duales)</span><span class="kpi-valor" style="color: #0284c7;">${kpiDual}</span></div>
-            <div class="kpi-box"><span class="kpi-titulo">Fuera de Rango / Alertas</span><span class="kpi-valor" style="color: #dc2626;">${kpiFuera}</span></div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th style="text-align: left;">Alumno / Matrícula</th>
-                    <th>Grupo</th>
-                    <th>Modalidad</th>
-                    <th>Hora Check-In</th>
-                    <th>Estatus Check-In</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${htmlTablaReporte}
-            </tbody>
-        </table>
-
-        <div class="firma-box">
-            <div class="firma-linea"></div>
-            <strong>Firma del Docente</strong><br>Prof. Juan Luis
-        </div>
-
-        <div class="footer">
-            Sistema Interactivo de Calificación y Asistencia Local (SICAL)<br>
-            Generado automáticamente el: ${new Date().toLocaleString()}
-        </div>
-    </body>
-    </html>
-    `;
-
-    // 4. Crear ventana emergente, inyectar el diseño e imprimir
-    const ventanaImpresion = window.open('', '_blank', 'width=800,height=900');
-    ventanaImpresion.document.write(documentoElegante);
-    ventanaImpresion.document.close();
-    
-    // Pequeño retardo para asegurar que los estilos carguen antes de llamar al PDF
-    setTimeout(() => {
-        ventanaImpresion.focus();
-        ventanaImpresion.print();
-        // Opcional: ventanaImpresion.close(); // Si quieres que se cierre sola tras imprimir
-    }, 500);
-};
-// ==========================================
-// SECCIÓN 8: CHECK-IN Y RADAR GPS (ALUMNOS)
+// SECCIÓN 9: CHECK-IN Y RADAR GPS (ALUMNOS)
 // ==========================================
 window.marcarAsistencia = function() {
     const btn = document.getElementById('btn-checkin');
     const msg = document.getElementById('msg-checkin');
     
-    // Obtenemos los datos base de la memoria o pantalla
     const matricula = sessionStorage.getItem('matriculaActiva') || document.getElementById('lbl-matricula').innerText;
     const nombre = sessionStorage.getItem('nombreActivo') || document.getElementById('lbl-nombre').innerText;
     const grupo = sessionStorage.getItem('grupoActivo') || document.getElementById('lbl-grupo').innerText.replace('Grupo ', '');
 
-    btn.disabled = true;
-    btn.innerText = "🔍 Verificando perfil...";
-    msg.style.color = "#64748b";
-    msg.innerText = "Consultando permisos en servidor...";
+    btn.disabled = true; btn.innerText = "🔍 Verificando perfil..."; msg.style.color = "#64748b"; msg.innerText = "Consultando permisos en servidor...";
 
-    // 🔒 CANDADO MAESTRO: Consultamos la modalidad real internamente
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ accion: "consultar_modalidad", matricula: matricula })
-    })
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "consultar_modalidad", matricula: matricula }) })
     .then(res => res.json())
     .then(data => {
         const modalidadReal = data.modalidad || "Presencial";
-
         if (modalidadReal === "Dual" || modalidadReal.toLowerCase().includes("dual")) {
-            // Es dual legítimo en tu base de datos, pase directo sin GPS
             btn.innerText = "📡 Registrando...";
             window.enviarRegistroAsistencia(matricula, nombre, grupo, "Dual", "💻 App Activa (Remoto)");
         } else {
-            // Es presencial, encendemos el radar a la fuerza
             btn.innerText = "📡 Detectando GPS...";
             msg.innerText = "Calculando distancia al plantel...";
 
             if (!navigator.geolocation) {
-                msg.innerText = "⚠️ Tu navegador no soporta GPS.";
-                window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", "⚠️ Sin GPS");
-                return;
+                msg.innerText = "⚠️ Navegador no soporta GPS.";
+                return window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", "⚠️ Sin GPS");
             }
 
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    const latAlumno = pos.coords.latitude;
-                    const lonAlumno = pos.coords.longitude;
-                    const latConalep = 20.685056; 
-                    const lonConalep = -87.058308;
-                    
-                    const R = 6371e3; 
-                    const φ1 = latAlumno * Math.PI/180;
-                    const φ2 = latConalep * Math.PI/180;
-                    const Δφ = (latConalep - latAlumno) * Math.PI/180;
-                    const Δλ = (lonConalep - lonAlumno) * Math.PI/180;
-
+                    const latAlumno = pos.coords.latitude, lonAlumno = pos.coords.longitude;
+                    const latConalep = 20.685056, lonConalep = -87.058308;
+                    const R = 6371e3, φ1 = latAlumno * Math.PI/180, φ2 = latConalep * Math.PI/180;
+                    const Δφ = (latConalep - latAlumno) * Math.PI/180, Δλ = (lonConalep - lonAlumno) * Math.PI/180;
                     const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    const distancia = R * c; 
+                    const distancia = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
 
                     let estatus = (distancia <= 150) ? "📍 En Plantel" : "⚠️ Fuera de Rango";
                     window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", estatus);
                 },
                 (err) => {
-                    msg.innerText = "❌ GPS Denegado o Inactivo.";
+                    msg.innerText = "❌ GPS Denegado.";
                     window.enviarRegistroAsistencia(matricula, nombre, grupo, "Presencial", "⚠️ GPS Bloqueado");
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         }
     })
-    .catch(err => {
-        btn.disabled = false;
-        btn.innerText = "📍 Reintentar Check-In";
-        msg.style.color = "red";
-        msg.innerText = "Error de red al verificar tu perfil.";
-    });
+    .catch(err => { btn.disabled = false; btn.innerText = "📍 Reintentar Check-In"; msg.style.color = "red"; msg.innerText = "Error de red."; });
 };
 
 window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
     const btn = document.getElementById('btn-checkin');
     const msg = document.getElementById('msg-checkin');
 
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ accion: "registrar_asistencia", matricula: mat, nombre: nom, grupo: gru, modalidad: mod, estatus: estatus })
-    })
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "registrar_asistencia", matricula: mat, nombre: nom, grupo: gru, modalidad: mod, estatus: estatus }) })
     .then(res => res.json())
     .then(data => {
-        if (data.status === "éxito") {
-            btn.style.background = "#16a34a";
-            btn.innerText = "✅ Asistencia de Hoy Registrada";
-            btn.disabled = true; 
+        if (data.status === "éxito" || data.status === "duplicado") {
+            btn.style.background = "#16a34a"; btn.innerText = "✅ Asistencia Registrada"; btn.disabled = true; 
             msg.style.color = estatus.includes("Fuera") || estatus.includes("⚠️") ? "#dc2626" : "#16a34a";
-            msg.innerText = `Estatus: ${estatus}`;
-            
-            const hoyStr = new Date().toLocaleDateString('en-CA'); 
-            localStorage.setItem(`checkin_${mat}`, hoyStr);
-            
-        } else if (data.status === "duplicado") {
-            btn.style.background = "#16a34a";
-            btn.innerText = "✅ Asistencia de Hoy Registrada";
-            btn.disabled = true;
-            msg.style.color = "#16a34a";
-            msg.innerText = "Tu asistencia ya estaba registrada en el sistema.";
-            
-            const hoyStr = new Date().toLocaleDateString('en-CA');
-            localStorage.setItem(`checkin_${mat}`, hoyStr);
+            msg.innerText = data.status === "duplicado" ? "Tu asistencia ya estaba registrada." : `Estatus: ${estatus}`;
+            localStorage.setItem(`checkin_${mat}`, new Date().toLocaleDateString('en-CA'));
         } else {
-            btn.disabled = false;
-            btn.innerText = "📍 Reintentar Check-In";
-            msg.style.color = "red";
-            msg.innerText = "Error: " + data.mensaje;
+            btn.disabled = false; btn.innerText = "📍 Reintentar Check-In"; msg.style.color = "red"; msg.innerText = "Error: " + data.mensaje;
         }
-    }).catch(err => {
-        btn.disabled = false;
-        btn.innerText = "📍 Reintentar Check-In";
-        msg.innerText = "Error de red.";
-    });
+    }).catch(err => { btn.disabled = false; btn.innerText = "📍 Reintentar"; msg.innerText = "Error de red."; });
 };
 
 window.verificarCheckinPrevio = function(mat) {
@@ -959,84 +792,48 @@ window.verificarCheckinPrevio = function(mat) {
     const msg = document.getElementById('msg-checkin');
     
     if (localStorage.getItem(`checkin_${mat}`) === hoyStr && btn && msg) {
-        btn.disabled = true;
-        btn.style.background = "#16a34a";
-        btn.innerText = "✅ Asistencia de Hoy Lista";
-        msg.style.color = "#16a34a";
-        msg.innerText = "Ya registraste tu check-in exitosamente el día de hoy.";
-    } else if (btn) {
-        btn.disabled = false;
-        btn.style.background = "#0f172a";
-        btn.innerText = "📍 Registrar Asistencia (Hoy)";
-        msg.innerText = "";
+        btn.disabled = true; btn.style.background = "#16a34a"; btn.innerText = "✅ Asistencia de Hoy Lista";
+        msg.style.color = "#16a34a"; msg.innerText = "Ya registraste tu check-in hoy.";
     }
 };
+
 // ==========================================
-// SECCIÓN 9: MOTOR DE RETOS INTERACTIVOS
+// SECCIÓN 10: MOTOR DE RETOS INTERACTIVOS
 // ==========================================
 let tiempoInicio = null;
 
-// Disparador del cronómetro cuando entran a la vista de retos
-// Llama a esta función o a 'tiempoInicio = Date.now();' cuando el alumno presione "Iniciar Reto"
 window.iniciarCronometroReto = function() {
     tiempoInicio = Date.now();
 };
 
 window.comprobarRespuesta = function(btnTarget) {
-    if (!tiempoInicio) {
-        alert("⚠️ El reto no ha sido iniciado correctamente.");
-        return;
-    }
+    if (!tiempoInicio) { alert("⚠️ El reto no ha sido iniciado."); return; }
 
-    // 1. Detener el cronómetro y calcular el tiempo
     const tiempoFin = Date.now();
     const segundosTardados = Math.floor((tiempoFin - tiempoInicio) / 1000);
     const minutos = String(Math.floor(segundosTardados / 60)).padStart(2, '0');
     const segundos = String(segundosTardados % 60).padStart(2, '0');
     const tiempoFormateado = `${minutos}:${segundos}`;
     
-    // 2. Obtener datos del alumno activo y el nivel (Ajusta los IDs de tus inputs si es necesario)
     const nivel = document.getElementById('nivel-reto')?.value || "1";
     const matricula = sessionStorage.getItem('matriculaActiva');
     const nombre = sessionStorage.getItem('nombreActivo');
     const grupo = sessionStorage.getItem('grupoActivo');
 
-    if (!matricula) {
-        alert("⚠️ Sesión no detectada. Inicia sesión para guardar tu récord.");
-        return;
-    }
+    if (!matricula) { alert("⚠️ Sesión no detectada."); return; }
 
     const textoOriginal = btnTarget.innerText;
-    btnTarget.innerText = "⏳ Validando y guardando récord...";
-    btnTarget.disabled = true;
+    btnTarget.innerText = "⏳ Guardando récord..."; btnTarget.disabled = true;
 
-    // 3. Enviar los datos a la nueva pestaña "Retos" en Google Sheets
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({
-            accion: "registrar_reto",
-            matricula: matricula,
-            nombre: nombre,
-            grupo: grupo,
-            nivel: nivel,
-            tiempo: tiempoFormateado
-        })
+        body: JSON.stringify({ accion: "registrar_reto", matricula: matricula, nombre: nombre, grupo: grupo, nivel: nivel, tiempo: tiempoFormateado })
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === "éxito") {
-            alert(`✅ ¡Felicidades! Reto Nivel ${nivel} superado.\n⏱️ Tiempo registrado: ${tiempoFormateado}`);
-            // Aquí puedes reiniciar el reto, limpiar la pantalla, etc.
-        } else {
-            alert(`⚠️ Respuesta correcta, pero error al guardar récord: ${data.mensaje}`);
-        }
+        if (data.status === "éxito") alert(`✅ ¡Reto Nivel ${nivel} superado!\n⏱️ Tiempo: ${tiempoFormateado}`);
+        else alert(`⚠️ Respuesta correcta, error al guardar: ${data.mensaje}`);
     })
-    .catch(err => {
-        alert(`⚠️ Respuesta correcta, pero falló la conexión al guardar el tiempo.`);
-    })
-    .finally(() => {
-        btnTarget.innerText = textoOriginal;
-        btnTarget.disabled = false;
-        tiempoInicio = null; // Reseteamos el cronómetro
-    });
+    .catch(err => { alert(`⚠️ Respuesta correcta, pero falló la conexión al guardar el tiempo.`); })
+    .finally(() => { btnTarget.innerText = textoOriginal; btnTarget.disabled = false; tiempoInicio = null; });
 };
