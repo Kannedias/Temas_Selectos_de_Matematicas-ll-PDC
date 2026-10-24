@@ -147,9 +147,12 @@ window.consultarAvanceReal = function(matricula) {
     })
     .then(res => res.json())
     .then(data => {
-        if(data.parciales && typeof window.dibujarGrafica === 'function') {
-            window.datosDesgloseParciales = data.parciales;
-            window.dibujarGrafica(data.parciales);
+        
+        // 🛡️ CORRECCIÓN: Forzamos el dibujado de la gráfica SIEMPRE. 
+        // Si no hay datos, manda un arreglo vacío para pintar la base gris.
+        if(typeof window.dibujarGrafica === 'function') {
+            window.datosDesgloseParciales = data.parciales || [];
+            window.dibujarGrafica(window.datosDesgloseParciales);
         }
         
         const tbodyHistorial = document.getElementById('tbody-historial');
