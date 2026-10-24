@@ -718,6 +718,123 @@ window.filtrarTablaAsistencia = function() {
 };
 
 // ==========================================
+// SECCIÓN 8.1: EXPORTACIÓN DE REPORTE A PDF
+// ==========================================
+window.generarReporteAsistenciaPDF = function() {
+    // 1. Recolectar datos actuales de la tabla y filtros
+    const fechaSeleccionada = document.getElementById('filtro-fecha-asis')?.value || "Fecha No Definida";
+    const grupoSeleccionado = document.getElementById('filtro-grupo-asis')?.value || "TODOS";
+    const modSeleccionada = document.getElementById('filtro-mod-asis')?.value || "TODOS";
+    const kpiPres = document.getElementById('kpi-asis-pres')?.innerText || "0";
+    const kpiDual = document.getElementById('kpi-asis-dual')?.innerText || "0";
+    const kpiFuera = document.getElementById('kpi-asis-fuera')?.innerText || "0";
+
+    const tbody = document.getElementById('tabla-asistencia-dia');
+    if (!tbody || tbody.innerText.includes("escaneando") || tbody.innerText.includes("No hay check-ins")) {
+        alert("⚠️ No hay datos de asistencia válidos para generar el reporte.");
+        return;
+    }
+
+    // 2. Extraer las filas de la tabla visible
+    const filas = tbody.querySelectorAll('tr');
+    let htmlTablaReporte = '';
+    
+    filas.forEach(tr => {
+        const celdas = tr.querySelectorAll('td');
+        if (celdas.length >= 6) {
+            const nombre = celdas[0].querySelector('strong').innerText;
+            const matricula = celdas[0].querySelector('small').innerText;
+            const grupo = celdas[1].innerText;
+            const modalidad = celdas[2].innerText;
+            const hora = celdas[3].innerText;
+            const estatus = celdas[4].innerText;
+            
+            htmlTablaReporte += `
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #1e293b;"><strong>${nombre}</strong><br><span style="color: #64748b;">${matricula}</span></td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px; font-weight: bold;">${grupo}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px;">${modalidad}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px;">${hora}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 12px; font-weight: bold;">${estatus}</td>
+                </tr>
+            `;
+        }
+    });
+
+    // 3. Ensamblar la plantilla HTML del documento oficial
+    const documentoElegante = `
+    <html>
+    <head>
+        <title>Reporte Asistencia_${grupoSeleccionado}_${fechaSeleccionada}</title>
+        <style>
+            body { font-family: 'Arial', sans-serif; padding: 40px; color: #0f172a; }
+            .header-oficial { border-bottom: 3px solid #00806A; padding-bottom: 15px; margin-bottom: 30px; }
+            .titulo-reporte { font-size: 24px; color: #00806A; margin: 0; text-transform: uppercase; }
+            .subtitulo { font-size: 14px; color: #475569; margin-top: 5px; }
+            .kpi-container { display: flex; gap: 20px; margin-bottom: 30px; }
+            .kpi-box { border: 1px solid #cbd5e1; padding: 10px 15px; border-radius: 6px; background: #f8fafc; flex: 1; text-align: center; }
+            .kpi-titulo { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 5px; }
+            .kpi-valor { font-size: 18px; font-weight: bold; color: #0f172a; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { background-color: #00806A; color: white; padding: 12px; text-align: center; font-size: 13px; text-transform: uppercase; }
+            .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+            .firma-box { margin-top: 60px; text-align: center; width: 300px; margin-left: auto; margin-right: auto; }
+            .firma-linea { border-bottom: 1px solid #0f172a; margin-bottom: 5px; }
+        </style>
+    </head>
+    <body>
+        <div class="header-oficial">
+            <h1 class="titulo-reporte">Reporte Diario de Asistencia</h1>
+            <div class="subtitulo"><strong>Módulo:</strong> Matemáticas II (SICAL) | <strong>Fecha del Reporte:</strong> ${fechaSeleccionada}</div>
+            <div class="subtitulo"><strong>Docente:</strong> Prof. Juan Luis | <strong>Grupo Filtrado:</strong> ${grupoSeleccionado} | <strong>Modalidad:</strong> ${modSeleccionada}</div>
+        </div>
+
+        <div class="kpi-container">
+            <div class="kpi-box"><span class="kpi-titulo">Total en Plantel (Presenciales)</span><span class="kpi-valor" style="color: #16a34a;">${kpiPres}</span></div>
+            <div class="kpi-box"><span class="kpi-titulo">Total Remotos (Duales)</span><span class="kpi-valor" style="color: #0284c7;">${kpiDual}</span></div>
+            <div class="kpi-box"><span class="kpi-titulo">Fuera de Rango / Alertas</span><span class="kpi-valor" style="color: #dc2626;">${kpiFuera}</span></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: left;">Alumno / Matrícula</th>
+                    <th>Grupo</th>
+                    <th>Modalidad</th>
+                    <th>Hora Check-In</th>
+                    <th>Estatus Check-In</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${htmlTablaReporte}
+            </tbody>
+        </table>
+
+        <div class="firma-box">
+            <div class="firma-linea"></div>
+            <strong>Firma del Docente</strong><br>Prof. Juan Luis
+        </div>
+
+        <div class="footer">
+            Sistema Interactivo de Calificación y Asistencia Local (SICAL)<br>
+            Generado automáticamente el: ${new Date().toLocaleString()}
+        </div>
+    </body>
+    </html>
+    `;
+
+    // 4. Crear ventana emergente, inyectar el diseño e imprimir
+    const ventanaImpresion = window.open('', '_blank', 'width=800,height=900');
+    ventanaImpresion.document.write(documentoElegante);
+    ventanaImpresion.document.close();
+    
+    setTimeout(() => {
+        ventanaImpresion.focus();
+        ventanaImpresion.print();
+    }, 500);
+};
+
+// ==========================================
 // SECCIÓN 9: CHECK-IN Y RADAR GPS (ALUMNOS)
 // ==========================================
 window.marcarAsistencia = function() {
