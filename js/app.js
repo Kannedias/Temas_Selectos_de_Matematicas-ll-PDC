@@ -114,21 +114,21 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const angFinal = res.direccion.grados;
 
     if (dx === 0 && dy === 0) {
-        analisisCuadrante = "Punto Nulo"; calculoFormula = `<li>No hay dirección definida.</li>`;
+        analisisCuadrante = "Punto Nulo"; calculoFormula = `<p style="margin: 0; font-size: 0.95rem; text-align: center;">No hay dirección definida.</p>`;
     } else if (dx > 0 && dy >= 0) {
         analisisCuadrante = "Cuadrante I (+, +)";
-        calculoFormula = `<li>$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$</li><li>Directo: $\\theta = \\alpha$</li>`;
+        calculoFormula = `<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; text-align: center;">$$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$$</p><p style="margin: 0; font-size: 0.95rem; text-align: center;">Directo: $$\\theta = \\alpha$$</p>`;
     } else if (dx < 0 && dy >= 0) {
         analisisCuadrante = "Cuadrante II (-, +)";
-        calculoFormula = `<li>$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$</li><li>$\\theta = 180^\\circ - \\alpha = ${angFinal}^\\circ$</li>`;
+        calculoFormula = `<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; text-align: center;">$$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$$</p><p style="margin: 0; font-size: 0.95rem; text-align: center;">$$\\theta = 180^\\circ - \\alpha = ${angFinal}^\\circ$$</p>`;
     } else if (dx < 0 && dy < 0) {
         analisisCuadrante = "Cuadrante III (-, -)";
-        calculoFormula = `<li>$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$</li><li>$\\theta = 180^\\circ + \\alpha = ${angFinal}^\\circ$</li>`;
+        calculoFormula = `<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; text-align: center;">$$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$$</p><p style="margin: 0; font-size: 0.95rem; text-align: center;">$$\\theta = 180^\\circ + \\alpha = ${angFinal}^\\circ$$</p>`;
     } else if (dx > 0 && dy < 0) {
         analisisCuadrante = "Cuadrante IV (+, -)";
-        calculoFormula = `<li>$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$</li><li>$\\theta = 360^\\circ - \\alpha = ${angFinal}^\\circ$</li>`;
+        calculoFormula = `<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; text-align: center;">$$\\alpha = \\arctan(${fmt(absDy)}/${fmt(absDx)}) = ${angBase}^\\circ$$</p><p style="margin: 0; font-size: 0.95rem; text-align: center;">$$\\theta = 360^\\circ - \\alpha = ${angFinal}^\\circ$$</p>`;
     } else if (dx === 0) {
-        analisisCuadrante = "Sobre Eje Y"; calculoFormula = `<li>Directo por inspección: $\\theta = ${angFinal}^\\circ$</li>`;
+        analisisCuadrante = "Sobre Eje Y"; calculoFormula = `<p style="margin: 0; font-size: 0.95rem; text-align: center;">Directo por inspección: $$\\theta = ${angFinal}^\\circ$$</p>`;
     }
 
     // --- INYECCIÓN HTML DE LAS 7 TARJETAS LIMPIAS ---
@@ -146,12 +146,12 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1})\\hat{i} + (${cB}{y_2} - ${cA}{y_1})\\hat{j}$$</p>
             </div>
 
-            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <div style="font-size: 0.85rem; background: #eff6ff; padding: 4px 12px; border-radius: 20px; color: #1e40af;"><strong>Punto A:</strong> $$${strCoordA}$$</div>
-                <div style="font-size: 0.85rem; background: #fef2f2; padding: 4px 12px; border-radius: 20px; color: #9f1239;"><strong>Punto B:</strong> $$${strCoordB}$$</div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #eff6ff; padding: 4px 12px; border-radius: 20px; color: #1e40af; border: 1px solid #bfdbfe;"><strong>Punto A:</strong> $$${strCoordA}$$</div>
+                <div style="font-size: 0.85rem; background: #fef2f2; padding: 4px 12px; border-radius: 20px; color: #9f1239; border: 1px solid #fecaca;"><strong>Punto B:</strong> $$${strCoordB}$$</div>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir valores:</strong></p>
                 <p style="margin: 0 0 1rem 0; font-size: 0.95rem; text-align: center;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\, + \\, (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
                 
@@ -179,12 +179,12 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.8rem; color: #64748b; margin: 0; font-style: italic;">Teorema de Pitágoras</p>
             </div>
 
-            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <div style="font-size: 0.85rem; background: #faf5ff; padding: 4px 12px; border-radius: 20px; color: #6b21a8;">$\\Delta x = ${dxFmt}$</div>
-                <div style="font-size: 0.85rem; background: #faf5ff; padding: 4px 12px; border-radius: 20px; color: #6b21a8;">$\\Delta y = ${dyFmt}$</div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #faf5ff; padding: 4px 12px; border-radius: 20px; color: #6b21a8; border: 1px solid #e9d5ff;">$\\Delta x = ${dxFmt}$</div>
+                <div style="font-size: 0.85rem; background: #faf5ff; padding: 4px 12px; border-radius: 20px; color: #6b21a8; border: 1px solid #e9d5ff;">$\\Delta y = ${dyFmt}$</div>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir valores:</strong></p>
                 <p style="margin: 0 0 1rem 0; font-size: 0.95rem; text-align: center;">$$|\\Delta \\vec{r}| = \\sqrt{(${dxFmt})^2 + (${dyFmt})^2}$$</p>
                 
@@ -210,16 +210,14 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\theta = \\arctan\\left(\\frac{\\Delta y}{\\Delta x}\\right)$$</p>
             </div>
 
-            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <div style="font-size: 0.85rem; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; color: #065f46;">$\\Delta y = ${dyFmt}$</div>
-                <div style="font-size: 0.85rem; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; color: #065f46;">$\\Delta x = ${dxFmt}$</div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; color: #065f46; border: 1px solid #a7f3d0;">$\\Delta y = ${dyFmt}$</div>
+                <div style="font-size: 0.85rem; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; color: #065f46; border: 1px solid #a7f3d0;">$\\Delta x = ${dxFmt}$</div>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>Análisis:</strong> ${analisisCuadrante}</p>
-                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; color: #475569; font-size: 0.85rem; text-align: left;">
-                    ${calculoFormula}
-                </ul>
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>Análisis: ${analisisCuadrante}</strong></p>
+                ${calculoFormula}
             </div>
 
             <div style="background: #ecfdf5; border-left: 4px solid #059669; color: #064e3b; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
@@ -240,12 +238,12 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$m = \\frac{\\Delta y}{\\Delta x}$$</p>
             </div>
 
-            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <div style="font-size: 0.85rem; background: #fffbeb; padding: 4px 12px; border-radius: 20px; color: #92400e;">$\\Delta y = ${dyFmt}$</div>
-                <div style="font-size: 0.85rem; background: #fffbeb; padding: 4px 12px; border-radius: 20px; color: #92400e;">$\\Delta x = ${dxFmt}$</div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #fffbeb; padding: 4px 12px; border-radius: 20px; color: #92400e; border: 1px solid #fde68a;">$\\Delta y = ${dyFmt}$</div>
+                <div style="font-size: 0.85rem; background: #fffbeb; padding: 4px 12px; border-radius: 20px; color: #92400e; border: 1px solid #fde68a;">$\\Delta x = ${dxFmt}$</div>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir:</strong></p>
                 <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$m = \\frac{${dyFmt}}{${dxFmt}}$$</p>
             </div>
@@ -268,12 +266,12 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$y - y_1 = m(x - x_1)$$</p>
             </div>
 
-            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <div style="font-size: 0.85rem; background: #eef2ff; padding: 4px 12px; border-radius: 20px; color: #3730a3;"><strong>Punto A:</strong> $$${strCoordA}$$</div>
-                <div style="font-size: 0.85rem; background: #eef2ff; padding: 4px 12px; border-radius: 20px; color: #3730a3;">$m = ${mVal}$</div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #eef2ff; padding: 4px 12px; border-radius: 20px; color: #3730a3; border: 1px solid #c7d2fe;"><strong>Punto A:</strong> $$${strCoordA}$$</div>
+                <div style="font-size: 0.85rem; background: #eef2ff; padding: 4px 12px; border-radius: 20px; color: #3730a3; border: 1px solid #c7d2fe;">$m = ${mVal}$</div>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir:</strong></p>
                 <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$y - ${cA}{${y1Fmt}} = ${mVal}(x - ${cA}{${x1Fmt}})$$</p>
             </div>
@@ -284,7 +282,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         </div>
         `,
 
-        // PASO 6: FORMA EXPLÍCITA (Corregido sin y = y =)
+        // PASO 6: FORMA EXPLÍCITA
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
@@ -301,7 +299,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="margin: 0; font-size: 0.95rem; color: #115e59;">$$y - ${y1Fmt} = ${mVal}(x - ${x1Fmt})$$</p>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Despeje de $y$:</strong></p>
                 <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$ ${res.ecuaciones.explicita} $$</p>
             </div>
@@ -312,7 +310,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         </div>
         `,
 
-        // PASO 7: FORMA GENERAL (Corregido)
+        // PASO 7: FORMA GENERAL
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
@@ -329,7 +327,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="margin: 0; font-size: 0.95rem; color: #881337;">$$${res.ecuaciones.explicita}$$</p>
             </div>
 
-            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Igualar a 0:</strong></p>
                 <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$${res.ecuaciones.general}$$</p>
             </div>
