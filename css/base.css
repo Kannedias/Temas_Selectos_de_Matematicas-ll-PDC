@@ -380,3 +380,26 @@ body {
         grid-template-columns: 1fr !important;
     }
 }
+/* =======================================================
+   ADAPTACIÓN INTELIGENTE PARA CELULARES (VERTICAL Y HORIZONTAL)
+   ======================================================= */
+
+/* 1. Regla para celulares grandes, pequeños y acostados (hasta 950px) */
+@media screen and (max-width: 950px) {
+  /* Forzar a 1 sola columna el panel de entradas y el plano cartesiano */
+  #sec-laboratorio > div[style*="display: grid"] {
+      grid-template-columns: 1fr !important;
+  }
+  
+  /* Forzar a 1 sola columna todas las tarjetas de los 7 pasos (sin amontonar) */
+  #pasos-container {
+      grid-template-columns: 1fr !important;
+  }
+}
+
+/* 2. Ajuste especial de altura de la Gráfica cuando el celular está ACOSTADO */
+@media screen and (max-width: 950px) and (orientation: landscape) {
+  #sec-laboratorio canvas {
+      max-height: 260px !important; /* Evita que la gráfica se coma la pantalla entera */
+  }
+}
