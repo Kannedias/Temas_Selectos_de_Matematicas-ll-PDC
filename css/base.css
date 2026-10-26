@@ -358,3 +358,25 @@ body {
       grid-template-columns: 1fr;
   }
 }
+/* =======================================================
+   GRID PARA EL DESGLOSE PASO A PASO (LABORATORIO)
+   ======================================================= */
+.pasos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    /* align-items: start evita que las tarjetas cortas se estiren artificialmente, quitando el "descuadre" visual */
+    align-items: start; 
+}
+
+/* 
+   REGLA DE ORO MÓVIL (Landscape y Portrait):
+   Un procedimiento matemático debe leerse de arriba hacia abajo (1, 2, 3...).
+   Si la pantalla es menor a 900px (celulares acostados o tablets), 
+   forzamos 1 sola columna para que el alumno solo haga scroll hacia abajo sin leer en zigzag. 
+*/
+@media (max-width: 900px) {
+    .pasos-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
