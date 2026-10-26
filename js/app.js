@@ -335,7 +335,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         </div>
         `,
 
-        // ==============================================
+       // ==============================================
         // PASO 7: FORMA GENERAL
         // ==============================================
         `
@@ -353,7 +353,8 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <!-- Origen de los datos -->
                 <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
                     <p style="font-size: 0.82rem; color: #9f1239; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 6:</p>
-                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #881337;">$$y = ${res.ecuaciones.explicita}$$</p>
+                    <!-- AQUÍ SE ELIMINÓ EL DUPLICADO "y =" -->
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #881337;">$$${res.ecuaciones.explicita}$$</p>
                 </div>
                 <hr style="border: 0; border-top: 1px dashed #fecdd3; margin: 0.25rem 0;">
 
