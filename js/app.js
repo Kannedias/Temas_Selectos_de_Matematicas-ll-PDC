@@ -611,7 +611,7 @@ function comprobarReto() {
     
     // Función de tolerancia (acepta +/- 0.05 de margen de error por decimales)
     const esCorrecto = (ingresado, real) => {
-        if (!ingresado || isNaN(ingresado)) return false;
+        if (!ingresado || isNaN(parseFloat(ingresado))) return false;
         return Math.abs(parseFloat(ingresado) - parseFloat(real)) <= 0.05;
     };
 
@@ -639,9 +639,11 @@ function comprobarReto() {
         inPen.style.borderColor = "#dc2626";
     }
     
-    // Validar Vector (Formato X, Y)
+    // 4. Validar Vector (Acepta "X, Y" o "(X, Y)")
     const inVec = document.getElementById('ans-vector');
-    const vecPartes = inVec.value.split(',').map(v => v.trim());
+    // Limpiamos paréntesis invisibles antes de partir por la coma
+    const vecLimpio = inVec.value.replace(/[()]/g, ''); 
+    const vecPartes = vecLimpio.split(',').map(v => v.trim());
     const dxReal = retoActivo.puntos.x2 - retoActivo.puntos.x1;
     const dyReal = retoActivo.puntos.y2 - retoActivo.puntos.y1;
     
@@ -655,7 +657,6 @@ function comprobarReto() {
     const feedbackMsg = document.getElementById('feedback-reto-msg');
     if (correctas === totalEvaluar) {
         feedbackMsg.innerHTML = `<span style="color: #166534;">🎉 ¡Excelente! Todos los parámetros son correctos. Tiempo: ${tiempoTexto}</span>`;
-        // Aquí podríamos guardar el récord en sessionStorage
     } else {
         feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa los recuadros en rojo o consulta el desglose.</span>`;
     }
