@@ -322,7 +322,7 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
             
             <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.8rem;">
                 <p style="font-size: 0.82rem; color: #115e59; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 5:</p>
-                <p style="margin: 0 0 0.5rem 0;">$$y - ${y1Str} = ${mVal}(x - ${x1Str})$$</p>
+                <p style="margin: 0 0 0.5rem 0;">$$y - ${y1Fmt} = ${mVal}(x - ${x1Fmt})$$</p>
                 
                 <span style="font-size: 0.78rem; color: #64748b;">Despeje paso a paso de $y$:</span>
                 <!-- AQUÍ SE ELIMINÓ EL DUPLICADO -->
