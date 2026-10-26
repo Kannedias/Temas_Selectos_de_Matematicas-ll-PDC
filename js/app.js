@@ -385,32 +385,30 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
 }
 
 // ==============================================
-// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS (ANIMADO)
+// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO (ANIMADO Y RESPONSIVO)
 // ==============================================
-let animacionPlano = null; // Control global para detener animaciones previas
+let animacionPlano = null; // Control global para detener animaciones
 
 function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const canvas = document.getElementById('planoCartesianoCanvas');
     if (!canvas) return;
 
-    if (animacionPlano) cancelAnimationFrame(animacionPlano); // Reinicia si hacen clic rápido
+    // DETENER cualquier animación previa (crucial para los checkboxes)
+    if (animacionPlano) {
+        cancelAnimationFrame(animacionPlano);
+        animacionPlano = null;
+    }
 
-    // 1. Leer estado de los checkboxes de capas
-    const mostrarPuntos = document.getElementById('chk-puntos') ? document.getElementById('chk-puntos').checked : true;
-    const mostrarTriangulo = document.getElementById('chk-triangulo') ? document.getElementById('chk-triangulo').checked : true;
-    const mostrarMagnitud = document.getElementById('chk-magnitud') ? document.getElementById('chk-magnitud').checked : true;
-    const mostrarAngulo = document.getElementById('chk-angulo') ? document.getElementById('chk-angulo').checked : true;
-    const mostrarPendiente = document.getElementById('chk-pendiente') ? document.getElementById('chk-pendiente').checked : true;
-    const mostrarOrdenada = document.getElementById('chk-ordenada') ? document.getElementById('chk-ordenada').checked : true;
-
+    // Ajuste dinámico exacto al tamaño del contenedor padre
     const rect = canvas.parentNode.getBoundingClientRect();
     canvas.width = rect.width || 600;
-    canvas.height = 340;
+    canvas.height = rect.height || 350; 
 
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
 
+    // Escala adaptativa basada en el tamaño real del canvas
     const maxCoord = Math.max(Math.abs(x1), Math.abs(y1), Math.abs(x2), Math.abs(y2), 5) + 3;
     const scale = Math.min(width, height) / (maxCoord * 2.2);
     const cx = width / 2;
@@ -420,20 +418,34 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const toPy = (y) => cy - (y * scale);
 
     let startTimestamp = null;
-    const duracionAnim = 1000; // 1 segundo de animación
+    const duracionAnim = 800; // 0.8 segundos de fluidez
 
-    // --- MOTOR DE ANIMACIÓN ---
     function renderizarFrame(timestamp) {
         if (!startTimestamp) startTimestamp = timestamp;
         let progresoBruto = Math.min((timestamp - startTimestamp) / duracionAnim, 1);
-        // Efecto Ease-out (desaceleración suave al final)
-        let p = 1 - Math.pow(1 - progresoBruto, 3); 
+        let p = 1 - Math.pow(1 - progresoBruto, 3); // Efecto Ease-out
 
-        // FONDO Y CUADRÍCULA (Estáticos)
+        // 1. LEER EL ESTADO DE LAS CAPAS EN CADA FOTOGRAMA
+        const chkPuntos = document.getElementById('chk-puntos');
+        const chkTriangulo = document.getElementById('chk-triangulo');
+        const chkMagnitud = document.getElementById('chk-magnitud');
+        const chkAngulo = document.getElementById('chk-angulo');
+        const chkPendiente = document.getElementById('chk-pendiente');
+        const chkOrdenada = document.getElementById('chk-ordenada');
+
+        const mostrarPuntos = chkPuntos ? chkPuntos.checked : true;
+        const mostrarTriangulo = chkTriangulo ? chkTriangulo.checked : true;
+        const mostrarMagnitud = chkMagnitud ? chkMagnitud.checked : true;
+        const mostrarAngulo = chkAngulo ? chkAngulo.checked : true;
+        const mostrarPendiente = chkPendiente ? chkPendiente.checked : true;
+        const mostrarOrdenada = chkOrdenada ? chkOrdenada.checked : true;
+
+        // Limpiar el fondo
         ctx.globalAlpha = 1;
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, width, height);
         
+        // Cuadrícula y Ejes
         ctx.strokeStyle = "#f1f5f9";
         ctx.lineWidth = 1;
         for (let x = -Math.floor(maxCoord); x <= Math.floor(maxCoord); x++) {
@@ -449,10 +461,8 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
 
         // ----------------------------------------------------
-        // CAPAS ANIMADAS
+        // LÍNEA PRINCIPAL ANIMADA
         // ----------------------------------------------------
-        
-        // RECTA PRINCIPAL (Efecto de Trazado de izquierda a derecha)
         ctx.strokeStyle = "#2563eb";
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -463,16 +473,22 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         } else {
             const m = parseFloat(res.pendiente);
             const b = parseFloat(res.ordenadaOrigen);
-            const xMin = -maxCoord * 2;
-            const xMax = maxCoord * 2;
-            const xActual = xMin + (xMax - xMin) * p; // Hasta dónde llega la línea en este frame
+            
+            // Los límites se calculan dinámicamente según el ancho real de la pantalla
+            const maxPxExtremo = (width / 2) / scale + 5; 
+            const xMin = -maxPxExtremo;
+            const xMax = maxPxExtremo;
+            
+            const xActual = xMin + (xMax - xMin) * p; 
             
             ctx.moveTo(toPx(xMin), toPy(m * xMin + b));
             ctx.lineTo(toPx(xActual), toPy(m * xActual + b));
         }
         ctx.stroke();
 
-        // ELEMENTOS CON EFECTO DE APARICIÓN (Fade-in)
+        // ----------------------------------------------------
+        // CAPAS SECUNDARIAS (Fade-in)
+        // ----------------------------------------------------
         ctx.globalAlpha = p; 
 
         if (mostrarTriangulo) {
@@ -481,8 +497,8 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
             ctx.lineWidth = mostrarPendiente ? 3 : 2; 
             ctx.beginPath();
             ctx.moveTo(toPx(x1), toPy(y1));
-            ctx.lineTo(toPx(x1 + (x2 - x1) * p), toPy(y1)); // Base animada
-            ctx.lineTo(toPx(x2), toPy(y1 + (y2 - y1) * p)); // Altura animada
+            ctx.lineTo(toPx(x1 + (x2 - x1) * p), toPy(y1)); 
+            ctx.lineTo(toPx(x2), toPy(y1 + (y2 - y1) * p)); 
             ctx.stroke();
             ctx.setLineDash([]);
             
@@ -563,11 +579,11 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
             ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + offsetBx, toPy(y2) - 10);
         }
 
-        // Si no ha terminado, solicita el siguiente fotograma
         if (progresoBruto < 1) {
             animacionPlano = requestAnimationFrame(renderizarFrame);
         } else {
-            ctx.globalAlpha = 1; // Seguridad: restaura opacidad al terminar
+            ctx.globalAlpha = 1;
+            animacionPlano = null; 
         }
     }
     
