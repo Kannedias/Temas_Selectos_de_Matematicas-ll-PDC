@@ -714,9 +714,3 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     setTimeout(calcularLaboratorio, 200);
 });
-
-// Funciones vacías para evitar errores de consola
-function iniciarRetoSeguro() { console.log("Reto Seguro Iniciado"); }
-function comprobarReto() { console.log("Comprobando Reto..."); }
-function desglosarReto() { console.log("Desglosando Reto..."); }
-function anularReto() { console.log("Reto Anulado."); }
