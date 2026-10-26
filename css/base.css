@@ -381,25 +381,50 @@ body {
     }
 }
 /* =======================================================
-   ADAPTACIÓN INTELIGENTE PARA CELULARES (VERTICAL Y HORIZONTAL)
+   ADAPTACIÓN INTELIGENTE: ESCRITORIO VS MÓVIL
    ======================================================= */
 
-/* 1. Regla para celulares grandes, pequeños y acostados (hasta 950px) */
-@media screen and (max-width: 950px) {
-  /* Forzar a 1 sola columna el panel de entradas y el plano cartesiano */
-  #sec-laboratorio > div[style*="display: grid"] {
-      grid-template-columns: 1fr !important;
-  }
-  
-  /* Forzar a 1 sola columna todas las tarjetas de los 7 pasos (sin amontonar) */
-  #pasos-container {
-      grid-template-columns: 1fr !important;
-  }
+/* 1. ESTRUCTURA PARA PANTALLAS GRANDES (Escritorio/AIO) */
+.layout-escritorio {
+    display: grid;
+    /* Columna 1 fija en 320px, Columna 2 toma todo el resto */
+    grid-template-columns: 320px 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
 }
 
-/* 2. Ajuste especial de altura de la Gráfica cuando el celular está ACOSTADO */
+/* 2. REGLA PARA MÓVILES Y TABLETS (Menos de 950px o celulares horizontales) */
+@media screen and (max-width: 950px) {
+    .layout-escritorio {
+        /* Todo se apila en 1 sola columna de arriba hacia abajo */
+        grid-template-columns: 1fr;
+    }
+    
+    .columna-grafica {
+        /* Evita que la gráfica sea infinita en celular */
+        min-height: 400px;
+    }
+}
+
 @media screen and (max-width: 950px) and (orientation: landscape) {
-  #sec-laboratorio canvas {
-      max-height: 260px !important; /* Evita que la gráfica se coma la pantalla entera */
-  }
+    /* Limita la gráfica si acuestan el celular para que no estorbe */
+    #sec-laboratorio canvas {
+        max-height: 280px !important;
+    }
+}
+
+/* =======================================================
+   GRID PARA EL DESGLOSE PASO A PASO (LABORATORIO)
+   ======================================================= */
+.pasos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    align-items: start; 
+}
+
+@media (max-width: 950px) {
+    .pasos-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
