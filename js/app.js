@@ -78,13 +78,13 @@ function renderizarResumenBarra(res, x1, y1, x2, y2) {
 }
 
 // =======================================================
-// BLOQUE 3: CONSTRUCTOR DE LAS 7 TARJETAS (ULTRA COMPACTO)
+// BLOQUE 3: CONSTRUCTOR DE LAS 7 TARJETAS (DISEÑO LIMPIO Y UNIFICADO)
 // =======================================================
 function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const container = document.getElementById('pasos-container');
     if (!container) return;
 
-    // Variables de Formato y Cálculo Limpio
+    // --- VARIABLES DE FORMATO GLOBALES PARA LOS 7 PASOS ---
     const fmt = (num) => Number.isInteger(Number(num)) ? Number(num).toString() : Number(num).toFixed(2);
     const dx = x2 - x1;
     const dy = y2 - y1;
@@ -99,7 +99,13 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const mVal = res.esVertical ? "\\text{Indefinida}" : fmt(res.pendiente);
     const bVal = res.esVertical ? "N/A" : fmt(res.ordenadaOrigen);
 
-    // Análisis del Cuadrante (Paso 3)
+    // Colores LaTeX para los puntos
+    const cA = "\\textcolor{#2563eb}";
+    const cB = "\\textcolor{#dc2626}";
+    const strCoordA = `${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}`;
+    const strCoordB = `${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}`;
+
+    // --- ANÁLISIS DE CUADRANTE Y DIRECCIÓN (PASO 3) ---
     let analisisCuadrante = "";
     let calculoFormula = "";
     const absDx = Math.abs(dx);
@@ -125,11 +131,9 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         analisisCuadrante = "Sobre Eje Y"; calculoFormula = `<li>Directo por inspección: $\\theta = ${angFinal}^\\circ$</li>`;
     }
 
-    // Inyección HTML de las 7 Tarjetas Ultra Compactas
+    // --- INYECCIÓN HTML DE LAS 7 TARJETAS LIMPIAS ---
     const tarjetasHTML = [
-        // ==============================================
-        // PASO 1: VECTOR DESPLAZAMIENTO (DISEÑO LIMPIO)
-        // ==============================================
+        // PASO 1: VECTOR DESPLAZAMIENTO
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
@@ -142,40 +146,31 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (${cB}{x_2} - ${cA}{x_1})\\hat{i} + (${cB}{y_2} - ${cA}{y_1})\\hat{j}$$</p>
             </div>
 
-            <!-- Cajas Responsivas Limpias -->
-            <div class="contenedor-puntos" style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem;">
-                <div class="pill-punto-a" style="margin: 0;">
-                    <span class="dot-a"></span><strong>Punto A:</strong> $$${strCoordA}$$
-                </div>
-                <div class="pill-punto-b" style="margin: 0;">
-                    <span class="dot-b"></span><strong>Punto B:</strong> $$${strCoordB}$$
-                </div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #eff6ff; padding: 4px 12px; border-radius: 20px; color: #1e40af;"><strong>Punto A:</strong> $$${strCoordA}$$</div>
+                <div style="font-size: 0.85rem; background: #fef2f2; padding: 4px 12px; border-radius: 20px; color: #9f1239;"><strong>Punto B:</strong> $$${strCoordB}$$</div>
             </div>
 
-            <!-- Contenedor Compacto y Alineado -->
-            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir valores:</strong></p>
                 <p style="margin: 0 0 1rem 0; font-size: 0.95rem; text-align: center;">$$ \\Delta \\vec{r} = (${x2Fmt} - ${x1Fmt})\\hat{i} \\, + \\, (${y2Fmt} - ${y1Fmt})\\hat{j} $$</p>
                 
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>2. Calcular incrementos:</strong></p>
-                <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem; text-align: center;">$$ \\Delta x = ${x2Fmt} - ${x1Fmt} = ${dxFmt} $$</p>
-                <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$ \\Delta y = ${y2Fmt} - ${y1Fmt} = ${dyFmt} $$</p>
+                <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem; text-align: center;">$$ \\Delta x = ${dxFmt} $$</p>
+                <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$ \\Delta y = ${dyFmt} $$</p>
             </div>
 
-            <!-- Resultado Destacado -->
-            <div class="resultado-azul-destacado" style="margin: 0;">
+            <div style="background: #eff6ff; border-left: 4px solid #2563eb; color: #1e40af; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dxFmt})\\hat{i} + (${dyFmt})\\hat{j}$</span>
             </div>
         </div>
         `,
 
-        // ==============================================
-        // PASO 2: MAGNITUD DEL DESPLAZAMIENTO (DISEÑO LIMPIO)
-        // ==============================================
+        // PASO 2: MAGNITUD
         `
         <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">2</span>
+                <span style="background: #9333ea; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">2</span>
                 <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Magnitud ($|\\Delta \\vec{r}|$)</h4>
             </div>
             
@@ -184,190 +179,163 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.8rem; color: #64748b; margin: 0; font-style: italic;">Teorema de Pitágoras</p>
             </div>
 
-            <div class="contenedor-puntos" style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; gap: 1rem;">
-                <div class="pill-delta" style="margin: 0;">
-                    <span class="dot-dx"></span>$\\Delta x = ${dxFmt}$
-                </div>
-                <div class="pill-delta" style="margin: 0;">
-                    <span class="dot-dy"></span>$\\Delta y = ${dyFmt}$
-                </div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #faf5ff; padding: 4px 12px; border-radius: 20px; color: #6b21a8;">$\\Delta x = ${dxFmt}$</div>
+                <div style="font-size: 0.85rem; background: #faf5ff; padding: 4px 12px; border-radius: 20px; color: #6b21a8;">$\\Delta y = ${dyFmt}$</div>
             </div>
 
-            <div class="math-scrollable" style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
                 <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir valores:</strong></p>
                 <p style="margin: 0 0 1rem 0; font-size: 0.95rem; text-align: center;">$$|\\Delta \\vec{r}| = \\sqrt{(${dxFmt})^2 + (${dyFmt})^2}$$</p>
                 
-                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>2. Resolver potencias y suma:</strong></p>
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>2. Resolver:</strong></p>
                 <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$|\\Delta \\vec{r}| = \\sqrt{${fmt(dx * dx)} + ${fmt(dy * dy)}} = \\sqrt{${fmt(dx * dx + dy * dy)}}$$</p>
             </div>
 
-            <div class="resultado-exito-destacado" style="margin: 0;">
+            <div style="background: #faf5ff; border-left: 4px solid #9333ea; color: #581c87; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
                 <span><strong>Resultado:</strong> $|\\Delta \\vec{r}| = ${res.magnitud} \\text{ u}$</span>
             </div>
         </div>
         `,
 
-        // ==============================================
-        // PASO 3: DIRECCIÓN Y CUADRANTE
-        // ==============================================
+        // PASO 3: DIRECCIÓN
         `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
-                <span style="background: #059669; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">3</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Dirección ($\\theta$)</h4>
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #059669; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">3</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Dirección ($\\theta$)</h4>
             </div>
             
-            <div style="text-align: center; margin-bottom: 0.75rem;">
-                <p style="font-size: 0.9rem; color: #475569; margin: 0;">$$\\theta = \\arctan\\left(\\frac{\\Delta y}{\\Delta x}\\right)$$</p>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\theta = \\arctan\\left(\\frac{\\Delta y}{\\Delta x}\\right)$$</p>
             </div>
 
-            <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #ecfdf5; border-radius: 6px; margin-bottom: 0.75rem; font-size: 0.85rem;">
-                <!-- Origen de los datos -->
-                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
-                    <p style="font-size: 0.82rem; color: #064e3b; margin: 0 0 0.25rem 0; font-style: italic;">Valores obtenidos en el Paso 1:</p>
-                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #065f46;">$$\\Delta y = ${dyFmt} \\quad \\text{y} \\quad \\Delta x = ${dxFmt}$$</p>
-                </div>
-                <hr style="border: 0; border-top: 1px dashed #a7f3d0; margin: 0.25rem 0;">
-                
-                <div style="text-align: center; margin-top: 0.25rem;">
-                    <p style="margin: 0 0 0.5rem 0; color: #064e3b;"><strong>Análisis:</strong> ${analisisCuadrante}</p>
-                    <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; color: #065f46; text-align: left;">
-                        ${calculoFormula}
-                    </ul>
-                </div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; color: #065f46;">$\\Delta y = ${dyFmt}$</div>
+                <div style="font-size: 0.85rem; background: #ecfdf5; padding: 4px 12px; border-radius: 20px; color: #065f46;">$\\Delta x = ${dxFmt}$</div>
             </div>
 
-            <div style="background-color: #ecfdf5; border-left: 5px solid #059669; color: #064e3b; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Resultado:</strong> $\\theta = ${res.direccion.grados}^\\circ$
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>Análisis:</strong> ${analisisCuadrante}</p>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; color: #475569; font-size: 0.85rem; text-align: left;">
+                    ${calculoFormula}
+                </ul>
+            </div>
+
+            <div style="background: #ecfdf5; border-left: 4px solid #059669; color: #064e3b; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
+                <span><strong>Resultado:</strong> $\\theta = ${res.direccion.grados}^\\circ$</span>
             </div>
         </div>
         `,
 
-        // ==============================================
-        // PASO 4: CÁLCULO DE LA PENDIENTE
-        // ==============================================
+        // PASO 4: PENDIENTE
         `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
-                <span style="background: #d97706; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">4</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Pendiente ($m$)</h4>
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #d97706; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">4</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Pendiente ($m$)</h4>
             </div>
             
-            <div style="text-align: center; margin-bottom: 0.75rem;">
-                <p style="font-size: 0.9rem; color: #475569; margin: 0;">$$m = \\frac{\\Delta y}{\\Delta x}$$</p>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$m = \\frac{\\Delta y}{\\Delta x}$$</p>
             </div>
 
-            <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #fffbeb; border-radius: 6px; margin-bottom: 0.75rem;">
-                <!-- Origen de los datos -->
-                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
-                    <p style="font-size: 0.82rem; color: #92400e; margin: 0 0 0.25rem 0; font-style: italic;">Valores obtenidos en el Paso 1:</p>
-                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #78350f;">$$\\Delta y = ${dyFmt} \\quad \\text{y} \\quad \\Delta x = ${dxFmt}$$</p>
-                </div>
-                <hr style="border: 0; border-top: 1px dashed #fde68a; margin: 0.25rem 0;">
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
-                    <span style="font-size: 0.75rem; color: #92400e; background-color: #fde68a; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sustituir:</span>
-                    <span style="font-size: 0.9rem; margin: 0;">$$m = \\frac{${dyFmt}}{${dxFmt}}$$</span>
-                </div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #fffbeb; padding: 4px 12px; border-radius: 20px; color: #92400e;">$\\Delta y = ${dyFmt}$</div>
+                <div style="font-size: 0.85rem; background: #fffbeb; padding: 4px 12px; border-radius: 20px; color: #92400e;">$\\Delta x = ${dxFmt}$</div>
             </div>
 
-            <div style="background-color: #fffbeb; border-left: 5px solid #d97706; color: #92400e; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Resultado:</strong> $m = ${mVal}$
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir:</strong></p>
+                <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$m = \\frac{${dyFmt}}{${dxFmt}}$$</p>
+            </div>
+
+            <div style="background: #fffbeb; border-left: 4px solid #d97706; color: #92400e; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
+                <span><strong>Resultado:</strong> $m = ${mVal}$</span>
             </div>
         </div>
         `,
 
-        // ==============================================
-        // PASO 5: ECUACIÓN PUNTO-PENDIENTE
-        // ==============================================
+        // PASO 5: PUNTO-PENDIENTE
         `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
-                <span style="background: #4f46e5; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">5</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Punto-Pendiente</h4>
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #4f46e5; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">5</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Forma Punto-Pendiente</h4>
             </div>
             
-            <div style="text-align: center; margin-bottom: 0.75rem;">
-                <p style="font-size: 0.9rem; color: #475569; margin: 0;">$$y - y_1 = m(x - x_1)$$</p>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$y - y_1 = m(x - x_1)$$</p>
             </div>
 
-            <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #eef2ff; border-radius: 6px; margin-bottom: 0.75rem;">
-                <!-- Origen de los datos -->
-                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
-                    <p style="font-size: 0.82rem; color: #3730a3; margin: 0 0 0.25rem 0; font-style: italic;">Datos base (Punto A inicial y Pendiente del Paso 4):</p>
-                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #312e81;">$$A(\\textcolor{#2563eb}{${fmt(x1)}}, \\textcolor{#2563eb}{${fmt(y1)}}) \\quad \\text{y} \\quad m = ${mVal}$$</p>
-                </div>
-                <hr style="border: 0; border-top: 1px dashed #c7d2fe; margin: 0.25rem 0;">
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
-                    <span style="font-size: 0.75rem; color: #3730a3; background-color: #c7d2fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sustituir:</span>
-                    <span style="font-size: 0.9rem; margin: 0;">$$y - \\textcolor{#2563eb}{${y1Fmt}} = ${mVal}(x - \\textcolor{#2563eb}{${x1Fmt}})$$</span>
-                </div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <div style="font-size: 0.85rem; background: #eef2ff; padding: 4px 12px; border-radius: 20px; color: #3730a3;"><strong>Punto A:</strong> $$${strCoordA}$$</div>
+                <div style="font-size: 0.85rem; background: #eef2ff; padding: 4px 12px; border-radius: 20px; color: #3730a3;">$m = ${mVal}$</div>
             </div>
 
-            <div style="background-color: #eef2ff; border-left: 5px solid #4f46e5; color: #312e81; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Resultado:</strong> $${res.ecuaciones.puntoPendiente}$
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Sustituir:</strong></p>
+                <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$y - ${cA}{${y1Fmt}} = ${mVal}(x - ${cA}{${x1Fmt}})$$</p>
+            </div>
+
+            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; color: #312e81; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
+                <span><strong>Resultado:</strong> $${res.ecuaciones.puntoPendiente}$</span>
             </div>
         </div>
         `,
 
-       // ==============================================
-        // PASO 6: FORMA EXPLÍCITA
-        // ==============================================
+        // PASO 6: FORMA EXPLÍCITA (Corregido sin y = y =)
         `
-        <div class="card-aplicacion" style="background: #fff; padding: 1.1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
-                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">6</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Explícita ($y = mx + b$)</h4>
-            </div>
-            <p class="txt-andamiaje">💡 Despejamos la $y$ para ver de forma transparente el cruce exacto en el eje vertical.</p>
-            
-            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.8rem;">
-                <p style="font-size: 0.82rem; color: #115e59; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 5:</p>
-                <p style="margin: 0 0 0.5rem 0;">$$y - ${y1Fmt} = ${mVal}(x - ${x1Fmt})$$</p>
-                
-                <span style="font-size: 0.78rem; color: #64748b;">Despeje paso a paso de $y$:</span>
-                <!-- AQUÍ SE ELIMINÓ EL DUPLICADO -->
-                $$ ${res.ecuaciones.explicita} $$
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #0d9488; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">6</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Forma Explícita ($y = mx + b$)</h4>
             </div>
             
-            <div class="resultado-destacado">
-                <span>Ordenada al origen $b = ${bVal}$</span>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.8rem; color: #64748b; margin: 0;">💡 Despejamos la $y$ para obtener la ordenada al origen.</p>
+            </div>
+
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; text-align: center;">
+                <p style="font-size: 0.85rem; color: #0f766e; margin: 0 0 0.5rem 0; font-style: italic;">A partir de la ecuación del Paso 5:</p>
+                <p style="margin: 0; font-size: 0.95rem; color: #115e59;">$$y - ${y1Fmt} = ${mVal}(x - ${x1Fmt})$$</p>
+            </div>
+
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Despeje de $y$:</strong></p>
+                <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$ ${res.ecuaciones.explicita} $$</p>
+            </div>
+
+            <div style="background: #f0fdfa; border-left: 4px solid #0d9488; color: #0f766e; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
+                <span><strong>Resultado:</strong> Ordenada $b = ${bVal}$</span>
             </div>
         </div>
         `,
 
-       // ==============================================
-        // PASO 7: FORMA GENERAL
-        // ==============================================
+        // PASO 7: FORMA GENERAL (Corregido)
         `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
-                <span style="background: #e11d48; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">7</span>
-                <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma General</h4>
+        <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="background: #e11d48; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">7</span>
+                <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem;">Forma General</h4>
             </div>
             
-            <div style="text-align: center; margin-bottom: 0.75rem;">
-                <p style="font-size: 0.9rem; color: #475569; margin: 0;">$$Ax + By + C = 0$$</p>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$Ax + By + C = 0$$</p>
             </div>
 
-            <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #fff1f2; border-radius: 6px; margin-bottom: 0.75rem;">
-                <!-- Origen de los datos -->
-                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
-                    <p style="font-size: 0.82rem; color: #9f1239; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 6:</p>
-                    <!-- AQUÍ SE ELIMINÓ EL DUPLICADO "y =" -->
-                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #881337;">$$${res.ecuaciones.explicita}$$</p>
-                </div>
-                <hr style="border: 0; border-top: 1px dashed #fecdd3; margin: 0.25rem 0;">
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
-                    <span style="font-size: 0.75rem; color: #9f1239; background-color: #ffe4e6; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Igualar a 0:</span>
-                    <span style="font-size: 0.9rem; margin: 0;">$$${res.ecuaciones.general}$$</span>
-                </div>
+            <div style="border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; padding: 0.75rem 0; margin-bottom: 1rem; text-align: center;">
+                <p style="font-size: 0.85rem; color: #9f1239; margin: 0 0 0.5rem 0; font-style: italic;">A partir de la ecuación del Paso 6:</p>
+                <p style="margin: 0; font-size: 0.95rem; color: #881337;">$$${res.ecuaciones.explicita}$$</p>
             </div>
 
-            <div style="background-color: #fff1f2; border-left: 5px solid #e11d48; color: #881337; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Resultado:</strong> Ecuación Estándar
+            <div style="background: transparent; padding: 0; margin-bottom: 1.25rem; border: none;">
+                <p style="font-size: 0.85rem; color: #475569; margin: 0 0 0.5rem 0; text-align: left;"><strong>1. Igualar a 0:</strong></p>
+                <p style="margin: 0; font-size: 0.95rem; text-align: center;">$$${res.ecuaciones.general}$$</p>
+            </div>
+
+            <div style="background: #fff1f2; border-left: 4px solid #e11d48; color: #9f1239; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; text-align: center;">
+                <span><strong>Resultado:</strong> Ecuación Estándar</span>
             </div>
         </div>
         `
@@ -389,19 +357,17 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
 // ==============================================
 // BLOQUE 4: DIBUJO DEL PLANO CARTESIANO (ANIMADO Y RESPONSIVO)
 // ==============================================
-let animacionPlano = null; // Control global para detener animaciones
+let animacionPlano = null; 
 
 function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const canvas = document.getElementById('planoCartesianoCanvas');
     if (!canvas) return;
 
-    // DETENER cualquier animación previa (crucial para los checkboxes)
     if (animacionPlano) {
         cancelAnimationFrame(animacionPlano);
         animacionPlano = null;
     }
 
-    // Ajuste dinámico exacto al tamaño del contenedor padre
     const rect = canvas.parentNode.getBoundingClientRect();
     canvas.width = rect.width || 600;
     canvas.height = rect.height || 350; 
@@ -410,7 +376,6 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const width = canvas.width;
     const height = canvas.height;
 
-    // Escala adaptativa basada en el tamaño real del canvas
     const maxCoord = Math.max(Math.abs(x1), Math.abs(y1), Math.abs(x2), Math.abs(y2), 5) + 3;
     const scale = Math.min(width, height) / (maxCoord * 2.2);
     const cx = width / 2;
@@ -420,14 +385,13 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const toPy = (y) => cy - (y * scale);
 
     let startTimestamp = null;
-    const duracionAnim = 800; // 0.8 segundos de fluidez
+    const duracionAnim = 800; 
 
     function renderizarFrame(timestamp) {
         if (!startTimestamp) startTimestamp = timestamp;
         let progresoBruto = Math.min((timestamp - startTimestamp) / duracionAnim, 1);
-        let p = 1 - Math.pow(1 - progresoBruto, 3); // Efecto Ease-out
+        let p = 1 - Math.pow(1 - progresoBruto, 3); // Ease-out
 
-        // 1. LEER EL ESTADO DE LAS CAPAS EN CADA FOTOGRAMA
         const chkPuntos = document.getElementById('chk-puntos');
         const chkTriangulo = document.getElementById('chk-triangulo');
         const chkMagnitud = document.getElementById('chk-magnitud');
@@ -442,12 +406,10 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         const mostrarPendiente = chkPendiente ? chkPendiente.checked : true;
         const mostrarOrdenada = chkOrdenada ? chkOrdenada.checked : true;
 
-        // Limpiar el fondo
         ctx.globalAlpha = 1;
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, width, height);
         
-        // Cuadrícula y Ejes
         ctx.strokeStyle = "#f1f5f9";
         ctx.lineWidth = 1;
         for (let x = -Math.floor(maxCoord); x <= Math.floor(maxCoord); x++) {
@@ -462,9 +424,6 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(width, cy); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
 
-        // ----------------------------------------------------
-        // LÍNEA PRINCIPAL ANIMADA
-        // ----------------------------------------------------
         ctx.strokeStyle = "#2563eb";
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -475,12 +434,9 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         } else {
             const m = parseFloat(res.pendiente);
             const b = parseFloat(res.ordenadaOrigen);
-            
-            // Los límites se calculan dinámicamente según el ancho real de la pantalla
             const maxPxExtremo = (width / 2) / scale + 5; 
             const xMin = -maxPxExtremo;
             const xMax = maxPxExtremo;
-            
             const xActual = xMin + (xMax - xMin) * p; 
             
             ctx.moveTo(toPx(xMin), toPy(m * xMin + b));
@@ -488,9 +444,6 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         }
         ctx.stroke();
 
-        // ----------------------------------------------------
-        // CAPAS SECUNDARIAS (Fade-in)
-        // ----------------------------------------------------
         ctx.globalAlpha = p; 
 
         if (mostrarTriangulo) {
@@ -589,7 +542,6 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
         }
     }
     
-    // Iniciar la animación
     animacionPlano = requestAnimationFrame(renderizarFrame);
 }
 
@@ -609,9 +561,7 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(calcularLaboratorio, 200);
 });
 
-// =======================================================
-// FUNCIONES VACÍAS PARA LOS RETOS (Para evitar errores de consola)
-// =======================================================
+// Funciones vacías para evitar errores de consola
 function iniciarRetoSeguro() { console.log("Reto Seguro Iniciado"); }
 function comprobarReto() { console.log("Comprobando Reto..."); }
 function desglosarReto() { console.log("Desglosando Reto..."); }
