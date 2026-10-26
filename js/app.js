@@ -309,36 +309,28 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         </div>
         `,
 
-        // ==============================================
+       // ==============================================
         // PASO 6: FORMA EXPLÍCITA
         // ==============================================
         `
-        <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
-                <span style="background: #0d9488; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">6</span>
+        <div class="card-aplicacion" style="background: #fff; padding: 1.1rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                <span style="background: #2563eb; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">6</span>
                 <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">Forma Explícita ($y = mx + b$)</h4>
             </div>
+            <p class="txt-andamiaje">💡 Despejamos la $y$ para ver de forma transparente el cruce exacto en el eje vertical.</p>
             
-            <div style="text-align: center; margin-bottom: 0.75rem;">
-                <p style="font-size: 0.9rem; color: #475569; margin: 0;">$$y = mx + b$$</p>
+            <div style="background: #f8fafc; padding: 0.6rem; border-radius: 6px; border: 1px solid #f1f5f9; text-align: center; margin-bottom: 0.8rem;">
+                <p style="font-size: 0.82rem; color: #115e59; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 5:</p>
+                <p style="margin: 0 0 0.5rem 0;">$$y - ${y1Str} = ${mVal}(x - ${x1Str})$$</p>
+                
+                <span style="font-size: 0.78rem; color: #64748b;">Despeje paso a paso de $y$:</span>
+                <!-- AQUÍ SE ELIMINÓ EL DUPLICADO -->
+                $$ ${res.ecuaciones.explicita} $$
             </div>
-
-            <div style="padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: #f0fdfa; border-radius: 6px; margin-bottom: 0.75rem;">
-                <!-- Origen de los datos -->
-                <div style="width: 100%; text-align: center; margin-bottom: 0.25rem;">
-                    <p style="font-size: 0.82rem; color: #115e59; margin: 0 0 0.25rem 0; font-style: italic;">A partir de la ecuación del Paso 5:</p>
-                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #134e4a;">$$${res.ecuaciones.puntoPendiente}$$</p>
-                </div>
-                <hr style="border: 0; border-top: 1px dashed #99f6e4; margin: 0.25rem 0;">
-
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.25rem;">
-                    <span style="font-size: 0.75rem; color: #115e59; background-color: #ccfbf1; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Despejar $y$:</span>
-                    <span style="font-size: 0.9rem; margin: 0;">$$y = ${res.ecuaciones.explicita}$$</span>
-                </div>
-            </div>
-
-            <div style="background-color: #f0fdfa; border-left: 5px solid #0d9488; color: #134e4a; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; font-weight: 600; text-align: center; margin-top: auto;">
-                <strong>Ordenada ($b$):</strong> ${bVal}
+            
+            <div class="resultado-destacado">
+                <span>Ordenada al origen $b = ${bVal}$</span>
             </div>
         </div>
         `,
