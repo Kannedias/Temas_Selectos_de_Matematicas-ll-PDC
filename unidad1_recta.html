@@ -328,10 +328,16 @@
     <div id="resumen-grafica-bar" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.82rem;"></div>
 </div>
 
-            <!-- SECCIÓN INFERIOR: PASO A PASO DETALLADO -->
-            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0;">
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem; color: #004d40; font-size: 1.2rem;">📝 Explicación Detallada Paso a Paso (7 Pasos)</h3>
-                <div id="pasos-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;"></div>
+<!-- TARJETAS DE PROCEDIMIENTO RAZONADO -->
+            <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0; margin-top: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
+                    <h3 style="margin: 0; color: #004d40; font-size: 1.2rem;">📝 Procedimiento Razonado y Solución Paso a Paso</h3>
+                    <span style="background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.78rem; font-weight: 600;">Explicación Estudiantil</span>
+                </div>
+                <!-- AQUÍ INYECTAMOS LA NUEVA CLASE RESPONSIVA -->
+                <div id="pasos-container" class="pasos-grid">
+                    <!-- Se inyectará por JS el desglose estructurado -->
+                </div>
             </div>
         </section>
 
