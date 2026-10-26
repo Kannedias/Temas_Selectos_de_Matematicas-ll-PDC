@@ -116,42 +116,45 @@
 
             <!-- 3. Unidades Temáticas (Módulo 1 y 2) -->
             <div class="card-box">
-                <!-- UNIDAD 1 -->
-                <h3 style="color: var(--conalep-dark); margin-top: 0; border-bottom: 2px solid var(--border-card); padding-bottom: 10px;">📚 UNIDAD 1: Geometría Analítica Vectorial</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; margin-bottom: 2.5rem;">
-                    
-                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
-                        <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                            📐 Módulo 1.1: Sistemas y Vectores
-                        </h3>
-                        <div style="margin-bottom: 12px;">
-                            <span id="status-mod-1.1" class="badge-status status-pend">⏳ Consultando...</span>
-                        </div>
-                        <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                            <li style="margin-bottom: 8px;"><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
-                            <li><strong>Física y Geometría:</strong> Vector desplazamiento y magnitud.</li>
-                        </ul>
-                        <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-primary); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: auto; transition: 0.2s;">
-                            🚀 Entrar a la Unidad
-                        </button>
-                    </div>
+                <!-- ==========================================
+         UNIDAD 1: Geometría Analítica Vectorial
+         ========================================== -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--conalep-dark); margin-bottom: 1rem; border-bottom: 2px solid var(--conalep-accent); padding-bottom: 0.5rem;">
+            📚 UNIDAD 1: Geometría Analítica Vectorial
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            
+            <!-- Tarjeta Módulo 1.1 -->
+            <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-primary);">
+                <h4 style="margin-top: 0; color: var(--conalep-dark);">📐 Módulo 1.1: Sistemas y Vectores</h4>
+                <span id="status-mod-1.1" class="badge-status status-pend">🔴 Pendiente</span>
+                <ul style="font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; padding-left: 20px;">
+                    <li><strong>Plano cartesiano y vectores:</strong> Introducción al espacio bidimensional.</li>
+                    <li><strong>Física y Geometría:</strong> Vector desplazamiento y magnitud.</li>
+                </ul>
+            </div>
 
-                    <div style="background: #ffffff; border: 1px solid #fde047; border-radius: 8px; padding: 1.25rem; border-left: 5px solid #f59e0b; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.1); display: flex; flex-direction: column;">
-                        <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                            📈 Módulo 1.2: La Línea Recta
-                        </h3>
-                        <div style="margin-bottom: 12px;">
-                            <span style="display: inline-flex; align-items: center; background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">🟡 En Curso</span>
-                        </div>
-                        <ul style="font-size: 0.88rem; color: #475569; margin: 0 0 15px 0; padding-left: 20px; flex-grow: 1;">
-                            <li style="margin-bottom: 8px;"><strong>Inclinación y Tendencia:</strong> Dirección y pendiente.</li>
-                            <li><strong>Modelado Algebraico:</strong> Formas Punto-Pendiente, Explícita y General.</li>
-                        </ul>
-                        <button onclick="window.location.href='unidad1_recta.html'" style="width: 100%; background: var(--conalep-primary); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: auto; transition: 0.2s;">
-                            🚀 Entrar a la Unidad
-                        </button>
-                    </div>
-                </div>
+            <!-- Tarjeta Módulo 1.2 -->
+            <div class="card-box" style="margin: 0; border-left: 4px solid var(--conalep-gold);">
+                <h4 style="margin-top: 0; color: var(--conalep-dark);">📈 Módulo 1.2: La Línea Recta</h4>
+                <span class="badge-status status-act">🟡 En Curso</span>
+                <ul style="font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; padding-left: 20px;">
+                    <li><strong>Inclinación y Tendencia:</strong> Dirección y pendiente.</li>
+                    <li><strong>Modelado Algebraico:</strong> Formas Punto-Pendiente, Explícita y General.</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- BOTÓN CENTRAL UNIFICADO -->
+        <div style="text-align: center; margin-top: 1.5rem; border-top: 1px dashed #cbd5e1; padding-top: 1.5rem;">
+            <button onclick="window.location.href='unidad1_recta.html'" class="btn-conalep" style="background-color: var(--conalep-accent); padding: 0.7rem 2.5rem; font-size: 1.05rem; box-shadow: 0 4px 6px rgba(0, 128, 106, 0.2); transition: transform 0.2s;">
+                🚀 Entrar a la Unidad 1
+            </button>
+        </div>
+    </div>
 
                 <!-- UNIDAD 2 -->
                 <h3 style="color: var(--conalep-dark); margin-top: 0; border-bottom: 2px solid var(--border-card); padding-bottom: 10px;">📚 UNIDAD 2: Aplicaciones Dinámicas</h3>
