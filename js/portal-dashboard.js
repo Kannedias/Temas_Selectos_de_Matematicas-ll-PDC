@@ -906,14 +906,41 @@ window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
     }).catch(err => { btn.disabled = false; btn.innerText = "📍 Reintentar"; msg.innerText = "Error de red."; });
 };
 
+// ==========================================
+// NUEVA FUNCIÓN: Verificar al Iniciar Sesión (Con Candado de Fin de Semana)
+// ==========================================
 window.verificarCheckinPrevio = function(mat) {
-    const hoyStr = new Date().toLocaleDateString('en-CA');
+    const hoy = new Date();
+    const diaSemana = hoy.getDay(); // 0 = Domingo, 6 = Sábado
+    const hoyStr = hoy.toLocaleDateString('en-CA');
     const btn = document.getElementById('btn-checkin');
     const msg = document.getElementById('msg-checkin');
     
+    // CANDADO 1: Bloqueo de Sábados y Domingos
+    if (diaSemana === 0 || diaSemana === 6) {
+        if (btn && msg) {
+            btn.disabled = true;
+            btn.style.background = "#64748b";
+            btn.innerText = "🏖️ Descanso de Fin de Semana";
+            msg.style.color = "#64748b";
+            msg.innerText = "El pase de lista solo está habilitado de lunes a viernes.";
+        }
+        return; // Detenemos la función aquí
+    }
+
+    // CANDADO 2: Si ya hizo check-in hoy
     if (localStorage.getItem(`checkin_${mat}`) === hoyStr && btn && msg) {
-        btn.disabled = true; btn.style.background = "#16a34a"; btn.innerText = "✅ Asistencia de Hoy Lista";
-        msg.style.color = "#16a34a"; msg.innerText = "Ya registraste tu check-in hoy.";
+        btn.disabled = true;
+        btn.style.background = "#16a34a";
+        btn.innerText = "✅ Asistencia de Hoy Lista";
+        msg.style.color = "#16a34a";
+        msg.innerText = "Ya registraste tu check-in exitosamente el día de hoy.";
+    } else if (btn) {
+        // Día normal de lunes a viernes
+        btn.disabled = false;
+        btn.style.background = "#0f172a";
+        btn.innerText = "📍 Registrar Asistencia (Hoy)";
+        msg.innerText = "";
     }
 };
 
