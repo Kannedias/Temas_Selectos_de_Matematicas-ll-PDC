@@ -544,6 +544,161 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
 }
 
 // =======================================================
+// BLOQUE 5: MÓDULO DE RETOS Y EXAMEN (MODO SEGURO)
+// =======================================================
+
+// Variables globales para la memoria del examen
+let retoActivo = null;
+let solucionReto = null;
+let intentosReto = 0; 
+let inicioTiempoReto = null;
+
+function iniciarRetoSeguro() {
+    const nivel = document.getElementById('nivel-reto').value;
+    
+    // Obtenemos la matrícula (asumiendo que está en sessionStorage o usamos un default para pruebas)
+    const matricula = sessionStorage.getItem('matriculaActiva') || "TEST-000";
+    
+    // 1. Candado Anti-Trampas: Bloqueamos las pestañas superiores
+    const botonesNav = document.querySelectorAll('.nav-tab');
+    botonesNav.forEach(btn => {
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.5';
+    });
+    
+    // 2. Transición de UI (Ocultar config, mostrar examen)
+    document.getElementById('panel-configuracion-reto').style.display = 'none';
+    const zonaActiva = document.getElementById('zona-activa-reto');
+    zonaActiva.style.display = 'block';
+    
+    // 3. Generar el Problema y registrar tiempo
+    intentosReto++;
+    const semilla = `${matricula}_Intento_${intentosReto}`;
+    
+    retoActivo = GeneratorEngine.generarReto(nivel, semilla);
+    solucionReto = retoActivo.solucion;
+    inicioTiempoReto = Date.now();
+    
+    // 4. Inyectar datos a la pantalla
+    document.getElementById('titulo-nivel').innerText = `Nivel ${nivel} - Intento #${intentosReto}`;
+    document.getElementById('planteamiento-problema').innerHTML = retoActivo.planteamientoHTML;
+    
+    // 5. Limpiar campos anteriores y ocultar feedback
+    limpiarCamposReto();
+    document.getElementById('feedback-reto-msg').innerHTML = "";
+    document.getElementById('desglose-reto-container').innerHTML = "";
+}
+
+function limpiarCamposReto() {
+    const campos = ['ans-vector', 'ans-magnitud', 'ans-direccion', 'ans-pendiente', 'ans-pp', 'ans-exp', 'ans-gen'];
+    campos.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) { el.value = ""; el.style.borderColor = "#cbd5e1"; }
+    });
+}
+
+function comprobarReto() {
+    if (!solucionReto) return;
+    
+    // Calcular tiempo transcurrido en segundos
+    const tiempoSegundos = Math.floor((Date.now() - inicioTiempoReto) / 1000);
+    const min = Math.floor(tiempoSegundos / 60);
+    const seg = tiempoSegundos % 60;
+    const tiempoTexto = `${min}m ${seg}s`;
+
+    let correctas = 0;
+    let totalEvaluar = 4; // Por ahora evaluaremos los 4 numéricos principales
+    
+    // Función de tolerancia (acepta +/- 0.05 de margen de error por decimales)
+    const esCorrecto = (ingresado, real) => {
+        if (!ingresado || isNaN(ingresado)) return false;
+        return Math.abs(parseFloat(ingresado) - parseFloat(real)) <= 0.05;
+    };
+
+    // 1. Evaluar Magnitud
+    const inMag = document.getElementById('ans-magnitud');
+    if (esCorrecto(inMag.value, solucionReto.magnitud)) {
+        inMag.style.borderColor = "#16a34a"; correctas++;
+    } else {
+        inMag.style.borderColor = "#dc2626";
+    }
+
+    // 2. Evaluar Dirección
+    const inDir = document.getElementById('ans-direccion');
+    if (esCorrecto(inDir.value, solucionReto.direccion.grados)) {
+        inDir.style.borderColor = "#16a34a"; correctas++;
+    } else {
+        inDir.style.borderColor = "#dc2626";
+    }
+
+    // 3. Evaluar Pendiente
+    const inPen = document.getElementById('ans-pendiente');
+    if (esCorrecto(inPen.value, solucionReto.pendiente)) {
+        inPen.style.borderColor = "#16a34a"; correctas++;
+    } else {
+        inPen.style.borderColor = "#dc2626";
+    }
+    
+    // Validar Vector (Formato X, Y)
+    const inVec = document.getElementById('ans-vector');
+    const vecPartes = inVec.value.split(',').map(v => v.trim());
+    const dxReal = retoActivo.puntos.x2 - retoActivo.puntos.x1;
+    const dyReal = retoActivo.puntos.y2 - retoActivo.puntos.y1;
+    
+    if (vecPartes.length === 2 && esCorrecto(vecPartes[0], dxReal) && esCorrecto(vecPartes[1], dyReal)) {
+        inVec.style.borderColor = "#16a34a"; correctas++;
+    } else {
+        inVec.style.borderColor = "#dc2626";
+    }
+
+    // Feedback Final
+    const feedbackMsg = document.getElementById('feedback-reto-msg');
+    if (correctas === totalEvaluar) {
+        feedbackMsg.innerHTML = `<span style="color: #166534;">🎉 ¡Excelente! Todos los parámetros son correctos. Tiempo: ${tiempoTexto}</span>`;
+        // Aquí podríamos guardar el récord en sessionStorage
+    } else {
+        feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa los recuadros en rojo o consulta el desglose.</span>`;
+    }
+}
+
+function desglosarReto() {
+    if (!retoActivo) return;
+    
+    // Reutilizamos la función maestra del laboratorio para mostrar el paso a paso
+    // Necesitamos inyectarlo en el contenedor del reto, no en el laboratorio
+    const contenedorOriginal = document.getElementById('pasos-container');
+    const contenedorReto = document.getElementById('desglose-reto-container');
+    
+    // Cambiamos temporalmente el ID de destino en la función original (Truco ninja)
+    contenedorOriginal.id = "pasos-container-oculto";
+    contenedorReto.id = "pasos-container";
+    
+    // Llamamos a la función con los puntos del reto activo
+    renderizarTarjetasPasoAPasoBeta(retoActivo.solucion, retoActivo.puntos.x1, retoActivo.puntos.y1, retoActivo.puntos.x2, retoActivo.puntos.y2);
+    
+    // Devolvemos los IDs a la normalidad
+    contenedorReto.id = "desglose-reto-container";
+    contenedorOriginal.id = "pasos-container";
+}
+
+function anularReto() {
+    // 1. Desbloquear las pestañas superiores
+    const botonesNav = document.querySelectorAll('.nav-tab');
+    botonesNav.forEach(btn => {
+        btn.style.pointerEvents = 'auto';
+        btn.style.opacity = '1';
+    });
+    
+    // 2. Restaurar UI
+    document.getElementById('zona-activa-reto').style.display = 'none';
+    document.getElementById('panel-configuracion-reto').style.display = 'block';
+    
+    // 3. Limpiar memoria
+    retoActivo = null;
+    solucionReto = null;
+}
+
+// =======================================================
 // INICIALIZACIÓN
 // =======================================================
 document.addEventListener("DOMContentLoaded", function() {
