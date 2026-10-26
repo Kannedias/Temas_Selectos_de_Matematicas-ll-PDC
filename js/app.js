@@ -385,13 +385,17 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
 }
 
 // ==============================================
-// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS
+// BLOQUE 4: DIBUJO DEL PLANO CARTESIANO EN CANVAS (ANIMADO)
 // ==============================================
+let animacionPlano = null; // Control global para detener animaciones previas
+
 function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const canvas = document.getElementById('planoCartesianoCanvas');
     if (!canvas) return;
 
-    // Leer estado de los checkboxes de capas
+    if (animacionPlano) cancelAnimationFrame(animacionPlano); // Reinicia si hacen clic rápido
+
+    // 1. Leer estado de los checkboxes de capas
     const mostrarPuntos = document.getElementById('chk-puntos') ? document.getElementById('chk-puntos').checked : true;
     const mostrarTriangulo = document.getElementById('chk-triangulo') ? document.getElementById('chk-triangulo').checked : true;
     const mostrarMagnitud = document.getElementById('chk-magnitud') ? document.getElementById('chk-magnitud').checked : true;
@@ -399,7 +403,6 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const mostrarPendiente = document.getElementById('chk-pendiente') ? document.getElementById('chk-pendiente').checked : true;
     const mostrarOrdenada = document.getElementById('chk-ordenada') ? document.getElementById('chk-ordenada').checked : true;
 
-    // Ajuste dinámico
     const rect = canvas.parentNode.getBoundingClientRect();
     canvas.width = rect.width || 600;
     canvas.height = 340;
@@ -416,134 +419,160 @@ function dibujarPlanoCartesianoLimpio(x1, y1, x2, y2, res) {
     const toPx = (x) => cx + (x * scale);
     const toPy = (y) => cy - (y * scale);
 
-    // Fondo y Cuadrícula
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, width, height);
-    ctx.strokeStyle = "#f1f5f9";
-    ctx.lineWidth = 1;
-    for (let x = -Math.floor(maxCoord); x <= Math.floor(maxCoord); x++) {
-        ctx.beginPath(); ctx.moveTo(toPx(x), 0); ctx.lineTo(toPx(x), height); ctx.stroke();
-    }
-    for (let y = -Math.floor(maxCoord); y <= Math.floor(maxCoord); y++) {
-        ctx.beginPath(); ctx.moveTo(0, toPy(y)); ctx.lineTo(width, toPy(y)); ctx.stroke();
-    }
+    let startTimestamp = null;
+    const duracionAnim = 1000; // 1 segundo de animación
 
-    // Ejes X e Y
-    ctx.strokeStyle = "#cbd5e1";
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(width, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
+    // --- MOTOR DE ANIMACIÓN ---
+    function renderizarFrame(timestamp) {
+        if (!startTimestamp) startTimestamp = timestamp;
+        let progresoBruto = Math.min((timestamp - startTimestamp) / duracionAnim, 1);
+        // Efecto Ease-out (desaceleración suave al final)
+        let p = 1 - Math.pow(1 - progresoBruto, 3); 
 
-    // CAPA: Triángulo de Incrementos y Pendiente
-    if (mostrarTriangulo) {
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = "#f59e0b"; // Ámbar
-        ctx.lineWidth = mostrarPendiente ? 3 : 2; 
-        ctx.beginPath();
-        ctx.moveTo(toPx(x1), toPy(y1));
-        ctx.lineTo(toPx(x2), toPy(y1)); // Horizontal Δx
-        ctx.lineTo(toPx(x2), toPy(y2)); // Vertical Δy
-        ctx.stroke();
-        ctx.setLineDash([]);
+        // FONDO Y CUADRÍCULA (Estáticos)
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
         
-        if (mostrarPendiente && !res.esVertical) {
-            ctx.fillStyle = "#d97706";
-            ctx.font = "bold 13px sans-serif";
-            const mText = Number.isInteger(parseFloat(res.pendiente)) ? res.pendiente : parseFloat(res.pendiente).toFixed(2);
-            ctx.fillText(`m = ${mText}`, toPx(x2) + (x2 > x1 ? 10 : -45), toPy(y1 + (y2-y1)/2));
+        ctx.strokeStyle = "#f1f5f9";
+        ctx.lineWidth = 1;
+        for (let x = -Math.floor(maxCoord); x <= Math.floor(maxCoord); x++) {
+            ctx.beginPath(); ctx.moveTo(toPx(x), 0); ctx.lineTo(toPx(x), height); ctx.stroke();
+        }
+        for (let y = -Math.floor(maxCoord); y <= Math.floor(maxCoord); y++) {
+            ctx.beginPath(); ctx.moveTo(0, toPy(y)); ctx.lineTo(width, toPy(y)); ctx.stroke();
+        }
+
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(width, cy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, height); ctx.stroke();
+
+        // ----------------------------------------------------
+        // CAPAS ANIMADAS
+        // ----------------------------------------------------
+        
+        // RECTA PRINCIPAL (Efecto de Trazado de izquierda a derecha)
+        ctx.strokeStyle = "#2563eb";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        if (res.esVertical) {
+            const hAnimada = height * p;
+            ctx.moveTo(toPx(x1), (height - hAnimada) / 2);
+            ctx.lineTo(toPx(x1), (height + hAnimada) / 2);
+        } else {
+            const m = parseFloat(res.pendiente);
+            const b = parseFloat(res.ordenadaOrigen);
+            const xMin = -maxCoord * 2;
+            const xMax = maxCoord * 2;
+            const xActual = xMin + (xMax - xMin) * p; // Hasta dónde llega la línea en este frame
+            
+            ctx.moveTo(toPx(xMin), toPy(m * xMin + b));
+            ctx.lineTo(toPx(xActual), toPy(m * xActual + b));
+        }
+        ctx.stroke();
+
+        // ELEMENTOS CON EFECTO DE APARICIÓN (Fade-in)
+        ctx.globalAlpha = p; 
+
+        if (mostrarTriangulo) {
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = "#f59e0b"; 
+            ctx.lineWidth = mostrarPendiente ? 3 : 2; 
+            ctx.beginPath();
+            ctx.moveTo(toPx(x1), toPy(y1));
+            ctx.lineTo(toPx(x1 + (x2 - x1) * p), toPy(y1)); // Base animada
+            ctx.lineTo(toPx(x2), toPy(y1 + (y2 - y1) * p)); // Altura animada
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            if (mostrarPendiente && !res.esVertical) {
+                ctx.fillStyle = "#d97706";
+                ctx.font = "bold 13px sans-serif";
+                const mText = Number.isInteger(parseFloat(res.pendiente)) ? res.pendiente : parseFloat(res.pendiente).toFixed(2);
+                ctx.fillText(`m = ${mText}`, toPx(x2) + (x2 > x1 ? 10 : -45), toPy(y1 + (y2-y1)/2));
+            }
+        }
+
+        if (mostrarAngulo && !res.esVertical && (x2 - x1) !== 0) {
+            const angRad = Math.atan2(y2 - y1, x2 - x1);
+            ctx.beginPath();
+            ctx.strokeStyle = "#10b981"; 
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.moveTo(toPx(x1), toPy(y1));
+            ctx.lineTo(toPx(x1 + (maxCoord/3)), toPy(y1));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.beginPath();
+            const radioArco = 30;
+            if(angRad > 0) { ctx.arc(toPx(x1), toPy(y1), radioArco, -angRad * p, 0); } 
+            else { ctx.arc(toPx(x1), toPy(y1), radioArco, 0, -angRad * p); }
+            ctx.stroke();
+
+            ctx.fillStyle = "#047857";
+            ctx.font = "bold 12px sans-serif";
+            const angText = typeof res.direccion === 'object' ? res.direccion.grados : res.direccion;
+            ctx.fillText(`θ = ${angText}°`, toPx(x1) + radioArco + 10, toPy(y1) - (angRad > 0 ? 15 : -15));
+        }
+
+        if (mostrarMagnitud) {
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2;
+            ctx.beginPath();
+            ctx.arc(toPx(mx), toPy(my), 14, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#9333ea"; 
+            ctx.stroke();
+            ctx.fillStyle = "#7e22ce";
+            ctx.font = "bold 12px sans-serif";
+            ctx.fillText(`|Δr|= ${res.magnitud}`, toPx(mx) - 25, toPy(my) - 20);
+        }
+
+        if (mostrarOrdenada && !res.esVertical && res.ordenadaOrigen !== "N/A") {
+            const b = parseFloat(res.ordenadaOrigen);
+            ctx.fillStyle = "#0d9488"; 
+            ctx.beginPath();
+            ctx.arc(toPx(0), toPy(b), 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#ffffff";
+            ctx.stroke();
+            ctx.fillStyle = "#0f766e";
+            ctx.font = "bold 12px sans-serif";
+            ctx.fillText(`b(0, ${b})`, toPx(0) + 10, toPy(b) - 8);
+        }
+
+        if (mostrarPuntos) {
+            ctx.fillStyle = "#2563eb";
+            ctx.beginPath(); ctx.arc(toPx(x1), toPy(y1), 6, 0, Math.PI * 2); ctx.fill();
+            ctx.lineWidth = 2; ctx.strokeStyle = "#ffffff"; ctx.stroke();
+
+            ctx.fillStyle = "#dc2626";
+            ctx.beginPath(); ctx.arc(toPx(x2), toPy(y2), 6, 0, Math.PI * 2); ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = "#0f172a";
+            ctx.font = "bold 12px sans-serif";
+            const offsetAx = x1 < x2 ? -45 : 12;
+            const offsetBx = x2 < x1 ? -45 : 12;
+            ctx.fillText(`A(${x1}, ${y1})`, toPx(x1) + offsetAx, toPy(y1) - 10);
+            ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + offsetBx, toPy(y2) - 10);
+        }
+
+        // Si no ha terminado, solicita el siguiente fotograma
+        if (progresoBruto < 1) {
+            animacionPlano = requestAnimationFrame(renderizarFrame);
+        } else {
+            ctx.globalAlpha = 1; // Seguridad: restaura opacidad al terminar
         }
     }
-
-    // LÍNEA PRINCIPAL (Siempre visible)
-    ctx.strokeStyle = "#2563eb";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    if (res.esVertical) {
-        ctx.moveTo(toPx(x1), 0);
-        ctx.lineTo(toPx(x1), height);
-    } else {
-        const m = parseFloat(res.pendiente);
-        const b = parseFloat(res.ordenadaOrigen);
-        ctx.moveTo(toPx(-maxCoord * 2), toPy(m * (-maxCoord * 2) + b));
-        ctx.lineTo(toPx(maxCoord * 2), toPy(m * (maxCoord * 2) + b));
-    }
-    ctx.stroke();
-
-    // CAPA: Ángulo de Inclinación
-    if (mostrarAngulo && !res.esVertical && (x2 - x1) !== 0) {
-        const angRad = Math.atan2(y2 - y1, x2 - x1);
-        ctx.beginPath();
-        ctx.strokeStyle = "#10b981"; // Verde
-        ctx.lineWidth = 2;
-        
-        ctx.setLineDash([3, 3]);
-        ctx.moveTo(toPx(x1), toPy(y1));
-        ctx.lineTo(toPx(x1 + (maxCoord/3)), toPy(y1));
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.beginPath();
-        const radioArco = 30;
-        if(angRad > 0) { ctx.arc(toPx(x1), toPy(y1), radioArco, -angRad, 0); } 
-        else { ctx.arc(toPx(x1), toPy(y1), radioArco, 0, -angRad); }
-        ctx.stroke();
-
-        ctx.fillStyle = "#047857";
-        ctx.font = "bold 12px sans-serif";
-        const angText = typeof res.direccion === 'object' ? res.direccion.grados : res.direccion;
-        ctx.fillText(`θ = ${angText}°`, toPx(x1) + radioArco + 10, toPy(y1) - (angRad > 0 ? 15 : -15));
-    }
-
-    // CAPA: Magnitud del Vector
-    if (mostrarMagnitud) {
-        const mx = (x1 + x2) / 2;
-        const my = (y1 + y2) / 2;
-        ctx.beginPath();
-        ctx.arc(toPx(mx), toPy(my), 14, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#9333ea"; // Morado
-        ctx.stroke();
-        
-        ctx.fillStyle = "#7e22ce";
-        ctx.font = "bold 12px sans-serif";
-        ctx.fillText(`|Δr|= ${res.magnitud}`, toPx(mx) - 25, toPy(my) - 20);
-    }
-
-    // CAPA: Ordenada al Origen
-    if (mostrarOrdenada && !res.esVertical && res.ordenadaOrigen !== "N/A") {
-        const b = parseFloat(res.ordenadaOrigen);
-        ctx.fillStyle = "#0d9488"; // Teal
-        ctx.beginPath();
-        ctx.arc(toPx(0), toPy(b), 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#ffffff";
-        ctx.stroke();
-        
-        ctx.fillStyle = "#0f766e";
-        ctx.font = "bold 12px sans-serif";
-        ctx.fillText(`b(0, ${b})`, toPx(0) + 10, toPy(b) - 8);
-    }
-
-    // CAPA: Puntos A y B
-    if (mostrarPuntos) {
-        ctx.fillStyle = "#2563eb";
-        ctx.beginPath(); ctx.arc(toPx(x1), toPy(y1), 6, 0, Math.PI * 2); ctx.fill();
-        ctx.lineWidth = 2; ctx.strokeStyle = "#ffffff"; ctx.stroke();
-
-        ctx.fillStyle = "#dc2626";
-        ctx.beginPath(); ctx.arc(toPx(x2), toPy(y2), 6, 0, Math.PI * 2); ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#0f172a";
-        ctx.font = "bold 12px sans-serif";
-        const offsetAx = x1 < x2 ? -45 : 12;
-        const offsetBx = x2 < x1 ? -45 : 12;
-        ctx.fillText(`A(${x1}, ${y1})`, toPx(x1) + offsetAx, toPy(y1) - 10);
-        ctx.fillText(`B(${x2}, ${y2})`, toPx(x2) + offsetBx, toPy(y2) - 10);
-    }
+    
+    // Iniciar la animación
+    animacionPlano = requestAnimationFrame(renderizarFrame);
 }
 
 // =======================================================
