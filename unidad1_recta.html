@@ -267,7 +267,7 @@
         </section>
 
         <!-- ==========================================
-             PESTAÑA 3: LABORATORIO INTERACTIVO (LIMPIO)
+             PESTAÑA 3: LABORATORIO INTERACTIVO (LIMPIO Y RESPONSIVO)
              ========================================== -->
         <section id="sec-laboratorio" class="tab-content">
             <div class="pedagogico-header" style="margin-bottom: 1.25rem;">
@@ -275,60 +275,66 @@
                 <p style="color: #475569; margin: 0; font-size: 0.9rem;">Ingresa las coordenadas de los puntos $A$ y $B$ para visualizar la gráfica e interpretar la solución paso a paso.</p>
             </div>
 
-            <!-- GRID SUPERIOR: ENTRADAS + PLANO CARTESIANO -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; align-items: start;">
+            <!-- GRID SUPERIOR RESPONSIVO: ENTRADAS + PLANO CARTESIANO -->
+            <div class="layout-escritorio" style="margin-bottom: 1.5rem;">
                 
                 <!-- COLUMNA IZQUIERDA: PUNTOS Y CONTROLES -->
-                <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
-                    <h3 style="margin: 0 0 0.75rem 0; color: #004d40; font-size: 1.1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem;">📍 Puntos de Entrada</h3>
-                    
-                    <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
-                        <div style="background-color: #f0f7ff; border: 1px solid #b6d4fe; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.6rem;">
-                            <strong style="color: #084298; font-size: 0.85rem;">Punto A $(x_1, y_1)$</strong>
-                            <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
-                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$x_1$:</span><input type="number" step="any" id="lab-x1" value="-2" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
-                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$y_1$:</span><input type="number" step="any" id="lab-y1" value="-3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                <div class="columna-controles">
+                    <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);">
+                        <h3 style="margin: 0 0 0.75rem 0; color: #004d40; font-size: 1.1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem;">📍 Puntos de Entrada</h3>
+                        
+                        <form id="form-laboratorio" onsubmit="event.preventDefault(); calcularLaboratorio();">
+                            <div style="background-color: #f0f7ff; border: 1px solid #b6d4fe; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.6rem;">
+                                <strong style="color: #084298; font-size: 0.85rem;">Punto A $(x_1, y_1)$</strong>
+                                <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+                                    <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$x_1$:</span><input type="number" step="any" id="lab-x1" value="-2" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                                    <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$y_1$:</span><input type="number" step="any" id="lab-y1" value="-3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div style="background-color: #fff0f0; border: 1px solid #f5c2c7; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
-                            <strong style="color: #842029; font-size: 0.85rem;">Punto B $(x_2, y_2)$</strong>
-                            <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
-                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$x_2$:</span><input type="number" step="any" id="lab-x2" value="4" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
-                                <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$y_2$:</span><input type="number" step="any" id="lab-y2" value="3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                            <div style="background-color: #fff0f0; border: 1px solid #f5c2c7; padding: 0.6rem 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                                <strong style="color: #842029; font-size: 0.85rem;">Punto B $(x_2, y_2)$</strong>
+                                <div style="display: flex; gap: 0.4rem; margin-top: 0.3rem;">
+                                    <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$x_2$:</span><input type="number" step="any" id="lab-x2" value="4" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                                    <div style="flex: 1;"><span style="font-size: 0.75rem; color: #555;">$y_2$:</span><input type="number" step="any" id="lab-y2" value="3" required style="width: 100%; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box;"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Panel de Controles (Capas) -->
-                        <div style="margin-bottom: 1rem; font-size: 0.85rem; color: #475569;">
-                            <strong style="display: block; margin-bottom: 0.4rem;">Capas del Gráfico:</strong>
-                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()"> Puntos</label>
-                                <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()"> Triángulo</label>
-                                <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()"> Magnitud</label>
-                                <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()"> Ángulo</label>
-                                <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()"> Pendiente</label>
-                                <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()"> Ordenada</label>
+                            <!-- Panel de Controles (Capas) -->
+                            <div style="margin-bottom: 1rem; font-size: 0.85rem; color: #475569;">
+                                <strong style="display: block; margin-bottom: 0.4rem;">Capas del Gráfico:</strong>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-puntos" checked onchange="calcularLaboratorio()"> Puntos</label>
+                                    <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-triangulo" checked onchange="calcularLaboratorio()"> Triángulo</label>
+                                    <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-magnitud" checked onchange="calcularLaboratorio()"> Magnitud</label>
+                                    <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-angulo" checked onchange="calcularLaboratorio()"> Ángulo</label>
+                                    <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-pendiente" checked onchange="calcularLaboratorio()"> Pendiente</label>
+                                    <label style="display: flex; align-items: center; gap: 0.3rem;"><input type="checkbox" id="chk-ordenada" checked onchange="calcularLaboratorio()"> Ordenada</label>
+                                </div>
                             </div>
-                        </div>
 
-                        <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.6rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">🚀 Calcular y Graficar</button>
-                    </form>
+                            <button type="submit" style="width: 100%; background-color: #0d6efd; color: white; border: none; padding: 0.6rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">🚀 Calcular y Graficar</button>
+                        </form>
+                    </div>
                 </div>
 
-<!-- COLUMNA DERECHA: PLANO CARTESIANO -->
-<div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column; flex-grow: 1;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-        <h3 style="margin: 0; color: #333; font-size: 1.1rem;">📊 Plano Cartesiano Interactivo</h3>
-    </div>
-    <!-- Contenedor flexible -->
-    <div style="position: relative; width: 100%; flex-grow: 1; min-height: 350px; background: #fafafa; border-radius: 6px; overflow: hidden; border: 1px solid #f1f5f9; display: flex;">
-        <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
-    </div>
-    <div id="resumen-grafica-bar" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.82rem;"></div>
-</div>
+                <!-- COLUMNA DERECHA: PLANO CARTESIANO -->
+                <div class="columna-grafica">
+                    <div class="card-aplicacion" style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column; flex-grow: 1; height: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                            <h3 style="margin: 0; color: #333; font-size: 1.1rem;">📊 Plano Cartesiano Interactivo</h3>
+                        </div>
+                        <!-- Contenedor flexible -->
+                        <div style="position: relative; width: 100%; flex-grow: 1; min-height: 350px; background: #fafafa; border-radius: 6px; overflow: hidden; border: 1px solid #f1f5f9; display: flex;">
+                            <canvas id="planoCartesianoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                        </div>
+                        <div id="resumen-grafica-bar" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.82rem;"></div>
+                    </div>
+                </div>
 
-<!-- TARJETAS DE PROCEDIMIENTO RAZONADO -->
+            </div>
+
+            <!-- TARJETAS DE PROCEDIMIENTO RAZONADO -->
             <div class="card-aplicacion" style="background: #ffffff; padding: 1.25rem; border-radius: 10px; border: 1px solid #e0e0e0; margin-top: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
                     <h3 style="margin: 0; color: #004d40; font-size: 1.2rem;">📝 Procedimiento Razonado y Solución Paso a Paso</h3>
