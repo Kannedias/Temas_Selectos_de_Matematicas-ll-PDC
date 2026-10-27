@@ -36,18 +36,30 @@
 <body>
 
     <!-- ==========================================
-         CABECERA INSTITUCIONAL (GLOBAL)
+         CABECERA INSTITUCIONAL (LABORATORIO)
          ========================================== -->
-    <header class="header-conalep">
-        <h1>CONALEP PLAYA DEL CARMEN</h1>
-        <p>Módulo: Temas Selectos de Matemáticas II | SICAL</p>
-        <div id="user-menu" class="hidden" style="margin-top: 15px;">
-            <span id="welcome-name" style="background: rgba(255,255,255,0.1); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem;"></span>
-            <button onclick="location.reload()" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer; margin-left: 10px; text-decoration: underline;">Salir</button>
+    <header class="main-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 15px 20px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+      <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
+        
+        <!-- Identidad Institucional (Logo y Textos) -->
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <!-- Asegúrate de tener tu imagen del logo en la misma carpeta o ajustar el nombre -->
+          <img src="image_4bef00.png" alt="Logo CONALEP" style="height: 45px; width: auto;" onerror="this.style.display='none'">
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">CONALEP PLAYA DEL CARMEN</div>
+            <div style="font-size: 0.8rem; color: #a7f3d0;">Laboratorio SICAL: Temas Selectos de Matemáticas II</div>
+          </div>
         </div>
-    </header>
 
-    <main class="container">
+        <!-- Botón de Retorno al Menú Principal -->
+        <div style="background: rgba(0,0,0,0.2); padding: 6px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
+          <button onclick="window.location.href='index.html'" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.9rem;">
+            <span>⬅</span> Volver al Panel
+          </button>
+        </div>
+
+      </div>
+    </header>
         
         <!-- ==========================================
              ZONA ALUMNO: VISTA A - LOGIN
