@@ -1066,3 +1066,20 @@ let tiempoInicio = null;
 window.iniciarCronometroReto = function() {
     tiempoInicio = Date.now();
 };
+// =======================================================
+// SECCIÓN 11: AUTO-LOGIN AL RECARGAR LA PÁGINA
+// =======================================================
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Buscamos si el alumno ya se había registrado antes
+    const matriculaGuardada = localStorage.getItem('matriculaActiva');
+    
+    // 2. Si lo encontramos, lo metemos directo sin preguntar
+    if (matriculaGuardada) {
+        const inputMatricula = document.getElementById('input-matricula');
+        if (inputMatricula) {
+            inputMatricula.value = matriculaGuardada;
+        }
+        // Disparamos la función de login automáticamente
+        window.iniciarSesion();
+    }
+});
