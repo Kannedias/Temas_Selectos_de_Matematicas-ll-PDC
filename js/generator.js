@@ -27,13 +27,15 @@ const GeneratorEngine = {
     },
 
     // 5. Función Principal que Construye el Reto
-    generarReto: function(nivel, semilla) {
-        if (semilla) {
-            this.setSemilla(semilla.toString());
+    generarReto: function(nivel, matricula) {
+        // Bloqueo de Semilla: Amarra la generación a la matrícula y nivel
+        if (matricula && matricula.toString().trim() !== "") {
+            this.setSemilla(matricula.toString().trim() + "_Nivel_" + nivel);
         }
 
         let x1, y1, x2, y2;
         let esValido = false;
+        const nivelInt = parseInt(nivel);
 
         // 🛡️ CANDADO MATEMÁTICO: Filtramos rectas conflictivas
         while (!esValido) {
@@ -42,79 +44,25 @@ const GeneratorEngine = {
             x2 = this.randomRango(-10, 10);
             y2 = this.randomRango(-10, 10);
 
-            // Nivel 1: NUNCA permitiremos líneas rectas horizontales o verticales (División por cero)
-            if (nivel === "1") {
+            // Nivel 1: NUNCA permitiremos líneas rectas horizontales o verticales
+            if (nivelInt === 1) {
                 if (x1 !== x2 && y1 !== y2) {
                     esValido = true; 
                 }
             } else {
-                // Para Nivel 2, solo evitamos que sean el mismo punto exacto
+                // Para Nivel 2, solo evitamos que sean exactamente el mismo punto
                 if (x1 !== x2 || y1 !== y2) {
                     esValido = true;
                 }
             }
         }
 
-        // 6. Calculamos la solución interna usando tu cerebro matemático
+        // 6. Calculamos la solución interna usando el motor matemático
         const solucion = MathEngine.calcularSecuenciaRecta(x1, y1, x2, y2);
 
         // 7. Armamos el planteamiento visual según el nivel
-        let planteamientoHTML = "";
-        if (nivel === "1") {
-            planteamientoHTML = `Calcula los parámetros matemáticos para la trayectoria delimitada por los siguientes puntos:<br><br>
-            <div style="font-size: 1.3rem; text-align: center; border: 2px dashed #10b981; padding: 10px; margin: 10px 0; color: #047857; font-weight: bold; background: #ffffff;">
-                Punto A(${x1}, ${y1}) &nbsp; y &nbsp; Punto B(${x2}, ${y2})
-            </div>
-            Completa los 7 campos de respuesta utilizando las fórmulas de la geometría analítica vectorial.`;
-        } else {
-            planteamientoHTML = `Un brazo robótico de ensamblaje en una banda de producción industrial se mueve en línea recta. Su sensor de origen lo ubica en la coordenada <strong>A(${x1}, ${y1})</strong> y debe soldar una pieza en la coordenada final <strong>B(${x2}, ${y2})</strong>.<br><br>Determina el vector de desplazamiento necesario, la magnitud del brazo y la ecuación general del riel guía.`;
-        }
-
-        // 8. Retornamos el paquete completo al sistema
-        return {
-            nivel: nivel,
-            puntos: { x1, y1, x2, y2 },
-            solucion: solucion,
-            planteamientoHTML: planteamientoHTML
-        };
-    }
-};
-
-    // ============================================================================
-    // ETIQUETA: LÓGICA DE CONSTRUCCIÓN DE NIVELES (NIVEL 1 Y 2)
-    // ============================================================================
-    /**
-     * Genera un reto según el nivel seleccionado
-     * @param {number} nivel - 1 (Directo) o 2 (Contexto)
-     * @param {string} matricula - Matrícula del alumno como semilla
-     */
-    generarReto: function(nivel, matricula) {
-        // Bloqueo de Semilla: Si el alumno ingresó matrícula, amarramos la semilla a su identidad
-        if (matricula && matricula.trim() !== "") {
-            this.setSemilla(matricula.trim() + "_Nivel_" + nivel);
-        }
-
-        // Generación de coordenadas base (-10 a 10)
-        let x1 = this.randomRango(-10, 10);
-        let y1 = this.randomRango(-10, 10);
-        let x2 = this.randomRango(-10, 10);
-        let y2 = this.randomRango(-10, 10);
-
-        // Candado Matemático: Evitar que P1 y P2 sean exactamente el mismo punto
-        if (x1 === x2 && y1 === y2) {
-            x2 += 3;
-            y2 += 2;
-        }
-
-        // Cálculo silencioso de la solución real usando tu MathEngine
-        const solucion = MathEngine.calcularSecuenciaRecta(x1, y1, x2, y2);
-
         let narrativaHtml = "";
-        const nivelInt = parseInt(nivel);
-
-        // ============================================================================
-        // ETIQUETA: MAQUETACIÓN VISUAL DE LOS NIVELES
-        // ============================================================================
+        
         if (nivelInt === 1) {
             // NIVEL 1: Destreza Numérica Directa (Puros Números)
             narrativaHtml = `
@@ -124,8 +72,7 @@ const GeneratorEngine = {
                 </div>
                 <p style="margin: 0; font-size: 0.9rem; color: #15803d;">Completa los 7 campos de respuesta utilizando las fórmulas de la geometría analítica vectorial.</p>
             `;
-        } 
-        else if (nivelInt === 2) {
+        } else if (nivelInt === 2) {
             // NIVEL 2: Contextualización y Problemas de Aplicación
             const contextos = [
                 `Un <strong>dron de reconocimiento forestal</strong> despega desde su estación base ubicada en la coordenada <strong>A(${x1}, ${y1}) km</strong>. El sistema le ordena volar en línea recta para analizar un foco de calor detectado en <strong>B(${x2}, ${y2}) km</strong>.`,
@@ -133,7 +80,6 @@ const GeneratorEngine = {
                 `Un radar de puerto detecta un <strong>navío mercante</strong> en la posición <strong>A(${x1}, ${y1}) millas</strong> navegando con rumbo de colisión directo hacia la boya de contención en <strong>B(${x2}, ${y2}) millas</strong>.`
             ];
             
-            // Elegimos la historia usando la semilla para que al mismo alumno le toque la misma historia
             const idxHistoria = this.randomRango(0, contextos.length - 1);
             const historiaSeleccionada = contextos[idxHistoria];
             
@@ -146,7 +92,7 @@ const GeneratorEngine = {
             `;
         }
 
-        // Retornamos el paquete completo de datos al archivo app.js
+        // 8. Retornamos el paquete completo al sistema
         return {
             nivel: nivelInt,
             puntos: { x1, y1, x2, y2 },
