@@ -351,13 +351,9 @@ window.cargarDatosAdministrativos = function() {
     .then(data => {
         if (data.status === "éxito") {
             window.catalogoGeneralTareas = data.catalogo || [];
-            
-            // Llamamos a tu tabla de control de unidades
             if (typeof window.renderizarControlUnidades === "function") {
                 window.renderizarControlUnidades("TODOS");
             }
-            
-            // Actualizamos la tabla de catálogo si la función existe
             if(typeof window.filtrarCatalogoGeneral === 'function') {
                 window.filtrarCatalogoGeneral();
             }
@@ -369,15 +365,39 @@ window.cargarDatosAdministrativos = function() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "éxito") {
-            // Llenamos la variable maestra de alumnos
             window.listaGlobalAlumnos = data.alumnos || [];
-            
-            // Dibujamos las tarjetas azules de los grupos
             if(typeof window.renderizarTarjetasGrupos === 'function'){
                 window.renderizarTarjetasGrupos();
             }
         }
     }).catch(err => console.error("Error al cargar alumnos:", err));
+};
+
+window.renderizarTarjetasGrupos = function() {
+    const contenedor = document.getElementById('contenedor-tarjetas-grupos');
+    if (!contenedor || !window.listaGlobalAlumnos) return;
+    
+    const gruposUnicos = [...new Set(window.listaGlobalAlumnos.map(a => String(a.grupo).trim()))].filter(g => g !== "" && g !== "undefined");
+
+    if (gruposUnicos.length === 0) {
+        contenedor.innerHTML = `<div style="padding: 2rem; text-align: center; color: #64748b; background: #f8fafc; border-radius: 8px;">No se detectaron grupos.</div>`;
+        return;
+    }
+
+    contenedor.innerHTML = gruposUnicos.sort().map(grupo => {
+        const totalAlumnos = window.listaGlobalAlumnos.filter(a => String(a.grupo).trim() === grupo).length;
+        return `
+            <div onclick="window.abrirGestionGrupo('${grupo}')" 
+                 style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                 onmouseover="this.style.borderColor='var(--conalep-accent)'; this.style.transform='translateY(-2px)';"
+                 onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)';">
+                <h3 style="color: var(--conalep-dark); margin-top: 0; font-size: 1.25rem;">📘 Grupo ${grupo}</h3>
+                <span style="display: inline-block; background: #f1f5f9; color: #475569; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; margin-top: 10px;">
+                    👥 ${totalAlumnos} Alumnos
+                </span>
+            </div>
+        `;
+    }).join('');
 };
 
 // =======================================================
