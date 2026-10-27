@@ -663,34 +663,9 @@ window.publicarNuevaTarea = function() {
     .finally(() => { btn.innerText = "🚀 Publicar Actividad Oficial"; btn.disabled = false; });
 };
 
+/// =======================================================
+// SECCIÓN 7: VENTANILLA DE ESTUDIANTES (ENTREGAS MÚLTIPLES)
 // =======================================================
-// SECCIÓN 7: VENTANILLA DE ESTUDIANTES (ENTREGAS)
-// =======================================================
-window.subirFotoPerfil = function() {
-    const fileInput = document.getElementById('input-foto-perfil');
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) return;
-    const file = fileInput.files[0];
-    const matricula = sessionStorage.getItem('matriculaActiva');
-    const nombre = sessionStorage.getItem('nombreActivo');
-    const grupo = sessionStorage.getItem('grupoActivo');
-
-    if (!matricula) return alert("⚠️ Inicia sesión para subir fotos.");
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const base64Data = e.target.result.split(',')[1];
-        const imgPerfil = document.getElementById('img-perfil');
-        const emojiCamara = document.getElementById('emoji-camara');
-        if(imgPerfil && emojiCamara) { imgPerfil.src = e.target.result; imgPerfil.style.display = 'block'; emojiCamara.style.display = 'none'; }
-
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "subir_foto_perfil", matricula: matricula, nombre: nombre, grupo: grupo, nombreArchivo: file.name, mimeType: file.type, archivoBase64: base64Data }) })
-        .then(res => res.json())
-        .then(data => { if (data.status === "éxito") alert("✅ ¡Foto guardada!"); else alert("❌ Error: " + data.mensaje); })
-        .catch(err => { console.error(err); alert("⚠️ Error de conexión."); });
-    };
-    reader.readAsDataURL(file);
-};
-
 window.subirEvidencia = function() {
     const fileInput = document.getElementById('input-archivo');
     const actividadCompleta = document.getElementById('select-tarea').value;
@@ -698,26 +673,69 @@ window.subirEvidencia = function() {
     const grupo = sessionStorage.getItem('grupoActivo');
     const nombre = sessionStorage.getItem('nombreActivo');
 
-    if (!matricula) return alert("⚠️ Inicia sesión.");
-    if (!actividadCompleta || actividadCompleta.includes("--")) return alert("⚠️ Selecciona la tarea.");
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) return alert("⚠️ Selecciona un archivo.");
+    if (!matricula) return alert("⚠️ Inicia sesión para enviar evidencias.");
+    if (!actividadCompleta || actividadCompleta.includes("--")) return alert("⚠️ Selecciona la tarea antes de subir archivos.");
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) return alert("⚠️ Selecciona al menos un archivo.");
     
-    const file = fileInput.files[0];
-    if (file.size > 26214400) return alert("⚠️ Archivo muy pesado (máx 25MB).");
+    // Sumar el peso de todos los archivos para no saturar
+    let pesoTotal = 0;
+    for (let i = 0; i < fileInput.files.length; i++) {
+        pesoTotal += fileInput.files[i].size;
+    }
+    if (pesoTotal > 26214400) return alert("⚠️ El peso total supera los 25MB. Intenta subir archivos más ligeros.");
 
-    const btn = document.getElementById('btn-enviar');
-    if (btn) { btn.innerText = "⏳ Subiendo..."; btn.disabled = true; }
+    const btn = document.getElementById('btn-enviar') || document.querySelector('button[onclick="window.subirEvidencia()"]');
+    if (btn) { btn.innerText = "⏳ Procesando archivos..."; btn.disabled = true; }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const base64Data = e.target.result.split(',')[1];
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "subir", matricula: matricula, nombreArchivo: file.name, mimeType: file.type, archivoBase64: base64Data, grupo: grupo, nombre: nombre, actividad: actividadCompleta }) })
+    // Extraemos estrictamente el ID de la tarea (Ej: "EV05" de "EV05 - Ejercicios...")
+    const idTarea = actividadCompleta.split(" - ")[0].trim();
+
+    // Leemos todas las fotos al mismo tiempo usando Promesas
+    const promesas = Array.from(fileInput.files).map(file => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                resolve({
+                    nombreOriginal: file.name,
+                    mimeType: file.type,
+                    base64: e.target.result.split(',')[1]
+                });
+            };
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Cuando termine de procesar las fotos, las manda empaquetadas al backend
+    Promise.all(promesas).then(archivosProcesados => {
+        if (btn) btn.innerText = "⏳ Subiendo a tu Drive...";
+        
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: JSON.stringify({ 
+                accion: "subir_multiples", // <--- Llama a la ruta correcta que renombra
+                matricula: matricula, 
+                grupo: grupo, 
+                nombre: nombre, 
+                actividad: actividadCompleta,
+                idTarea: idTarea,
+                archivos: archivosProcesados 
+            }) 
+        })
         .then(res => res.json())
-        .then(data => { if (data.status === "éxito") { alert("✅ Evidencia enviada."); fileInput.value = ""; } else { alert("❌ Error: " + data.mensaje); }})
+        .then(data => { 
+            if (data.status === "éxito") { 
+                alert(`✅ ¡Tus ${archivosProcesados.length} archivos se enviaron correctamente!`); 
+                fileInput.value = ""; 
+                // Refrescamos el historial automáticamente
+                if (typeof window.consultarAvanceReal === 'function') window.consultarAvanceReal(matricula);
+            } else { 
+                alert("❌ Error en el servidor: " + data.mensaje); 
+            }
+        })
         .catch(err => { console.error(err); alert("⚠️ Error de conexión."); })
         .finally(() => { if (btn) { btn.innerText = "📤 Enviar Evidencia a Revisión"; btn.disabled = false; }});
-    };
-    reader.readAsDataURL(file);
+    });
 };
 
 // ==========================================
