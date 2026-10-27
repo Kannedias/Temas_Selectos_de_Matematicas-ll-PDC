@@ -1101,27 +1101,36 @@ window.comprobarRespuesta = function(btnTarget) {
 
     // 6. Guardar en Google Sheets (Usando el SCRIPT_URL global)
     const nivel = document.getElementById('nivel-reto')?.value || "1";
-    const matricula = sessionStorage.getItem('matriculaActiva');
-    const nombre = sessionStorage.getItem('nombreActivo');
-    const grupo = sessionStorage.getItem('grupoActivo');
+    const matricula = sessionStorage.getItem('matriculaActiva') || "TEST-000";
+    const nombre = sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
+    const grupo = sessionStorage.getItem('grupoActivo') || "000";
     
     btnTarget.innerText = "⏳ Guardando récord..."; 
     btnTarget.disabled = true;
 
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ accion: "registrar_reto", matricula: matricula, nombre: nombre, grupo: grupo, nivel: nivel, tiempo: tiempoFormateado })
+        body: JSON.stringify({ 
+            accion: "registrar_reto", 
+            matricula: matricula, 
+            nombre: nombre, 
+            grupo: grupo, 
+            nivel: nivel, 
+            tiempo: tiempoFormateado,
+            intentos: intentosReto // ✨ AQUÍ ENVIAMOS EL NÚMERO DE INTENTO
+        })
     })
     .then(res => res.json())
     .then(data => {
         const feedback = document.getElementById('feedback-resultado');
         if (data.status === "éxito") {
             feedback.style.color = "#059669";
-            feedback.innerHTML = `✅ ¡Reto Superado y Guardado! ⏱️ Tiempo oficial: ${tiempoFormateado}`;
+            feedback.innerHTML = `✅ ¡Reto Guardado Oficialmente! <br> ⏱️ Tiempo: ${tiempoFormateado} | 🔄 Intento #${intentosReto}`;
         } else { 
-            alert(`⚠️ Respuesta correcta, pero error al guardar: ${data.mensaje}`); 
+            alert(`⚠️ Error al guardar: ${data.mensaje}`); 
         }
     })
+    // ... (el resto del catch y finally se queda igual)
     .catch(err => alert("⚠️ Falló la conexión al guardar el tiempo."))
     .finally(() => { 
         btnTarget.innerText = "✔️ Respuestas Comprobadas"; 
