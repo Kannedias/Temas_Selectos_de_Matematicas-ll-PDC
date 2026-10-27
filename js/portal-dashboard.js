@@ -52,9 +52,9 @@ window.iniciarSesion = function() {
                 if(emojiCamara) emojiCamara.style.display = 'none';
             }
 
-            sessionStorage.setItem('matriculaActiva', matricula);
-            sessionStorage.setItem('grupoActivo', data.grupo);
-            sessionStorage.setItem('nombreActivo', data.nombreCompleto);
+                localStorage.setItem('matriculaActiva', matricula);
+                localStorage.setItem('nombreActivo', data.nombreCompleto);
+                localStorage.setItem('grupoActivo', data.grupo);
 
             document.getElementById('vista-login').classList.add('hidden');
             window.verificarCheckinPrevio(matricula);
