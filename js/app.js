@@ -614,11 +614,11 @@ function limpiarCamposReto() {
 
 window.comprobarRespuesta = function(btnTarget) {
     if (!solucionReto || !inicioTiempoReto) { 
-        alert("⚠️ El reto no ha sido iniciado."); 
+        alert("⚠️ El reto no ha sido iniciado. Haz clic en 'Iniciar Reto Seguro'."); 
         return; 
     }
 
-    // 1. Calcular tiempo transcurrido
+    // 1. Calcular tiempo exacto transcurrido
     const tiempoSegundos = Math.floor((Date.now() - inicioTiempoReto) / 1000);
     const min = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
     const seg = String(tiempoSegundos % 60).padStart(2, '0');
@@ -633,18 +633,25 @@ window.comprobarRespuesta = function(btnTarget) {
     };
 
     // --- EVALUACIÓN DE LAS 4 CAJAS ---
+    // A) Magnitud
     const inMag = document.getElementById('ans-magnitud');
-    if (esCorrecto(inMag.value, solucionReto.magnitud)) { inMag.style.borderColor = "#16a34a"; correctas++; } 
-    else { inMag.style.borderColor = "#dc2626"; }
+    if (esCorrecto(inMag.value, solucionReto.magnitud)) { 
+        inMag.style.borderColor = "#16a34a"; inMag.style.backgroundColor = "#dcfce7"; correctas++; 
+    } else { inMag.style.borderColor = "#dc2626"; inMag.style.backgroundColor = "#fee2e2"; }
 
+    // B) Dirección
     const inDir = document.getElementById('ans-direccion');
-    if (esCorrecto(inDir.value, solucionReto.direccion.grados)) { inDir.style.borderColor = "#16a34a"; correctas++; } 
-    else { inDir.style.borderColor = "#dc2626"; }
+    if (esCorrecto(inDir.value, solucionReto.direccion.grados)) { 
+        inDir.style.borderColor = "#16a34a"; inDir.style.backgroundColor = "#dcfce7"; correctas++; 
+    } else { inDir.style.borderColor = "#dc2626"; inDir.style.backgroundColor = "#fee2e2"; }
 
+    // C) Pendiente
     const inPen = document.getElementById('ans-pendiente');
-    if (esCorrecto(inPen.value, solucionReto.pendiente)) { inPen.style.borderColor = "#16a34a"; correctas++; } 
-    else { inPen.style.borderColor = "#dc2626"; }
+    if (esCorrecto(inPen.value, solucionReto.pendiente)) { 
+        inPen.style.borderColor = "#16a34a"; inPen.style.backgroundColor = "#dcfce7"; correctas++; 
+    } else { inPen.style.borderColor = "#dc2626"; inPen.style.backgroundColor = "#fee2e2"; }
     
+    // D) Vector Desplazamiento
     const inVec = document.getElementById('ans-vector');
     const vecLimpio = inVec.value.replace(/[()]/g, ''); 
     const vecPartes = vecLimpio.split(',').map(v => v.trim());
@@ -652,35 +659,45 @@ window.comprobarRespuesta = function(btnTarget) {
     const dyReal = retoActivo.puntos.y2 - retoActivo.puntos.y1;
     
     if (vecPartes.length === 2 && esCorrecto(vecPartes[0], dxReal) && esCorrecto(vecPartes[1], dyReal)) {
-        inVec.style.borderColor = "#16a34a"; correctas++;
+        inVec.style.borderColor = "#16a34a"; inVec.style.backgroundColor = "#dcfce7"; correctas++;
     } else {
-        inVec.style.borderColor = "#dc2626";
+        inVec.style.borderColor = "#dc2626"; inVec.style.backgroundColor = "#fee2e2";
     }
 
     const feedbackMsg = document.getElementById('feedback-reto-msg');
 
-    // 3. SI TODO ES CORRECTO -> BLOQUEAR Y GUARDAR
+    // 3. SI TODO ES CORRECTO -> BLOQUEAR, MOSTRAR DESGLOSE Y GUARDAR
     if (correctas === totalEvaluar) {
+        // Bloquear casillas
         const inputs = document.querySelectorAll('.grid-respuestas input');
-        inputs.forEach(input => { input.disabled = true; input.style.backgroundColor = "#f1f5f9"; });
+        inputs.forEach(input => { input.disabled = true; });
 
-        const btnProceso = document.getElementById('btn-ver-proceso');
-        if (btnProceso) {
-            btnProceso.disabled = false;
-            btnProceso.style.background = "#d97706";
-            btnProceso.style.cursor = "pointer";
+        // Apagar Escudo Anti-trampas para que puedan estudiar
+        retoActivo = null; 
+
+        // DETONAR EL DESGLOSE PASO A PASO AUTOMÁTICAMENTE
+        if (typeof desglosarReto === 'function') {
+            desglosarReto();
+            const btnProceso = document.getElementById('btn-ver-proceso');
+            if (btnProceso) {
+                btnProceso.disabled = false;
+                btnProceso.style.background = "#d97706";
+                btnProceso.style.cursor = "pointer";
+            }
         }
 
-        window.retoActivo = null; // Apagar Anti-trampas
-
+        // Obtener datos del alumno
         const nivel = document.getElementById('nivel-reto')?.value || "1";
         const matricula = localStorage.getItem('matriculaActiva') || sessionStorage.getItem('matriculaActiva') || "TEST-000";
         const nombre = localStorage.getItem('nombreActivo') || sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
         const grupo = localStorage.getItem('grupoActivo') || sessionStorage.getItem('grupoActivo') || "000";
         
+        // Estado de carga del botón
+        const textoOriginal = btnTarget.innerText;
         btnTarget.innerText = "⏳ Guardando récord..."; 
         btnTarget.disabled = true;
 
+        // Enviar a Google Sheets
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ 
@@ -701,14 +718,18 @@ window.comprobarRespuesta = function(btnTarget) {
                 alert(`⚠️ Respuesta correcta, pero error al guardar: ${data.mensaje}`); 
             }
         })
-        .catch(err => alert("⚠️ Falló la conexión al guardar el tiempo."))
+        .catch(err => {
+            console.error("Error Fetch:", err);
+            alert("⚠️ Falló la conexión al guardar el tiempo en Sheets.");
+        })
         .finally(() => { 
-            btnTarget.innerText = "✔️ Respuestas Comprobadas"; 
+            btnTarget.innerText = textoOriginal; 
+            btnTarget.disabled = false;
             inicioTiempoReto = null; 
         });
 
     } else {
-        feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa los recuadros en rojo o consulta el desglose.</span>`;
+        feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa las casillas marcadas en rojo.</span>`;
     }
 };
 
