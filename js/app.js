@@ -700,6 +700,41 @@ function anularReto() {
 }
 
 // =======================================================
+// BLOQUE 6: BLINDAJE ANTI-TRAMPAS (MODO SEGURO EXAMEN)
+// =======================================================
+
+// 1. Detectar cuando salen de la pestaña (PC/Mac/Navegadores)
+document.addEventListener("visibilitychange", () => {
+    // retoActivo no es null cuando hay un examen corriendo
+    if (retoActivo && document.hidden) {
+        alert("🚨 TRAMPA DETECTADA: Has abandonado la pestaña de evaluación. El reto será anulado.");
+        anularReto();
+    }
+});
+
+// 2. Detectar cuando minimizan el navegador o cambian de App (Celulares y PC)
+window.addEventListener("blur", () => {
+    if (retoActivo) {
+        alert("🚨 TRAMPA DETECTADA: Has minimizado la pantalla o salido de la ventana. El reto será anulado.");
+        anularReto();
+    }
+});
+
+// 3. Bloquear Clic Derecho en toda la página si hay un reto activo
+document.addEventListener('contextmenu', event => {
+    if (retoActivo) {
+        event.preventDefault();
+    }
+});
+
+// 4. Bloquear atajos de copiado (Ctrl+C / Copiar en celular)
+document.addEventListener('copy', event => {
+    if (retoActivo) {
+        event.preventDefault();
+        alert("⚠️ El copiado de texto está deshabilitado en Modo Examen.");
+    }
+});
+// =======================================================
 // INICIALIZACIÓN
 // =======================================================
 document.addEventListener("DOMContentLoaded", function() {
