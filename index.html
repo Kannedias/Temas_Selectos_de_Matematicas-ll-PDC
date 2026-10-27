@@ -181,72 +181,71 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
                 
 <!-- ==========================================
-     ZONA 2: CATÁLOGO Y ENTREGA DE EVIDENCIAS (DISEÑO UNIFICADO)
-     ========================================== -->
-<div class="layout-escritorio" style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; align-items: start;">
-    
-    <!-- COLUMNA IZQUIERDA: HISTORIAL DE EVIDENCIAS -->
-    <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
-            <h3 style="margin: 0; color: #0f172a; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
-                📁 Mi Historial
-            </h3>
-            <button onclick="document.getElementById('contenedor-historial').classList.toggle('hidden')" style="background-color: #f8fafc; color: #475569; border: 1px solid #cbd5e1; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">
-                👁️ Mostrar / Ocultar
-            </button>
-        </div>
+                 ZONA 2: CATÁLOGO Y ENTREGA DE EVIDENCIAS (DISEÑO UNIFICADO)
+                 ========================================== -->
+            <div class="layout-escritorio" style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; align-items: start;">
+                
+                <!-- COLUMNA IZQUIERDA: HISTORIAL DE EVIDENCIAS -->
+                <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
+                        <h3 style="margin: 0; color: #0f172a; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                            📁 Mi Historial
+                        </h3>
+                        <button onclick="document.getElementById('contenedor-historial').classList.toggle('hidden')" style="background-color: #f8fafc; color: #475569; border: 1px solid #cbd5e1; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">
+                            👁️ Mostrar / Ocultar
+                        </button>
+                    </div>
 
-        <!-- Contenedor del historial (Se muestra al dar clic) -->
-        <div id="contenedor-historial" class="hidden" style="margin-top: 0.5rem;">
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; min-width: 400px; text-align: left;">
-                    <thead>
-                        <tr style="background-color: #f8fafc; color: #475569; font-size: 0.85rem; text-transform: uppercase;">
-                            <th style="padding: 10px; border-bottom: 2px solid #e2e8f0;">Actividad</th>
-                            <th style="padding: 10px; border-bottom: 2px solid #e2e8f0;">Fecha</th>
-                            <th style="padding: 10px; border-bottom: 2px solid #e2e8f0;">Estado</th>
-                            <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: center;">Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-historial">
-                        <tr><td colspan="4" style="text-align: center; padding: 2rem; color: #64748b;">Consultando entregas...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <p style="margin: 1rem 0 0 0; font-size: 0.85rem; color: #64748b; text-align: center;">
-            Aquí puedes consultar el estado de tus evaluaciones.
-        </p>
-    </div>
+                    <!-- Contenedor del historial (Se muestra al dar clic) -->
+                    <div id="contenedor-historial" class="hidden" style="margin-top: 0.5rem;">
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 400px; text-align: left;">
+                                <thead>
+                                    <tr style="background-color: #f8fafc; color: #475569; font-size: 0.85rem; text-transform: uppercase;">
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0;">Actividad</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0;">Fecha</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0;">Estado</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: center;">Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-historial">
+                                    <tr><td colspan="4" style="text-align: center; padding: 2rem; color: #64748b;">Consultando entregas...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <p style="margin: 1rem 0 0 0; font-size: 0.85rem; color: #64748b; text-align: center;">
+                        Aquí puedes consultar el estado de tus evaluaciones.
+                    </p>
+                </div>
 
-    <!-- COLUMNA DERECHA: VENTANILLA DE ENTREGA -->
-    <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
-        <h3 style="margin: 0 0 0.5rem 0; color: #004d40; font-size: 1.2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-            📤 Ventanilla de Entrega Digital
-        </h3>
-        <p style="font-size: 0.85rem; color: #475569; margin-bottom: 1.25rem;">
-            Sube tu foto de libreta o PDF con procedimiento (máx 25MB). Puedes seleccionar múltiples archivos.
-        </p>
+                <!-- COLUMNA DERECHA: VENTANILLA DE ENTREGA -->
+                <div class="card-aplicacion" style="background: #ffffff; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
+                    <h3 style="margin: 0 0 0.5rem 0; color: #004d40; font-size: 1.2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        📤 Ventanilla de Entrega Digital
+                    </h3>
+                    <p style="font-size: 0.85rem; color: #475569; margin-bottom: 1.25rem;">
+                        Sube tu foto de libreta o PDF con procedimiento (máx 25MB). Puedes seleccionar múltiples archivos.
+                    </p>
 
-        <label style="font-weight: bold; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.4rem; display: block;">Selecciona la Tarea:</label>
-        <select id="select-tarea" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #0f172a; margin-bottom: 0.5rem; background-color: #f8fafc; outline: none; cursor: pointer;">
-            <option value="">-- Selecciona una actividad --</option>
-            <!-- Se llena con JavaScript -->
-        </select>
-        
-        <!-- El JS de validación inserta la caja de instrucciones aquí -->
+                    <label style="font-weight: bold; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.4rem; display: block;">Selecciona la Tarea:</label>
+                    <select id="select-tarea" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #0f172a; margin-bottom: 0.5rem; background-color: #f8fafc; outline: none; cursor: pointer;">
+                        <option value="">-- Selecciona una actividad --</option>
+                        <!-- Se llena con JavaScript -->
+                    </select>
+                    
+                    <!-- El JS de validación inserta la caja de instrucciones aquí -->
 
-        <div style="margin-top: 1.25rem;">
-            <input type="file" id="input-archivo" accept="image/*,application/pdf" multiple style="width: 100%; padding: 0.5rem; border: 1px dashed #94a3b8; border-radius: 6px; background: #f8fafc; margin-bottom: 1rem; cursor: pointer;">
-            
-            <button id="btn-enviar" onclick="window.subirEvidencia()" style="width: 100%; background-color: #004d40; color: white; border: none; padding: 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: background 0.2s;" onmouseover="this.style.background='#00594C'" onmouseout="this.style.background='#004d40'">
-                📤 Enviar Evidencia a Revisión
-            </button>
-        </div>
-    </div>
+                    <div style="margin-top: 1.25rem;">
+                        <input type="file" id="input-archivo" accept="image/*,application/pdf" multiple style="width: 100%; padding: 0.5rem; border: 1px dashed #94a3b8; border-radius: 6px; background: #f8fafc; margin-bottom: 1rem; cursor: pointer;">
+                        
+                        <button id="btn-enviar" onclick="window.subirEvidencia()" style="width: 100%; background-color: #004d40; color: white; border: none; padding: 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: background 0.2s;" onmouseover="this.style.background='#00594C'" onmouseout="this.style.background='#004d40'">
+                            📤 Enviar Evidencia a Revisión
+                        </button>
+                    </div>
+                </div>
 
-</div>
-            
+            </div> 
         </section>
     </main>
 
