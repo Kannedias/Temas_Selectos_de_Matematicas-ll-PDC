@@ -1,4 +1,8 @@
 // =======================================================
+// CONFIGURACIÓN DE CONEXIÓN
+// =======================================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCO1FHOxVxUSi1Z6QgMjttLXZ1WrNgBLBkjUNw5Lq0wK8UkdLJu68eVXp9qyNJoioa/exec";
+// =======================================================
 // BLOQUE 1: CONTROL DE NAVEGACIÓN POR PESTAÑAS
 // =======================================================
 function cambiarPestana(idPestana) {
