@@ -75,6 +75,33 @@ window.iniciarSesion = function() {
 };
 
 // =======================================================
+// LÓGICA DE CIERRE DE SESIÓN (AMNESIA TOTAL)
+// =======================================================
+window.cerrarSesion = function() {
+    // 1. Borramos la memoria temporal Y la fija
+    sessionStorage.clear();
+    localStorage.clear();
+
+    // 2. Ocultamos los paneles internos
+    document.getElementById('vista-dashboard')?.classList.add('hidden');
+    document.getElementById('vista-admin')?.classList.add('hidden');
+    document.getElementById('user-menu')?.classList.add('hidden');
+    
+    // 3. Mostramos la pantalla de inicio
+    document.getElementById('vista-login')?.classList.remove('hidden');
+    
+    // 4. Limpiamos la casilla
+    const matInput = document.getElementById('input-matricula');
+    if (matInput) matInput.value = "";
+    
+    // 5. Destruimos la gráfica si existe
+    if(window.miGrafica !== null) { 
+        window.miGrafica.destroy(); 
+        window.miGrafica = null;
+    }
+};
+
+// =======================================================
 // SECCIÓN 2: GRÁFICAS DE DESEMPEÑO DEL ALUMNO
 // =======================================================
 window.dibujarGrafica = function(parcialesData) {
