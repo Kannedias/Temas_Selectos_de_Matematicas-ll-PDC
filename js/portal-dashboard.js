@@ -669,9 +669,9 @@ window.publicarNuevaTarea = function() {
 window.subirEvidencia = function() {
     const fileInput = document.getElementById('input-archivo');
     const actividadCompleta = document.getElementById('select-tarea').value;
-    const matricula = sessionStorage.getItem('matriculaActiva');
-    const grupo = sessionStorage.getItem('grupoActivo');
-    const nombre = sessionStorage.getItem('nombreActivo');
+    const matricula = localStorage.getItem('matriculaActiva');
+    const grupo = localStorage.getItem('grupoActivo');
+    const nombre = localStorage.getItem('nombreActivo');
 
     if (!matricula) return alert("⚠️ Inicia sesión para enviar evidencias.");
     if (!actividadCompleta || actividadCompleta.includes("--")) return alert("⚠️ Selecciona la tarea antes de subir archivos.");
