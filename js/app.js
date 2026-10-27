@@ -769,10 +769,12 @@ document.addEventListener('copy', event => {
         alert("⚠️ El copiado de texto está deshabilitado en Modo Examen.");
     }
 });
+// =======================================================
 // INICIALIZACIÓN
+// =======================================================
 document.addEventListener("DOMContentLoaded", function() {
     
-    // 🛡️ CADENERO DE SESIÓN: Verifica si el alumno realmente inició sesión
+    // 🛡️ CADENERO DE SESIÓN (ACTUALIZADO A MEMORIA FIJA)
     const matriculaGuardada = localStorage.getItem('matriculaActiva');
     
     // Si estamos en la página del laboratorio/retos y no hay matrícula...
@@ -782,7 +784,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return; // Detiene la carga de la página
     }
 
-    // ... (El resto de tu código de KaTeX y Laboratorio sigue normal)
+    // ... (El resto de tu código de KaTeX y Laboratorio sigue normal hacia abajo)
 
     if (window.renderMathInElement) {
         renderMathInElement(document.body, {
