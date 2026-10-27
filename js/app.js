@@ -773,7 +773,7 @@ document.addEventListener('copy', event => {
 document.addEventListener("DOMContentLoaded", function() {
     
     // 🛡️ CADENERO DE SESIÓN: Verifica si el alumno realmente inició sesión
-    const matriculaGuardada = sessionStorage.getItem('matriculaActiva');
+    const matriculaGuardada = localStorage.getItem('matriculaActiva');
     
     // Si estamos en la página del laboratorio/retos y no hay matrícula...
     if (!matriculaGuardada && window.location.pathname.includes("unidad1_recta.html")) {
