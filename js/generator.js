@@ -26,6 +26,60 @@ const GeneratorEngine = {
         return Math.floor(this.random() * (max - min + 1)) + min;
     },
 
+    // 5. Función Principal que Construye el Reto
+    generarReto: function(nivel, semilla) {
+        if (semilla) {
+            this.setSemilla(semilla.toString());
+        }
+
+        let x1, y1, x2, y2;
+        let esValido = false;
+
+        // 🛡️ CANDADO MATEMÁTICO: Filtramos rectas conflictivas
+        while (!esValido) {
+            x1 = this.randomRango(-10, 10);
+            y1 = this.randomRango(-10, 10);
+            x2 = this.randomRango(-10, 10);
+            y2 = this.randomRango(-10, 10);
+
+            // Nivel 1: NUNCA permitiremos líneas rectas horizontales o verticales (División por cero)
+            if (nivel === "1") {
+                if (x1 !== x2 && y1 !== y2) {
+                    esValido = true; 
+                }
+            } else {
+                // Para Nivel 2, solo evitamos que sean el mismo punto exacto
+                if (x1 !== x2 || y1 !== y2) {
+                    esValido = true;
+                }
+            }
+        }
+
+        // 6. Calculamos la solución interna usando tu cerebro matemático
+        const solucion = MathEngine.calcularSecuenciaRecta(x1, y1, x2, y2);
+
+        // 7. Armamos el planteamiento visual según el nivel
+        let planteamientoHTML = "";
+        if (nivel === "1") {
+            planteamientoHTML = `Calcula los parámetros matemáticos para la trayectoria delimitada por los siguientes puntos:<br><br>
+            <div style="font-size: 1.3rem; text-align: center; border: 2px dashed #10b981; padding: 10px; margin: 10px 0; color: #047857; font-weight: bold; background: #ffffff;">
+                Punto A(${x1}, ${y1}) &nbsp; y &nbsp; Punto B(${x2}, ${y2})
+            </div>
+            Completa los 7 campos de respuesta utilizando las fórmulas de la geometría analítica vectorial.`;
+        } else {
+            planteamientoHTML = `Un brazo robótico de ensamblaje en una banda de producción industrial se mueve en línea recta. Su sensor de origen lo ubica en la coordenada <strong>A(${x1}, ${y1})</strong> y debe soldar una pieza en la coordenada final <strong>B(${x2}, ${y2})</strong>.<br><br>Determina el vector de desplazamiento necesario, la magnitud del brazo y la ecuación general del riel guía.`;
+        }
+
+        // 8. Retornamos el paquete completo al sistema
+        return {
+            nivel: nivel,
+            puntos: { x1, y1, x2, y2 },
+            solucion: solucion,
+            planteamientoHTML: planteamientoHTML
+        };
+    }
+};
+
     // ============================================================================
     // ETIQUETA: LÓGICA DE CONSTRUCCIÓN DE NIVELES (NIVEL 1 Y 2)
     // ============================================================================
