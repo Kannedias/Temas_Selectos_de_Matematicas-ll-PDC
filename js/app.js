@@ -734,10 +734,21 @@ document.addEventListener('copy', event => {
         alert("⚠️ El copiado de texto está deshabilitado en Modo Examen.");
     }
 });
-// =======================================================
 // INICIALIZACIÓN
-// =======================================================
 document.addEventListener("DOMContentLoaded", function() {
+    
+    // 🛡️ CADENERO DE SESIÓN: Verifica si el alumno realmente inició sesión
+    const matriculaGuardada = sessionStorage.getItem('matriculaActiva');
+    
+    // Si estamos en la página del laboratorio/retos y no hay matrícula...
+    if (!matriculaGuardada && window.location.pathname.includes("unidad1_recta.html")) {
+        alert("⚠️ No se detectó una sesión activa. Serás redirigido al portal principal para ingresar tu matrícula.");
+        window.location.href = "index.html"; 
+        return; // Detiene la carga de la página
+    }
+
+    // ... (El resto de tu código de KaTeX y Laboratorio sigue normal)
+
     if (window.renderMathInElement) {
         renderMathInElement(document.body, {
             delimiters: [
