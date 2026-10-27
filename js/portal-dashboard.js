@@ -51,9 +51,9 @@ window.iniciarSesion = function() {
                 if(emojiCamara) emojiCamara.style.display = 'none';
             }
 
-                localStorage.setItem('matriculaActiva', matricula);
-                localStorage.setItem('nombreActivo', data.nombreCompleto);
-                localStorage.setItem('grupoActivo', data.grupo);
+                sessionStorage.setItem('matriculaActiva', matricula);
+                sessionStorage.setItem('nombreActivo', data.nombreCompleto);
+                sessionStorage.setItem('grupoActivo', data.grupo);
 
             document.getElementById('vista-login').classList.add('hidden');
             window.verificarCheckinPrevio(matricula);
@@ -82,7 +82,7 @@ window.cerrarSesion = function(event) {
     if (event) event.preventDefault();
     
     // 2. Aniquilamos las memorias de forma obligatoria
-    localStorage.clear();
+    sessionStorage.clear();
     sessionStorage.clear();
     
     // 3. Forzamos la recarga de la página desde cero
@@ -683,9 +683,9 @@ window.publicarNuevaTarea = function() {
 window.subirEvidencia = function() {
     const fileInput = document.getElementById('input-archivo');
     const actividadCompleta = document.getElementById('select-tarea').value;
-    const matricula = localStorage.getItem('matriculaActiva');
-    const grupo = localStorage.getItem('grupoActivo');
-    const nombre = localStorage.getItem('nombreActivo');
+    const matricula = sessionStorage.getItem('matriculaActiva');
+    const grupo = sessionStorage.getItem('grupoActivo');
+    const nombre = sessionStorage.getItem('nombreActivo');
 
     if (!matricula) return alert("⚠️ Inicia sesión para enviar evidencias.");
     if (!actividadCompleta || actividadCompleta.includes("--")) return alert("⚠️ Selecciona la tarea antes de subir archivos.");
@@ -1028,7 +1028,7 @@ window.enviarRegistroAsistencia = function(mat, nom, gru, mod, estatus) {
             btn.style.background = "#16a34a"; btn.innerText = "✅ Asistencia Registrada"; btn.disabled = true; 
             msg.style.color = estatus.includes("Fuera") || estatus.includes("⚠️") ? "#dc2626" : "#16a34a";
             msg.innerText = data.status === "duplicado" ? "Tu asistencia ya estaba registrada." : `Estatus: ${estatus}`;
-            localStorage.setItem(`checkin_${mat}`, new Date().toLocaleDateString('en-CA'));
+            sessionStorage.setItem(`checkin_${mat}`, new Date().toLocaleDateString('en-CA'));
         } else {
             btn.disabled = false; btn.innerText = "📍 Reintentar Check-In"; msg.style.color = "red"; msg.innerText = "Error: " + data.mensaje;
         }
@@ -1058,7 +1058,7 @@ window.verificarCheckinPrevio = function(mat) {
     }
 
     // CANDADO 2: Si ya hizo check-in hoy
-    if (localStorage.getItem(`checkin_${mat}`) === hoyStr && btn && msg) {
+    if (sessionStorage.getItem(`checkin_${mat}`) === hoyStr && btn && msg) {
         btn.disabled = true;
         btn.style.background = "#16a34a";
         btn.innerText = "✅ Asistencia de Hoy Lista";
