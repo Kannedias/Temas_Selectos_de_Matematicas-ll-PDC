@@ -36,26 +36,28 @@
 <body>
 
     <!-- ==========================================
-         CABECERA INSTITUCIONAL (LABORATORIO)
+         CABECERA INSTITUCIONAL (GLOBAL)
          ========================================== -->
-    <header class="main-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 15px 20px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-      <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
+    <header class="main-header">
+      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
         
-        <!-- Identidad Institucional (Logo y Textos) -->
         <div style="display: flex; align-items: center; gap: 15px;">
-          <!-- Asegúrate de tener tu imagen del logo en la misma carpeta o ajustar el nombre -->
-          <img src="image_4bef00.png" alt="Logo CONALEP" style="height: 45px; width: auto;" onerror="this.style.display='none'">
+          <img src="image_4bef00.png" alt="Logo CONALEP" style="height: 50px; width: auto;" onerror="this.style.display='none'">
           <div>
-            <div style="font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">CONALEP PLAYA DEL CARMEN</div>
-            <div style="font-size: 0.8rem; color: #a7f3d0;">Laboratorio SICAL: Temas Selectos de Matemáticas II</div>
+            <div class="brand-title" style="font-weight: 700; font-size: 1.15rem;">CONALEP PLAYA DEL CARMEN</div>
+            <div class="brand-sub" style="font-size: 0.8rem; color: #a7f3d0;">Temas Selectos de Matemáticas II</div>
           </div>
         </div>
 
-        <!-- Botón de Retorno al Menú Principal -->
-        <div style="background: rgba(0,0,0,0.2); padding: 6px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
-          <button onclick="window.location.href='index.html'" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.9rem;">
-            <span>⬅</span> Volver al Panel
-          </button>
+        <div class="header-credits" style="text-align: center; display: none;">
+            <span style="color: #a7f3d0; font-size: 0.8rem; font-weight: bold;">● Sistema Activo SICAL</span><br>
+            <span style="font-size: 0.75rem; color: #cbd5e1;">Desarrollado por: Prof. Juan Luis | © 2026 Todos los derechos reservados.</span>
+        </div>
+
+        <div id="user-menu" class="hidden" style="background: rgba(0,0,0,0.15); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; gap: 10px; align-items: center;">
+          <span id="welcome-name">👤 Bienvenido</span>
+          <span style="color: #cbd5e1;">|</span>
+          <button onclick="window.cerrarSesion(event)" style="background: none; border: none; color: #fca5a5; font-weight: bold; cursor: pointer;">Salir</button>
         </div>
 
       </div>
