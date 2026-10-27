@@ -140,54 +140,76 @@ window.dibujarGrafica = function(parcialesData) {
 // SECCIÓN 3: MOTOR DE AVANCE DINÁMICO E HISTORIAL
 // =======================================================
 window.consultarAvanceReal = function(matricula) {
-    // 1. Carga de Gráficas e Historial de Ventanilla
+    // 1. Carga de Gráficas, Historial y Catálogo Inteligente
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ accion: "consultar", matricula: matricula })
     })
     .then(res => res.json())
     .then(data => {
-        
-        // 🛡️ CORRECCIÓN: Forzamos el dibujado de la gráfica SIEMPRE. 
-        // Si no hay datos, manda un arreglo vacío para pintar la base gris.
+        // 🛡️ Gráfica de Parciales
         if(typeof window.dibujarGrafica === 'function') {
             window.datosDesgloseParciales = data.parciales || [];
             window.dibujarGrafica(window.datosDesgloseParciales);
         }
         
+        // ==========================================
+        // DIBUJAR HISTORIAL ESTILO PANEL DOCENTE
+        // ==========================================
         const tbodyHistorial = document.getElementById('tbody-historial');
         if (tbodyHistorial && data.historial) {
             tbodyHistorial.innerHTML = ""; 
             if (data.historial.length === 0) {
-                tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay entregas registradas.</td></tr>`;
+                tbodyHistorial.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">📂 Aún no tienes evidencias entregadas.</td></tr>`;
             } else {
                 data.historial.forEach(item => {
-                    let estadoStr = String(item.estado || "").toLowerCase();
-                    let estadoEmoji = estadoStr.includes("revisad") || estadoStr.includes("cumplid") ? "✅" : (estadoStr.includes("corrección") ? "⚠️" : "⏳");
-                    let colorBadge = (estadoStr.includes("revisad") || estadoStr.includes("cumplid")) ? "status-ok" : (estadoStr.includes("corrección") ? "status-act" : "status-pend");
+                    let estadoCrudo = String(item.estado).trim().toLowerCase();
+                    let colorEstado = "#64748b";
+                    let bgEstado = "#f1f5f9";
+                    let icono = "⏳";
                     
-                    let row = `<tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${item.actividad}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${item.fecha}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><span class="badge-status ${colorBadge}">${estadoEmoji} ${item.estado}</span></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;"><strong>${item.nota}</strong></td>
+                    if (estadoCrudo.includes("cumplid") || estadoCrudo.includes("revisad")) {
+                        colorEstado = "#16a34a"; bgEstado = "#dcfce7"; icono = "✅";
+                    } else if (estadoCrudo.includes("pendient")) {
+                        colorEstado = "#d97706"; bgEstado = "#fef3c7"; icono = "⏳";
+                    } else if (estadoCrudo.includes("corrección") || estadoCrudo.includes("rechazad") || estadoCrudo.includes("no entregada")) {
+                        colorEstado = "#dc2626"; bgEstado = "#fef2f2"; icono = "⚠️";
+                    }
+
+                    let row = `<tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                        <td style="padding: 12px; font-weight: 500; color: #1e293b;">${item.actividad}</td>
+                        <td style="padding: 12px; color: #475569; font-size: 0.9rem;">${item.fecha}</td>
+                        <td style="padding: 12px;"><span style="background: ${bgEstado}; color: ${colorEstado}; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 0.85rem;">${icono} ${item.estado}</span></td>
+                        <td style="padding: 12px; font-weight: bold; color: #0f172a; text-align: center;">${item.nota || '--'}</td>
                     </tr>`;
                     tbodyHistorial.innerHTML += row;
                 });
             }
         }
         
+        // ==========================================
+        // LLENAR SELECT CON DESCRIPCIÓN (VENTANILLA)
+        // ==========================================
         const selectTarea = document.getElementById('select-tarea');
         if (selectTarea && data.catalogo) {
             selectTarea.innerHTML = `<option value="">-- Selecciona una actividad --</option>`;
             data.catalogo.forEach(tarea => {
                 let option = document.createElement('option');
                 option.value = tarea.id + " - " + tarea.titulo; 
-                option.text = tarea.id + " | " + tarea.titulo;
+                let tituloVisible = tarea.estatus === "CONCLUIDA" ? `🔒 CERRADA | ${tarea.id} | ${tarea.titulo}` : `📝 ${tarea.id} | ${tarea.titulo}`;
+                option.text = tituloVisible;
+                // Guardamos instrucciones y estatus ocultos
+                option.setAttribute('data-desc', tarea.desc || 'Sin instrucciones adicionales.');
+                option.setAttribute('data-estatus', tarea.estatus);
                 selectTarea.appendChild(option);
             });
+            
+            // Vigilar cuando el alumno cambie de tarea
+            selectTarea.removeEventListener('change', window.validarVentanillaAlumno); // Evitar duplicados
+            selectTarea.addEventListener('change', window.validarVentanillaAlumno);
         }
-    });
+    })
+    .catch(error => console.error("Error consultando avance:", error));
 
     // 2. Consulta al Motor Dinámico de Unidad 1
     fetch(SCRIPT_URL, {
@@ -224,6 +246,64 @@ window.consultarAvanceReal = function(matricula) {
             }
         }
     }).catch(err => console.error("Error motor avance:", err));
+};
+
+// ==========================================
+// LÓGICA DE LA VENTANILLA INTELIGENTE
+// ==========================================
+window.validarVentanillaAlumno = function() {
+    const select = document.getElementById('select-tarea');
+    const inputArchivo = document.getElementById('input-archivo'); 
+    const btnEnviar = document.getElementById('btn-enviar'); // O el id exacto de tu botón de subida
+    
+    // Si no tiene id, lo buscamos por onclick
+    const botonFinal = btnEnviar || document.querySelector('button[onclick="subirEvidencia()"]');
+    
+    // Contenedor de instrucciones (lo creamos dinámicamente)
+    let cajaInfo = document.getElementById('caja-info-tarea');
+    if (!cajaInfo) {
+        cajaInfo = document.createElement('div');
+        cajaInfo.id = 'caja-info-tarea';
+        cajaInfo.style.margin = '12px 0';
+        cajaInfo.style.padding = '12px';
+        cajaInfo.style.borderRadius = '6px';
+        cajaInfo.style.fontSize = '0.9rem';
+        cajaInfo.style.display = 'none';
+        select.parentNode.insertBefore(cajaInfo, select.nextSibling);
+    }
+
+    if (select.selectedIndex === 0) {
+        cajaInfo.style.display = 'none';
+        if (inputArchivo) inputArchivo.style.display = 'block';
+        if (botonFinal) botonFinal.style.display = 'block';
+        return;
+    }
+
+    const opcion = select.options[select.selectedIndex];
+    const estatus = opcion.getAttribute('data-estatus');
+    const descripcion = opcion.getAttribute('data-desc');
+
+    if (estatus === "CONCLUIDA" || estatus === "TERMINADA") {
+        // Tarea Cerrada: Ocultar subida, mostrar alerta
+        if (inputArchivo) inputArchivo.style.display = 'none';
+        if (botonFinal) botonFinal.style.display = 'none';
+        
+        cajaInfo.style.display = 'block';
+        cajaInfo.style.background = '#fef2f2';
+        cajaInfo.style.border = '1px dashed #dc2626';
+        cajaInfo.style.color = '#991b1b';
+        cajaInfo.innerHTML = `<strong>🔒 Evaluación Cerrada por el Docente</strong><br><span style="font-size:0.85rem;">Ya no se aceptan nuevas entregas para esta actividad.</span>`;
+    } else {
+        // Tarea Activa: Mostrar descripción e inputs
+        if (inputArchivo) inputArchivo.style.display = 'block';
+        if (botonFinal) botonFinal.style.display = 'block';
+        
+        cajaInfo.style.display = 'block';
+        cajaInfo.style.background = '#f0fdfa';
+        cajaInfo.style.border = '1px solid #5eead4';
+        cajaInfo.style.color = '#0f766e';
+        cajaInfo.innerHTML = `<strong>📋 Instrucciones de la Tarea:</strong><br><span style="color: #115e59;">${descripcion}</span>`;
+    }
 };
 
 // =======================================================
