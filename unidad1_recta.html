@@ -392,10 +392,18 @@
                     <div><label style="display:block; font-size: 0.85rem; font-weight: bold; color: #004d40;">7. Forma General:</label><input type="text" id="ans-gen" placeholder="Ej: 2x - y + 5 = 0" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;"></div>
                 </div>
 
+<!-- Botones de Acción -->
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid #cbd5e1; padding-top: 15px;">
-                    <button onclick="comprobarReto()" style="background: #2563eb; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer;">✔️ Comprobar Respuestas</button>
-                    <button onclick="desglosarReto()" style="background: #d97706; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer;">🔍 Ver Proceso a Detalle</button>
-                    <button onclick="anularReto()" style="background: #dc2626; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto;">❌ Cancelar Examen</button>
+                    <button id="btn-comprobar" onclick="window.comprobarRespuesta(this)" style="background: #2563eb; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                        ✔️ Comprobar Respuestas
+                    </button>
+                    <!-- El botón de proceso nace bloqueado y en gris -->
+                    <button id="btn-ver-proceso" onclick="window.verProcesoDesglose()" disabled style="background: #94a3b8; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: not-allowed; transition: 0.2s;">
+                        🔍 Ver Proceso a Detalle
+                    </button>
+                    <button id="btn-cancelar-reto" onclick="window.anularRetoPorTrampa()" style="background: #dc2626; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto;">
+                        ❌ Cancelar Examen
+                    </button>
                 </div>
 
                 <div id="feedback-reto-msg" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;"></div>
