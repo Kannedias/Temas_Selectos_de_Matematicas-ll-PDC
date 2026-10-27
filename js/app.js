@@ -597,51 +597,40 @@ function limpiarCamposReto() {
     });
 }
 
-function comprobarReto() {
-    if (!solucionReto) return;
-    
-    // Calcular tiempo transcurrido en segundos
-    const tiempoSegundos = Math.floor((Date.now() - inicioTiempoReto) / 1000);
-    const min = Math.floor(tiempoSegundos / 60);
-    const seg = tiempoSegundos % 60;
-    const tiempoTexto = `${min}m ${seg}s`;
+window.comprobarRespuesta = function(btnTarget) {
+    if (!solucionReto || !inicioTiempoReto) { 
+        alert("⚠️ El reto no ha sido iniciado."); 
+        return; 
+    }
 
+    // 1. Calcular tiempo transcurrido
+    const tiempoSegundos = Math.floor((Date.now() - inicioTiempoReto) / 1000);
+    const min = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
+    const seg = String(tiempoSegundos % 60).padStart(2, '0');
+    const tiempoFormateado = `${min}:${seg}`;
+
+    // 2. Motor de Tolerancia Matemática (+/- 0.05)
     let correctas = 0;
-    let totalEvaluar = 4; // Por ahora evaluaremos los 4 numéricos principales
-    
-    // Función de tolerancia (acepta +/- 0.05 de margen de error por decimales)
+    let totalEvaluar = 4;
     const esCorrecto = (ingresado, real) => {
         if (!ingresado || isNaN(parseFloat(ingresado))) return false;
         return Math.abs(parseFloat(ingresado) - parseFloat(real)) <= 0.05;
     };
 
-    // 1. Evaluar Magnitud
+    // --- EVALUACIÓN DE LAS 4 CAJAS ---
     const inMag = document.getElementById('ans-magnitud');
-    if (esCorrecto(inMag.value, solucionReto.magnitud)) {
-        inMag.style.borderColor = "#16a34a"; correctas++;
-    } else {
-        inMag.style.borderColor = "#dc2626";
-    }
+    if (esCorrecto(inMag.value, solucionReto.magnitud)) { inMag.style.borderColor = "#16a34a"; correctas++; } 
+    else { inMag.style.borderColor = "#dc2626"; }
 
-    // 2. Evaluar Dirección
     const inDir = document.getElementById('ans-direccion');
-    if (esCorrecto(inDir.value, solucionReto.direccion.grados)) {
-        inDir.style.borderColor = "#16a34a"; correctas++;
-    } else {
-        inDir.style.borderColor = "#dc2626";
-    }
+    if (esCorrecto(inDir.value, solucionReto.direccion.grados)) { inDir.style.borderColor = "#16a34a"; correctas++; } 
+    else { inDir.style.borderColor = "#dc2626"; }
 
-    // 3. Evaluar Pendiente
     const inPen = document.getElementById('ans-pendiente');
-    if (esCorrecto(inPen.value, solucionReto.pendiente)) {
-        inPen.style.borderColor = "#16a34a"; correctas++;
-    } else {
-        inPen.style.borderColor = "#dc2626";
-    }
+    if (esCorrecto(inPen.value, solucionReto.pendiente)) { inPen.style.borderColor = "#16a34a"; correctas++; } 
+    else { inPen.style.borderColor = "#dc2626"; }
     
-    // 4. Validar Vector (Acepta "X, Y" o "(X, Y)")
     const inVec = document.getElementById('ans-vector');
-    // Limpiamos paréntesis invisibles antes de partir por la coma
     const vecLimpio = inVec.value.replace(/[()]/g, ''); 
     const vecPartes = vecLimpio.split(',').map(v => v.trim());
     const dxReal = retoActivo.puntos.x2 - retoActivo.puntos.x1;
@@ -653,14 +642,60 @@ function comprobarReto() {
         inVec.style.borderColor = "#dc2626";
     }
 
-    // Feedback Final
     const feedbackMsg = document.getElementById('feedback-reto-msg');
+
+    // 3. SI TODO ES CORRECTO -> BLOQUEAR Y GUARDAR
     if (correctas === totalEvaluar) {
-        feedbackMsg.innerHTML = `<span style="color: #166534;">🎉 ¡Excelente! Todos los parámetros son correctos. Tiempo: ${tiempoTexto}</span>`;
+        const inputs = document.querySelectorAll('.grid-respuestas input');
+        inputs.forEach(input => { input.disabled = true; input.style.backgroundColor = "#f1f5f9"; });
+
+        const btnProceso = document.getElementById('btn-ver-proceso');
+        if (btnProceso) {
+            btnProceso.disabled = false;
+            btnProceso.style.background = "#d97706";
+            btnProceso.style.cursor = "pointer";
+        }
+
+        window.retoActivo = null; // Apagar Anti-trampas
+
+        const nivel = document.getElementById('nivel-reto')?.value || "1";
+        const matricula = localStorage.getItem('matriculaActiva') || sessionStorage.getItem('matriculaActiva') || "TEST-000";
+        const nombre = localStorage.getItem('nombreActivo') || sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
+        const grupo = localStorage.getItem('grupoActivo') || sessionStorage.getItem('grupoActivo') || "000";
+        
+        btnTarget.innerText = "⏳ Guardando récord..."; 
+        btnTarget.disabled = true;
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                accion: "registrar_reto", 
+                matricula: matricula, 
+                nombre: nombre, 
+                grupo: grupo, 
+                nivel: nivel, 
+                tiempo: tiempoFormateado,
+                intentos: intentosReto 
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "éxito") {
+                feedbackMsg.innerHTML = `<span style="color: #166534;">🎉 ¡Reto Guardado Oficialmente! <br> ⏱️ Tiempo: ${tiempoFormateado} | 🔄 Intento #${intentosReto}</span>`;
+            } else { 
+                alert(`⚠️ Respuesta correcta, pero error al guardar: ${data.mensaje}`); 
+            }
+        })
+        .catch(err => alert("⚠️ Falló la conexión al guardar el tiempo."))
+        .finally(() => { 
+            btnTarget.innerText = "✔️ Respuestas Comprobadas"; 
+            inicioTiempoReto = null; 
+        });
+
     } else {
         feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa los recuadros en rojo o consulta el desglose.</span>`;
     }
-}
+};
 
 function desglosarReto() {
     if (!retoActivo) return;
