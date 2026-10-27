@@ -1082,19 +1082,16 @@ window.iniciarCronometroReto = function() {
     tiempoInicio = Date.now();
 };
 // =======================================================
-// SECCIÓN 11: AUTO-LOGIN AL RECARGAR LA PÁGINA
+// SECCIÓN 11: AUTO-LOGIN (SOLO MIENTRAS LA PESTAÑA ESTÉ ABIERTA)
 // =======================================================
 document.addEventListener("DOMContentLoaded", function() {
-    // 1. Buscamos si el alumno ya se había registrado antes
-    const matriculaGuardada = localStorage.getItem('matriculaActiva');
+    const matriculaGuardada = sessionStorage.getItem('matriculaActiva');
     
-    // 2. Si lo encontramos, lo metemos directo sin preguntar
     if (matriculaGuardada) {
         const inputMatricula = document.getElementById('input-matricula');
         if (inputMatricula) {
             inputMatricula.value = matriculaGuardada;
         }
-        // Disparamos la función de login automáticamente
         window.iniciarSesion();
     }
 });
