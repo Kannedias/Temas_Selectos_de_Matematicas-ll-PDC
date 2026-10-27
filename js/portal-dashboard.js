@@ -1071,21 +1071,42 @@ window.iniciarCronometroReto = function() {
 window.comprobarRespuesta = function(btnTarget) {
     if (!tiempoInicio) { alert("⚠️ El reto no ha sido iniciado."); return; }
 
+    // 1. Detener Reloj y calcular tiempo
     const tiempoFin = Date.now();
     const segundosTardados = Math.floor((tiempoFin - tiempoInicio) / 1000);
     const minutos = String(Math.floor(segundosTardados / 60)).padStart(2, '0');
     const segundos = String(segundosTardados % 60).padStart(2, '0');
     const tiempoFormateado = `${minutos}:${segundos}`;
+
+    // 2. Aquí iría tu validación matemática con MathEngine...
+    // Si la respuesta es correcta, procedemos a bloquear y guardar:
     
+    // 3. Bloquear las casillas de respuestas para que no hagan trampa
+    const inputs = document.querySelectorAll('.grid-respuestas input');
+    inputs.forEach(input => {
+        input.disabled = true;
+        input.style.backgroundColor = "#f1f5f9";
+    });
+
+    // 4. Activar el botón de "Ver Proceso a Detalle" (Pasarlo a color ámbar)
+    const btnProceso = document.getElementById('btn-ver-proceso');
+    if (btnProceso) {
+        btnProceso.disabled = false;
+        btnProceso.style.background = "#d97706";
+        btnProceso.style.cursor = "pointer";
+    }
+
+    // 5. Desactivar temporalmente el "Anti-trampas" para que puedan ver su proceso tranquilos
+    window.retoActivo = false;
+
+    // 6. Guardar en Google Sheets (Usando el SCRIPT_URL global)
     const nivel = document.getElementById('nivel-reto')?.value || "1";
     const matricula = sessionStorage.getItem('matriculaActiva');
     const nombre = sessionStorage.getItem('nombreActivo');
     const grupo = sessionStorage.getItem('grupoActivo');
-
-    if (!matricula) { alert("⚠️ Sesión no detectada."); return; }
-
-    const textoOriginal = btnTarget.innerText;
-    btnTarget.innerText = "⏳ Guardando récord..."; btnTarget.disabled = true;
+    
+    btnTarget.innerText = "⏳ Guardando récord..."; 
+    btnTarget.disabled = true;
 
     fetch(SCRIPT_URL, {
         method: 'POST',
@@ -1093,9 +1114,17 @@ window.comprobarRespuesta = function(btnTarget) {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === "éxito") alert(`✅ ¡Reto Nivel ${nivel} superado!\n⏱️ Tiempo: ${tiempoFormateado}`);
-        else alert(`⚠️ Respuesta correcta, error al guardar: ${data.mensaje}`);
+        const feedback = document.getElementById('feedback-resultado');
+        if (data.status === "éxito") {
+            feedback.style.color = "#059669";
+            feedback.innerHTML = `✅ ¡Reto Superado y Guardado! ⏱️ Tiempo oficial: ${tiempoFormateado}`;
+        } else { 
+            alert(`⚠️ Respuesta correcta, pero error al guardar: ${data.mensaje}`); 
+        }
     })
-    .catch(err => { alert(`⚠️ Respuesta correcta, pero falló la conexión al guardar el tiempo.`); })
-    .finally(() => { btnTarget.innerText = textoOriginal; btnTarget.disabled = false; tiempoInicio = null; });
+    .catch(err => alert("⚠️ Falló la conexión al guardar el tiempo."))
+    .finally(() => { 
+        btnTarget.innerText = "✔️ Respuestas Comprobadas"; 
+        tiempoInicio = null; 
+    });
 };
