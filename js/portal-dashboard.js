@@ -75,30 +75,18 @@ window.iniciarSesion = function() {
 };
 
 // =======================================================
-// LÓGICA DE CIERRE DE SESIÓN (AMNESIA TOTAL)
+// LÓGICA DE CIERRE DE SESIÓN (AMNESIA TOTAL Y REINICIO)
 // =======================================================
-window.cerrarSesion = function() {
-    // 1. Borramos la memoria temporal Y la fija
-    sessionStorage.clear();
+window.cerrarSesion = function(event) {
+    // 1. Detenemos cualquier salto automático que tenga tu botón en HTML
+    if (event) event.preventDefault();
+    
+    // 2. Aniquilamos las memorias de forma obligatoria
     localStorage.clear();
-
-    // 2. Ocultamos los paneles internos
-    document.getElementById('vista-dashboard')?.classList.add('hidden');
-    document.getElementById('vista-admin')?.classList.add('hidden');
-    document.getElementById('user-menu')?.classList.add('hidden');
+    sessionStorage.clear();
     
-    // 3. Mostramos la pantalla de inicio
-    document.getElementById('vista-login')?.classList.remove('hidden');
-    
-    // 4. Limpiamos la casilla
-    const matInput = document.getElementById('input-matricula');
-    if (matInput) matInput.value = "";
-    
-    // 5. Destruimos la gráfica si existe
-    if(window.miGrafica !== null) { 
-        window.miGrafica.destroy(); 
-        window.miGrafica = null;
-    }
+    // 3. Forzamos la recarga de la página desde cero
+    window.location.href = window.location.pathname; 
 };
 
 // =======================================================
