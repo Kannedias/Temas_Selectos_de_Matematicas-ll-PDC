@@ -692,9 +692,9 @@ window.comprobarRespuesta = function(btnTarget) {
 
         // Obtener datos del alumno
         const nivel = document.getElementById('nivel-reto')?.value || "1";
-        const matricula = localStorage.getItem('matriculaActiva') || sessionStorage.getItem('matriculaActiva') || "TEST-000";
-        const nombre = localStorage.getItem('nombreActivo') || sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
-        const grupo = localStorage.getItem('grupoActivo') || sessionStorage.getItem('grupoActivo') || "000";
+        const matricula = sesionStorage.getItem('matriculaActiva') || sessionStorage.getItem('matriculaActiva') || "TEST-000";
+        const nombre = sesionStorage.getItem('nombreActivo') || sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
+        const grupo = sesionStorage.getItem('grupoActivo') || sessionStorage.getItem('grupoActivo') || "000";
         
         // Estado de carga del botón
         const textoOriginal = btnTarget.innerText;
@@ -815,7 +815,7 @@ document.addEventListener('copy', event => {
 document.addEventListener("DOMContentLoaded", function() {
     
     // 🛡️ CADENERO DE SESIÓN (ACTUALIZADO A MEMORIA FIJA)
-    const matriculaGuardada = localStorage.getItem('matriculaActiva');
+    const matriculaGuardada = sesionStorage.getItem('matriculaActiva');
     
     // Si estamos en la página del laboratorio/retos y no hay matrícula...
     if (!matriculaGuardada && window.location.pathname.includes("unidad1_recta.html")) {
