@@ -7,7 +7,6 @@ let miGrafica = null;
 window.listaGlobalAlumnos = []; 
 window.grupoSeleccionadoAdmin = null; 
 window.alumnoSeleccionadoAdmin = null; 
-
 // =======================================================
 // SECCIÓN 1: LÓGICA DE INICIO DE SESIÓN
 // =======================================================
