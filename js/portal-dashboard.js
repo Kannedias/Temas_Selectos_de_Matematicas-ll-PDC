@@ -249,15 +249,6 @@ window.consultarAvanceReal = function(matricula) {
                     badge1_1.innerHTML = "🔴 Pendiente";
                 }
             }
-
-            if (barraAvance && lblPorcentaje) {
-                let porcentaje = 0;
-                if (data.unidadCompletada) porcentaje = 100;
-                else if (data.tareasCumplidas > 0) porcentaje = 50;
-                
-                barraAvance.style.width = porcentaje + "%";
-                lblPorcentaje.innerText = porcentaje + "%";
-            }
         }
     }).catch(err => console.error("Error motor avance:", err));
 };
