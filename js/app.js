@@ -2,6 +2,7 @@
 // CONFIGURACIÓN DE CONEXIÓN
 // =======================================================
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCO1FHOxVxUSi1Z6QgMjttLXZ1WrNgBLBkjUNw5Lq0wK8UkdLJu68eVXp9qyNJoioa/exec";
+
 // =======================================================
 // BLOQUE 1: CONTROL DE NAVEGACIÓN POR PESTAÑAS
 // =======================================================
@@ -88,7 +89,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const container = document.getElementById('pasos-container');
     if (!container) return;
 
-    // --- VARIABLES DE FORMATO GLOBALES PARA LOS 7 PASOS ---
     const fmt = (num) => Number.isInteger(Number(num)) ? Number(num).toString() : Number(num).toFixed(2);
     const dx = x2 - x1;
     const dy = y2 - y1;
@@ -103,13 +103,11 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
     const mVal = res.esVertical ? "\\text{Indefinida}" : fmt(res.pendiente);
     const bVal = res.esVertical ? "N/A" : fmt(res.ordenadaOrigen);
 
-    // Colores LaTeX para los puntos
     const cA = "\\textcolor{#2563eb}";
     const cB = "\\textcolor{#dc2626}";
     const strCoordA = `${cA}{${fmt(x1)}}, ${cA}{${fmt(y1)}}`;
     const strCoordB = `${cB}{${fmt(x2)}}, ${cB}{${fmt(y2)}}`;
 
-    // --- ANÁLISIS DE CUADRANTE Y DIRECCIÓN (PASO 3) ---
     let analisisCuadrante = "";
     let calculoFormula = "";
     const absDx = Math.abs(dx);
@@ -135,7 +133,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
         analisisCuadrante = "Sobre Eje Y"; calculoFormula = `<p style="margin: 0; font-size: 0.95rem; text-align: center;">Directo por inspección: $$\\theta = ${angFinal}^\\circ$$</p>`;
     }
 
-    // --- INYECCIÓN HTML DE LAS 7 TARJETAS LIMPIAS ---
     const tarjetasHTML = [
         // ==============================================
         // PASO 1: VECTOR DESPLAZAMIENTO (SIN i, j)
@@ -153,7 +150,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="font-size: 0.95rem; color: #1e293b; margin: 0;">$$\\Delta \\vec{r} = (\\textcolor{#dc2626}{x_2} - \\textcolor{#2563eb}{x_1}, \\, \\textcolor{#dc2626}{y_2} - \\textcolor{#2563eb}{y_1})$$</p>
             </div>
 
-            <!-- Cajas Responsivas (Píldoras) -->
             <div class="contenedor-puntos" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 1.25rem;">
                 <div class="pill-punto-a" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.85rem; color: #1e40af; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
                     <span class="dot-a" style="background: #3b82f6; width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 4px rgba(59,130,246,0.4);"></span>
@@ -165,7 +161,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 </div>
             </div>
 
-            <!-- Contenedor Compacto de Operaciones -->
             <div class="math-scrollable" style="background: #f8fafc; padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; overflow-x: auto; white-space: nowrap; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
                 <div style="width: 100%; max-width: 320px; text-align: left;">
                     <p style="font-size: 0.82rem; color: #475569; margin: 0 0 0.5rem 0; font-style: italic; background-color: #f1f5f9; padding: 6px 10px; border-radius: 4px; border-left: 3px solid #94a3b8;"><strong>1. Sustitución de valores:</strong> Reemplazamos las coordenadas respetando los signos.</p>
@@ -179,7 +174,6 @@ function renderizarTarjetasPasoAPasoBeta(res, x1, y1, x2, y2) {
                 <p style="margin: 0; font-size: 0.95rem;">$$ \\Delta y = \\textcolor{#dc2626}{${y2}} - (\\textcolor{#2563eb}{${y1}}) = ${dy} $$</p>
             </div>
 
-            <!-- Resultado Destacado -->
             <div class="resultado-azul-destacado" style="background-color: #eff6ff; border-left: 5px solid #2563eb; color: #1e3a8a; padding: 1rem 1.25rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center;">
                 <span><strong>Resultado:</strong> $\\Delta \\vec{r} = (${dx}, \\, ${dy})$</span>
             </div>
@@ -575,8 +569,7 @@ let inicioTiempoReto = null;
 function iniciarRetoSeguro() {
     const nivel = document.getElementById('nivel-reto').value;
     
-    // Obtenemos la matrícula (asumiendo que está en sessionStorage o usamos un default para pruebas)
-    const matricula = sessionStorage.getItem('matriculaActiva') || "TEST-000";
+    const matricula = localStorage.getItem('matriculaActiva') || "TEST-000";
     
     // 1. Candado Anti-Trampas: Bloqueamos las pestañas superiores
     const botonesNav = document.querySelectorAll('.nav-tab');
@@ -622,23 +615,19 @@ window.comprobarRespuesta = function(btnTarget) {
         return; 
     }
 
-    // 1. Calcular tiempo transcurrido
     const tiempoSegundos = Math.floor((Date.now() - inicioTiempoReto) / 1000);
     const min = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
     const seg = String(tiempoSegundos % 60).padStart(2, '0');
     const tiempoFormateado = `${min}:${seg}`;
 
-    // 2. Motores de Tolerancia (Numérica y de Ecuaciones)
     let correctas = 0;
-    let totalEvaluar = 7; // Evaluamos las 7 casillas
+    let totalEvaluar = 7; // Ahora evaluamos los 7 pasos
 
-    // Tolerancia decimal +/- 0.05
     const esCorrectoNum = (ingresado, real) => {
         if (!ingresado || isNaN(parseFloat(ingresado))) return false;
         return Math.abs(parseFloat(ingresado) - parseFloat(real)) <= 0.05;
     };
 
-    // Tolerancia de Ecuaciones (Borra espacios vacíos para no penalizar)
     const esCorrectoTexto = (ingresado, real) => {
         if (!ingresado || !real) return false;
         const limpioIngresado = String(ingresado).replace(/\s+/g, '').toLowerCase();
@@ -654,8 +643,7 @@ window.comprobarRespuesta = function(btnTarget) {
         }
     };
 
-    // --- EVALUACIÓN DE LAS 7 CAJAS ---
-    // 1. Vector Desplazamiento
+    // 1. Vector
     const inVec = document.getElementById('ans-vector');
     const vecLimpio = inVec.value.replace(/[()]/g, ''); 
     const vecPartes = vecLimpio.split(',').map(v => v.trim());
@@ -676,29 +664,26 @@ window.comprobarRespuesta = function(btnTarget) {
     const inPen = document.getElementById('ans-pendiente');
     pintarCaja(inPen, esCorrectoNum(inPen.value, solucionReto.pendiente));
 
-    // 5. Forma Punto-Pendiente
+    // 5. Punto-Pendiente
     const inPP = document.getElementById('ans-pp');
     pintarCaja(inPP, esCorrectoTexto(inPP.value, solucionReto.ecuaciones.puntoPendiente));
 
-    // 6. Forma Explícita
+    // 6. Explícita
     const inExp = document.getElementById('ans-exp');
     pintarCaja(inExp, esCorrectoTexto(inExp.value, solucionReto.ecuaciones.explicita));
 
-    // 7. Forma General
+    // 7. General
     const inGen = document.getElementById('ans-gen');
     pintarCaja(inGen, esCorrectoTexto(inGen.value, solucionReto.ecuaciones.general));
 
-    // --- MANEJO DE RESULTADOS ---
     const feedbackMsg = document.getElementById('feedback-reto-msg');
 
     if (correctas === totalEvaluar) {
         const inputs = document.querySelectorAll('.grid-respuestas input');
         inputs.forEach(input => { input.disabled = true; });
 
-        // Apagar Anti-trampas
-        retoActivo = null; 
+        retoActivo = null; // Apaga escudo antitrampas al terminar exitosamente
 
-        // Detonar Desglose Automático
         if (typeof desglosarReto === 'function') {
             desglosarReto();
             const btnProceso = document.getElementById('btn-ver-proceso');
@@ -710,61 +695,14 @@ window.comprobarRespuesta = function(btnTarget) {
         }
 
         const nivel = document.getElementById('nivel-reto')?.value || "1";
-        const matricula = sessionStorage.getItem('matriculaActiva') || "TEST-000";
-        const nombre = sessionStorage.getItem('nombreActivo') || "Alumno";
-        const grupo = sessionStorage.getItem('grupoActivo') || "000";
+        const matricula = localStorage.getItem('matriculaActiva') || "TEST-000";
+        const nombre = localStorage.getItem('nombreActivo') || "Alumno Prueba";
+        const grupo = localStorage.getItem('grupoActivo') || "000";
         
         const textoOriginal = btnTarget.innerText;
         btnTarget.innerText = "⏳ Guardando récord..."; 
         btnTarget.disabled = true;
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ 
-                accion: "registrar_reto", 
-                matricula: matricula, 
-                nombre: nombre, 
-                grupo: grupo, 
-                nivel: nivel, 
-                tiempo: tiempoFormateado,
-                intentos: intentosReto 
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "éxito") {
-                feedbackMsg.innerHTML = `<span style="color: #166534;">🎉 ¡Reto Guardado Oficialmente! <br> ⏱️ Tiempo: ${tiempoFormateado} | 🔄 Intento #${intentosReto}</span>`;
-            } else { 
-                alert(`⚠️ Respuesta correcta, pero error al guardar: ${data.mensaje}`); 
-            }
-        })
-        .catch(err => {
-            console.error("Error Fetch:", err);
-            alert("⚠️ Falló la conexión al guardar el tiempo en Sheets.");
-        })
-        .finally(() => { 
-            btnTarget.innerText = textoOriginal; 
-            btnTarget.disabled = false;
-            inicioTiempoReto = null; 
-        });
-
-    } else {
-        feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa las casillas marcadas en rojo.</span>`;
-    }
-};
-
-        // Obtener datos del alumno
-        const nivel = document.getElementById('nivel-reto')?.value || "1";
-        const matricula = sessionStorage.getItem('matriculaActiva') || sessionStorage.getItem('matriculaActiva') || "TEST-000";
-        const nombre = sessionStorage.getItem('nombreActivo') || sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
-        const grupo = sessionStorage.getItem('grupoActivo') || sessionStorage.getItem('grupoActivo') || "000";
-        
-        // Estado de carga del botón
-        const textoOriginal = btnTarget.innerText;
-        btnTarget.innerText = "⏳ Guardando récord..."; 
-        btnTarget.disabled = true;
-
-        // Enviar a Google Sheets
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ 
@@ -803,91 +741,81 @@ window.comprobarRespuesta = function(btnTarget) {
 function desglosarReto() {
     if (!retoActivo) return;
     
-    // Reutilizamos la función maestra del laboratorio para mostrar el paso a paso
-    // Necesitamos inyectarlo en el contenedor del reto, no en el laboratorio
     const contenedorOriginal = document.getElementById('pasos-container');
     const contenedorReto = document.getElementById('desglose-reto-container');
     
-    // Cambiamos temporalmente el ID de destino en la función original (Truco ninja)
     contenedorOriginal.id = "pasos-container-oculto";
     contenedorReto.id = "pasos-container";
     
-    // Llamamos a la función con los puntos del reto activo
     renderizarTarjetasPasoAPasoBeta(retoActivo.solucion, retoActivo.puntos.x1, retoActivo.puntos.y1, retoActivo.puntos.x2, retoActivo.puntos.y2);
     
-    // Devolvemos los IDs a la normalidad
     contenedorReto.id = "desglose-reto-container";
     contenedorOriginal.id = "pasos-container";
 }
 
-function anularReto() {
-    // 1. Desbloquear las pestañas superiores
+// Enlazamos la función con el nombre que busca el botón en HTML (Cancelar Examen)
+window.anularReto = function() {
     const botonesNav = document.querySelectorAll('.nav-tab');
     botonesNav.forEach(btn => {
         btn.style.pointerEvents = 'auto';
         btn.style.opacity = '1';
     });
     
-    // 2. Restaurar UI
     document.getElementById('zona-activa-reto').style.display = 'none';
     document.getElementById('panel-configuracion-reto').style.display = 'block';
     
-    // 3. Limpiar memoria
     retoActivo = null;
     solucionReto = null;
-}
+};
+window.anularRetoPorTrampa = window.anularReto;
 
 // =======================================================
 // BLOQUE 6: BLINDAJE ANTI-TRAMPAS (MODO SEGURO EXAMEN)
 // =======================================================
 
-// 1. Detectar cuando salen de la pestaña (PC/Mac/Navegadores)
+// 1. Detectar cuando salen de la pestaña
 document.addEventListener("visibilitychange", () => {
-    // retoActivo no es null cuando hay un examen corriendo
     if (retoActivo && document.hidden) {
         alert("🚨 TRAMPA DETECTADA: Has abandonado la pestaña de evaluación. El reto será anulado.");
-        anularReto();
+        window.anularReto();
     }
 });
 
-// 2. Detectar cuando minimizan el navegador o cambian de App (Celulares y PC)
+// 2. Detectar cuando minimizan el navegador o cambian de App
 window.addEventListener("blur", () => {
     if (retoActivo) {
         alert("🚨 TRAMPA DETECTADA: Has minimizado la pantalla o salido de la ventana. El reto será anulado.");
-        anularReto();
+        window.anularReto();
     }
 });
 
-// 3. Bloquear Clic Derecho en toda la página si hay un reto activo
+// 3. Bloquear Clic Derecho
 document.addEventListener('contextmenu', event => {
     if (retoActivo) {
         event.preventDefault();
     }
 });
 
-// 4. Bloquear atajos de copiado (Ctrl+C / Copiar en celular)
+// 4. Bloquear copiado
 document.addEventListener('copy', event => {
     if (retoActivo) {
         event.preventDefault();
         alert("⚠️ El copiado de texto está deshabilitado en Modo Examen.");
     }
 });
+
 // =======================================================
-// INICIALIZACIÓN
+// INICIALIZACIÓN (CADENERO CON LOCALSTORAGE)
 // =======================================================
 document.addEventListener("DOMContentLoaded", function() {
     
-    // 🛡️ CADENERO DE SESIÓN (ACTUALIZADO A MEMORIA FIJA)
-    const matriculaGuardada = sessionStorage.getItem('matriculaActiva');
+    const matriculaGuardada = localStorage.getItem('matriculaActiva');
     
-    // Si estamos en la página del laboratorio/retos y no hay matrícula...
     if (!matriculaGuardada && window.location.pathname.includes("unidad1_recta.html")) {
         alert("⚠️ No se detectó una sesión activa. Serás redirigido al portal principal para ingresar tu matrícula.");
         window.location.href = "index.html"; 
-        return; // Detiene la carga de la página
+        return; 
     }
-
-    // ... (El resto de tu código de KaTeX y Laboratorio sigue normal hacia abajo)
 
     if (window.renderMathInElement) {
         renderMathInElement(document.body, {
