@@ -621,7 +621,7 @@ window.comprobarRespuesta = function(btnTarget) {
     const tiempoFormateado = `${min}:${seg}`;
 
     let correctas = 0;
-    let totalEvaluar = 7; // Ahora evaluamos los 7 pasos
+    let totalEvaluar = 7; 
 
     const esCorrectoNum = (ingresado, real) => {
         if (!ingresado || isNaN(parseFloat(ingresado))) return false;
@@ -679,11 +679,11 @@ window.comprobarRespuesta = function(btnTarget) {
     const feedbackMsg = document.getElementById('feedback-reto-msg');
 
     if (correctas === totalEvaluar) {
+        // Bloquear inputs tras acertar
         const inputs = document.querySelectorAll('.grid-respuestas input');
         inputs.forEach(input => { input.disabled = true; });
 
-        retoActivo = null; // Apaga escudo antitrampas al terminar exitosamente
-
+        // Detonar Desglose Automático ANTES de apagar el reto
         if (typeof desglosarReto === 'function') {
             desglosarReto();
             const btnProceso = document.getElementById('btn-ver-proceso');
@@ -694,10 +694,12 @@ window.comprobarRespuesta = function(btnTarget) {
             }
         }
 
+        retoActivo = null; // Apaga escudo antitrampas al terminar exitosamente
+
         const nivel = document.getElementById('nivel-reto')?.value || "1";
-        const matricula = localStorage.getItem('matriculaActiva') || "TEST-000";
-        const nombre = localStorage.getItem('nombreActivo') || "Alumno Prueba";
-        const grupo = localStorage.getItem('grupoActivo') || "000";
+        const matricula = sessionStorage.getItem('matriculaActiva') || "TEST-000";
+        const nombre = sessionStorage.getItem('nombreActivo') || "Alumno Prueba";
+        const grupo = sessionStorage.getItem('grupoActivo') || "000";
         
         const textoOriginal = btnTarget.innerText;
         btnTarget.innerText = "⏳ Guardando récord..."; 
@@ -734,7 +736,15 @@ window.comprobarRespuesta = function(btnTarget) {
         });
 
     } else {
-        feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Revisa las casillas marcadas en rojo.</span>`;
+        feedbackMsg.innerHTML = `<span style="color: #dc2626;">⚠️ Tienes ${correctas} de ${totalEvaluar} correctas. Corrige tus errores o haz clic en "Ver Proceso a Detalle" para rendirte y ver la solución.</span>`;
+        
+        // ENCENDER BOTÓN DE DESGLOSE AUNQUE HAYAN FALLADO
+        const btnProceso = document.getElementById('btn-ver-proceso');
+        if (btnProceso) {
+            btnProceso.disabled = false;
+            btnProceso.style.background = "#d97706";
+            btnProceso.style.cursor = "pointer";
+        }
     }
 };
 
@@ -752,6 +762,35 @@ function desglosarReto() {
     contenedorReto.id = "desglose-reto-container";
     contenedorOriginal.id = "pasos-container";
 }
+
+// =====================================================================
+// NUEVA FUNCIÓN: ACTIVAR MODO ESTUDIO (Al dar clic en "Ver Proceso")
+// =====================================================================
+window.verProcesoDesglose = function() {
+    if (!retoActivo) return; // Si no hay reto activo, se cancela
+
+    // 1. Bloquear cajas de texto para que ya no escriban
+    const inputs = document.querySelectorAll('.grid-respuestas input');
+    inputs.forEach(input => { input.disabled = true; });
+
+    // 2. Bloquear botón de comprobar para evitar envío de respuestas copiadas
+    const btnComprobar = document.getElementById('btn-comprobar');
+    if (btnComprobar) {
+        btnComprobar.disabled = true;
+        btnComprobar.style.background = "#94a3b8";
+        btnComprobar.style.cursor = "not-allowed";
+    }
+
+    // 3. Pintar las tarjetas con la solución
+    desglosarReto();
+
+    // 4. Apagar anti-trampas (el reto se anula para puntaje, pero entra en modo estudio)
+    retoActivo = null;
+
+    // 5. Mensaje informativo
+    const feedbackMsg = document.getElementById('feedback-reto-msg');
+    if(feedbackMsg) feedbackMsg.innerHTML = `<span style="color: #0369a1;">🔍 Modo Estudio Activado: El reto ha terminado sin puntaje. Analiza el procedimiento paso a paso.</span>`;
+};
 
 // Enlazamos la función con el nombre que busca el botón en HTML (Cancelar Examen)
 window.anularReto = function() {
