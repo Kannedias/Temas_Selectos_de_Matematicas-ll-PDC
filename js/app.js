@@ -844,26 +844,17 @@ document.addEventListener('copy', event => {
 });
 
 // =======================================================
-// INICIALIZACIÓN (CADENERO CON LOCALSTORAGE)
+// INICIALIZACIÓN (CADENERO)
 // =======================================================
 document.addEventListener("DOMContentLoaded", function() {
     
-    const matriculaGuardada = localStorage.getItem('matriculaActiva');
+    // Cambiar localStorage por sessionStorage aquí:
+    const matriculaGuardada = sessionStorage.getItem('matriculaActiva');
     
     if (!matriculaGuardada && window.location.pathname.includes("unidad1_recta.html")) {
         alert("⚠️ No se detectó una sesión activa. Serás redirigido al portal principal para ingresar tu matrícula.");
         window.location.href = "index.html"; 
         return; 
-    }
-
-    if (window.renderMathInElement) {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: "$$", right: "$$", display: true},
-                {left: "$", right: "$", display: false}
-            ],
-            throwOnError: false
-        });
     }
     setTimeout(calcularLaboratorio, 200);
 });
